@@ -17,6 +17,7 @@ import {
   Feather,
 } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
+import axios from 'axios'
 
 
 export default function Chats() {
@@ -24,10 +25,13 @@ export default function Chats() {
   const [professionalsData, setProfessionalsData] = useState([])
 
   useEffect(() => {
-    fetch('https://4859-201-72-240-122.ngrok-free.app/ExplainProfissionals')
-      .then((response) => response.json())
-      .then((data) => setProfessionalsData(data))
-      .catch((error) => console.error('Error fetching professionals:', error))
+      try{
+        const response = axios.get('https://ddc2-2804-d4b-b716-8600-bc05-bb02-5682-2ec4.ngrok-free.app//ExplainProfissionals')
+        const data = response.data;
+        setProfessionalsData(data.data);
+      } catch(error){
+        console.error('Error fetching professionals:', error);
+      }
   }, [])
 
   const renderProfessionalItem = ({ item }) => (

@@ -5,89 +5,92 @@ import { Button, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import { MMKV } from 'react-native-mmkv'
 import axios from 'axios'
 import { useNavigation } from '@react-navigation/native'
-import Splash from '../splash'
 
 const storage = new MMKV()
 
 export default function Profile() {
-  const [details, setDetails] = useState(null)
-  const navigation = useNavigation()
-
-  const ExcluirConta = async () => {
-    try {
-      const nomeUser = storage.getString('user.nameUser')
-      const response = await axios.post(
-        'https://8f1f-138-204-129-220.ngrok-free.app/ExcluirConta', { nomeUser }
-      )
-      const { status, data } = response.data
-      if (status === 'sucesso'){
-        storage.set('user.token', '')
-        storage.set('user.nameUser', '')
-        const keys = storage.getAllKeys()
-        storage.clearAll(keys)
-        navigation.navigate(Splash)
-      }
-    }
-    catch(error){
-      console.error('Erro durante a requisição:', error)
-    }
-  }
+  const [details, setDetails] = useState(null);
+  const [userType, setUserType] = useState(null);
+  const navigation = useNavigation();
 
   const loadDetails = async () => {
     try {
-      const nomeUser = storage.getString('user.nameUser')
+      const nomeUser = storage.getString('user.nameUser');
       const response = await axios.post(
-        'https://ddc2-2804-d4b-b716-8600-bc05-bb02-5682-2ec4.ngrok-free.app/UserDetails',
+        'https://edc4-2804-d4b-b716-8600-bc05-bb02-5682-2ec4.ngrok-free.app/UserDetails',
         { nomeUser },
-      )
-      const { status, data } = response.data
+      );
+      const { status, data } = response.data;
       
       if (status === 'ok') {
-        setDetails(data)
+        setDetails(data);
+        setUserType(data.tipo);
       }
     } catch (error) {
-      console.error('Erro durante a requisição:', error)
+      console.error('Erro durante a requisição:', error);
     }
-  }
+  };
 
   useEffect(() => {
-    loadDetails()
-  }, [])
+    loadDetails();
+  }, []);
 
-  const logout = async () => {
-    const keys = storage.getAllKeys()
-    storage.clearAll(keys)
-    navigation.navigate('login')
-  }
-
-  return (
-    <SafeAreaView style={styles.container}>
-      <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
-        {details && (
+  const renderProfileDetails = () => {
+    if (details) {
+      if (userType === 'Paciente') {
+        return (
           <View style={styles.userInfo}>
             <Text style={styles.label}>Nome de usuário:</Text>
-            <Text style={styles.value}>{details.nome}</Text>
+            <Text style={styles.value}>{details.userName}</Text>
             <Text style={styles.label}>Email:</Text>
             <Text style={styles.value}>{details.email}</Text>
             <Text style={styles.label}>Telefone:</Text>
             <Text style={styles.value}>{details.telefone}</Text>
-            <Text style={styles.label}>Endereço:</Text>
-            <Text style={styles.value}>{details.endereco}</Text>
-            <Text style={styles.label}>Biografia:</Text>
-            <Text style={styles.value}>{details.biografia}</Text>
-            <Text style={styles.label}>Diagnóstico:</Text>
-            <Text style={styles.value}>{details.diagnostico}</Text>
-            <Text style={styles.label}>Focuspoints:</Text>
-            <Text style={styles.value}>{details.focuspoints}</Text>
+            {/* Renderizar mais campos específicos para pacientes se necessário */}
           </View>
-        )}
+        );
+      } else if (userType === 'Profissional') {
+        return (
+          <View style={styles.userInfo}>
+            <Text style={styles.label}>Nome de usuário:</Text>
+            <Text style={styles.value}>{details.nomeUser}</Text>
+            <Text style={styles.label}>Email:</Text>
+            <Text style={styles.value}>{details.email}</Text>
+            <Text style={styles.label}>Telefone:</Text>
+            <Text style={styles.value}>{details.telefone}</Text>
+            {/* Renderizar mais campos específicos para profissionais se necessário */}
+          </View>
+        );
+      }
+    }
+    return null;
+  };
+
+  const logout = async () => {
+    const keys = storage.getAllKeys();
+    storage.clearAll(keys);
+    navigation.navigate('login');
+  };
+
+  const ExcluirConta = async () => {
+    try {
+      // dps eu faço
+    } catch (error) {
+      console.error('Erro durante a requisição:', error);
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
+        {renderProfileDetails()}
         <View>
           <Button title='Sair da conta' onPress={logout} />
-          <Button title='Apagar minha conta' onpress={ExcluirConta} />
+          <Button title='Apagar minha conta' onPress={ExcluirConta} />
         </View>
       </LinearGradient>
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({

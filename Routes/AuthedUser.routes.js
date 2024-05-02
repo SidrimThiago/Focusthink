@@ -3,6 +3,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import SplashScreen from '../screens/Start/splashscreen'
 import login from '../screens/Auth/login'
 import Splash from '../screens/splash'
+import Chats from '../screens/Authed/Chats'
+import EspecifedChat from '../screens/Authed/especifedChat'
 import Home from '../screens/Authed/Home'
 import Games from '../screens/Games/games'
 import NavBar from './NavBar.routes'
@@ -23,10 +25,12 @@ export default function Routes() {
         <Stack.Screen name="NavBar" component={NavBar} />
         <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Chats" component={Chats} />
         <Stack.Screen name="Chatbot" component={Chatbot} />
         <Stack.Screen name="Games" component={Games} />
         <Stack.Screen name="2048" component={Game2048} />
         <Stack.Screen name="MemoryGame" component={Gamebody} />
+        <Stack.Screen name="especifedChat" component={EspecifedChat} />
         <Stack.Screen name="login" component={login} />
       </Stack.Navigator>
     </NavigationContainer>

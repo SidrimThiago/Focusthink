@@ -27,8 +27,17 @@ import DateInputComponent from '../../../components/datepicker'
 import InsetShadow from 'react-native-inset-shadow'
 import { TextInputMask } from 'react-native-masked-text'
 
+
 export default function ProfissionalCadastro() {
   const [nome, setNome] = useState('')
+  const [nomeUser, setNomeUser] = useState('')
+  const [cep, setCep] = useState('')
+  const [rua, setRua] = useState('')
+  const [bairro, setbairro] = useState('')
+  const [cidade, setCidade] = useState('')
+  const [estado, setEstado] = useState('')
+  const [numero, setNumero] = useState('')
+  const [biografia, setBiografia] = useState('')
   const [tipo, setTipo] = useState('Profissional')
   const [genero, setGenero] = useState('')
   const [endereco, setEndereco] = useState('')
@@ -52,6 +61,7 @@ export default function ProfissionalCadastro() {
     if (password === confirmPassword) {
       const newProfissional = {
         tipo,
+        nomeUser,
         nome,
         genero,
         endereco,
@@ -60,6 +70,7 @@ export default function ProfissionalCadastro() {
         password,
         codigo,
         focuspoints,
+        biografia,
         tokenVerify,
         especialidade,
       }

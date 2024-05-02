@@ -99,19 +99,22 @@ export default function ProfileCreate({ navigation, route }) {
       user.tokenVerify = ''
       storage.set('user.token', '')
       axios
-        .post('https://d9ba-138-204-129-220.ngrok-free.app/RegisterUser', {
-          nome: user.nome,
-          nomeUser: user.nomeUser,
-          email: user.email,
-          tipo: user.type,
-          biografia: user.biografia,
-          telefone: user.telefone,
-          endereco: user.endereco,
-          diagnostico: user.diagnostico,
-          userPassword: user.password,
-          tokenVerify: user.tokenVerify,
-          focuspoints: user.focuspoints,
-        })
+        .post(
+          'https://051d-2804-d4b-b716-8600-bc05-bb02-5682-2ec4.ngrok-free.app/RegisterUser',
+          {
+            nome: user.nome,
+            nomeUser: user.nomeUser,
+            email: user.email,
+            tipo: user.type,
+            biografia: user.biografia,
+            telefone: user.telefone,
+            endereco: user.endereco,
+            diagnostico: user.diagnostico,
+            userPassword: user.password,
+            tokenVerify: user.tokenVerify,
+            focuspoints: user.focuspoints,
+          },
+        )
         .then((response) => {
           console.log(response.data)
         })
@@ -122,22 +125,34 @@ export default function ProfileCreate({ navigation, route }) {
       navigation.navigate('login')
     } else if (newProfissional) {
       user.tokenVerify = ''
+      user.nomeUser = nomeUser
+      user.biografia = biografia
+      console.log(user.biografia)
+      console.log(user.nomeUser)
       storage.set('user.token', '')
       axios
-        .post('https://2b85-138-204-129-220.ngrok-free.app/RegisterUser', {
-          nome: user.nome,
-          nomeUser: user.nomeUser,
-          email: user.email,
-          tipo: user.tipo,
-          biografia: user.biografia,
-          telefone: user.telefone,
-          endereco: user.endereco,
-          crm: user.codigo,
-          especialidade: user.especialidade,
-          password: user.password,
-          tokenVerify: user.tokenVerify,
-          focuspoints: user.focuspoints,
-        })
+        .post(
+          'https://051d-2804-d4b-b716-8600-bc05-bb02-5682-2ec4.ngrok-free.app/RegisterProf',
+          {
+            nome: user.nome,
+            nomeUser: user.nomeUser,
+            email: user.email,
+            tipo: user.type,
+            biografia: user.biografia,
+            telefone: user.telefone,
+            rua: user.rua,
+            bairro: user.bairro,
+            cidade: user.cidade,
+            cep: user.cep,
+            estado: user.estado,
+            numero: user.numero,
+            especialidade: user.especialidade,
+            password: user.password,
+            crm: user.codigo,
+            tokenVerify: user.tokenVerify,
+            focuspoints: user.focuspoints,
+          },
+        )
         .then((response) => {
           console.log(response.data)
         })

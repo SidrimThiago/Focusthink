@@ -9,13 +9,17 @@ import {
   FlatList,
   Image,
 } from 'react-native'
+import { MMKV } from 'react-native-mmkv'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Ionicons } from '@expo/vector-icons'
-
 import { useNavigation } from '@react-navigation/native'
+
+const storage = new MMKV()
 
 export default function Consults() {
   const navigation = useNavigation()
+  const UserDetails = storage.getString('user.nameUser')
+  const focusbot = 'Focusbot'
   const apiKey = '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'
   const apiUrl = 'https://api.openai.com/v1/chat/completions'
 
@@ -53,8 +57,8 @@ export default function Consults() {
     const BotRespost = data
     setData([
       ...data,
-      { type: 'user', text: userInput },
-      { type: 'bot', text: BotRespost },
+      { type: `${UserDetails}`, text: userInput },
+      { type: `${focusbot}`, text: BotRespost },
     ])
     setUserInput('')
   }
@@ -71,7 +75,6 @@ export default function Consults() {
             alt="image"
             source={require('../assets/memory/death.png')}
           />
-          <Text>Oxe</Text>
         </View>
         <FlatList
           data={data}

@@ -206,14 +206,16 @@ export default function Start() {
                     title="Entrar"
                     onPress={() => {
                       const handleLogin = async () => {
-                        await console.log(values.email, values.password)
                         const userData = {
                           email: values.email,
                           password: values.password,
                         }
+
+                        await console.log(values.email, values.password)
+
                         axios
                           .post(
-                            'https://ddc2-2804-d4b-b716-8600-bc05-bb02-5682-2ec4.ngrok-free.app/AuthLogin',
+                            'https://edc4-2804-d4b-b716-8600-bc05-bb02-5682-2ec4.ngrok-free.app/AuthLogin',
                             userData,
                           )
                           .then((res) => {

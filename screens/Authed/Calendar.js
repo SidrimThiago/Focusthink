@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     borderRadius: 15,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   tasksList: {
     marginTop: 20,
