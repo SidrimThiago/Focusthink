@@ -17,7 +17,7 @@ export default function Profile() {
     try {
       const nomeUser = storage.getString('user.nameUser');
       const response = await axios.post(
-        'https://edc4-2804-d4b-b716-8600-bc05-bb02-5682-2ec4.ngrok-free.app/UserDetails',
+        'https://e178-2804-d4b-b716-8600-bc05-bb02-5682-2ec4.ngrok-free.app/UserDetails',
         { nomeUser },
       );
       const { status, data } = response.data;

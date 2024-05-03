@@ -29,7 +29,7 @@ export default function Splash() {
     console.log(userData.nomeUser)
 
     axios
-      .post('https://edc4-2804-d4b-b716-8600-bc05-bb02-5682-2ec4.ngrok-free.app/ValidateUser', userData)
+      .post('https://e178-2804-d4b-b716-8600-bc05-bb02-5682-2ec4.ngrok-free.app/ValidateUser', userData)
       
       .then((res) => {
         console.log(res.data)
