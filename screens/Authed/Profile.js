@@ -2,22 +2,25 @@
 import { LinearGradient } from 'expo-linear-gradient'
 import React, { useEffect, useState } from 'react'
 import { Button, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { Feather } from '@expo/vector-icons';
 import { MMKV } from 'react-native-mmkv'
 import axios from 'axios'
 import { useNavigation } from '@react-navigation/native'
+import { Modal } from 'react-native-paper';
 
 const storage = new MMKV()
 
 export default function Profile() {
   const [details, setDetails] = useState(null);
   const [userType, setUserType] = useState(null);
+  const [settingModal, setSettingModal] = useState(null)
   const navigation = useNavigation();
 
   const loadDetails = async () => {
     try {
       const nomeUser = storage.getString('user.nameUser');
       const response = await axios.post(
-        'https://e178-2804-d4b-b716-8600-bc05-bb02-5682-2ec4.ngrok-free.app/UserDetails',
+        'https://3dce-138-204-129-254.ngrok-free.app/UserDetails',
         { nomeUser },
       );
       const { status, data } = response.data;
@@ -36,6 +39,7 @@ export default function Profile() {
   }, []);
 
   const renderProfileDetails = () => {
+
     if (details) {
       if (userType === 'Paciente') {
         return (

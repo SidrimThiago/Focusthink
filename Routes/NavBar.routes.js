@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native'
+import { StatusBar } from 'expo-status-bar'
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import {

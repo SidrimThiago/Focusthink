@@ -99,22 +99,19 @@ export default function ProfileCreate({ navigation, route }) {
       user.tokenVerify = ''
       storage.set('user.token', '')
       axios
-        .post(
-          'https://051d-2804-d4b-b716-8600-bc05-bb02-5682-2ec4.ngrok-free.app/RegisterUser',
-          {
-            nome: user.nome,
-            nomeUser: user.nomeUser,
-            email: user.email,
-            tipo: user.type,
-            biografia: user.biografia,
-            telefone: user.telefone,
-            endereco: user.endereco,
-            diagnostico: user.diagnostico,
-            userPassword: user.password,
-            tokenVerify: user.tokenVerify,
-            focuspoints: user.focuspoints,
-          },
-        )
+        .post('https://3dce-138-204-129-254.ngrok-free.app/RegisterUser', {
+          nome: user.nome,
+          nomeUser: user.nomeUser,
+          email: user.email,
+          tipo: user.type,
+          biografia: user.biografia,
+          telefone: user.telefone,
+          endereco: user.endereco,
+          diagnostico: user.diagnostico,
+          userPassword: user.password,
+          tokenVerify: user.tokenVerify,
+          focuspoints: user.focuspoints,
+        })
         .then((response) => {
           console.log(response.data)
         })
@@ -131,28 +128,25 @@ export default function ProfileCreate({ navigation, route }) {
       console.log(user.nomeUser)
       storage.set('user.token', '')
       axios
-        .post(
-          'https://051d-2804-d4b-b716-8600-bc05-bb02-5682-2ec4.ngrok-free.app/RegisterProf',
-          {
-            nome: user.nome,
-            nomeUser: user.nomeUser,
-            email: user.email,
-            tipo: user.type,
-            biografia: user.biografia,
-            telefone: user.telefone,
-            rua: user.rua,
-            bairro: user.bairro,
-            cidade: user.cidade,
-            cep: user.cep,
-            estado: user.estado,
-            numero: user.numero,
-            especialidade: user.especialidade,
-            password: user.password,
-            crm: user.codigo,
-            tokenVerify: user.tokenVerify,
-            focuspoints: user.focuspoints,
-          },
-        )
+        .post('https://3dce-138-204-129-254.ngrok-free.app/RegisterProf', {
+          nome: user.nome,
+          nomeUser: user.nomeUser,
+          email: user.email,
+          tipo: user.type,
+          biografia: user.biografia,
+          telefone: user.telefone,
+          rua: user.rua,
+          bairro: user.bairro,
+          cidade: user.cidade,
+          cep: user.cep,
+          estado: user.estado,
+          numero: user.numero,
+          especialidade: user.especialidade,
+          password: user.password,
+          crm: user.codigo,
+          tokenVerify: user.tokenVerify,
+          focuspoints: user.focuspoints,
+        })
         .then((response) => {
           console.log(response.data)
         })

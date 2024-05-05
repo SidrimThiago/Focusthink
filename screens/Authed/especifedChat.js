@@ -37,7 +37,6 @@ export default function ChatFrom() {
             alt="image"
             source={require('../assets/memory/death.png')}
           />
-          <Text>Oxe</Text>
         </View>
         <FlatList
           data={data}

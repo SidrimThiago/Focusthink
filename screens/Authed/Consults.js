@@ -30,136 +30,13 @@ export default function Consults() {
   const [modalVisible, setModalVisible] = useState(false)
   const [selectedProfessional, setSelectedProfessional] = useState(null)
 
-  useEffect(() => {
-    const fetchProfessionals = async () => {
-      try {
-        const response = await axios.get(
-          'https://e52d-2804-d4b-b716-8600-bc05-bb02-5682-2ec4.ngrok-free.app/ExplainProfissionals',
-        )
-        const data = response.data
-        setProfessionalsData(data.data)
-      } catch (error) {
-        console.error('Error fetching professionals:', error)
-      }
-    }
-
-    fetchProfessionals()
-  }, [])
-
-  const handleProfessionalPress = (professional) => {
-    setSelectedProfessional(professional)
-    setModalVisible(true)
-  }
-
-  const closeModal = () => {
-    setModalVisible(false)
-    setSelectedProfessional(null)
-  }
-
-  const sendMessage = () => {
-    setModalVisible(false)
-    setSelectedProfessional(null)
-    // aqui você deve abrir uma outra modal entretanto essa deve ocupar toda a tela 100% para iniciar uma conversa aí monte um protótipo simples de tela de chat
-  }
-
-  const renderProfessionalItem = ({ item }) => (
-    <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
-      }}
-      onTouchEnd={() => handleProfessionalPress(item)}
-    >
-      <View style={{ flex: 1 }}>
-        <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{item.nome}</Text>
-        <Text>{item.especialidade}</Text>
-      </View>
-      <Button
-        title="Seguir"
-        onPress={() => {
-          // Lógica para seguir o profissional
-        }}
-      />
-    </View>
-  )
-
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
-        <ScrollView
-          contentContainerStyle={{ paddingBottom: 20 }}
-          style={{ flex: 1 }}
-          className="h-full w-full"
-        >
-          <View>
-            <Text style={styles.title}>Lista de Profissionais</Text>
-            <FlatList
-              data={professionalsData}
-              renderItem={renderProfessionalItem}
-              keyExtractor={(item) => item._id}
-            />
-          </View>
-        </ScrollView>
         <Button
           title="chatbot"
           onPress={() => navigation.navigate('Chatbot')}
         />
-        <Button
-          title="Profissionais"
-          onPress={() => navigation.navigate('Chats')}
-        />
-        <Modal
-          visible={modalVisible}
-          animationType="slide"
-          transparent={true}
-          className="w-full h-full"
-        >
-          <View style={styles.modalContainer} className="w-full h-full">
-            <View style={styles.modalContent}>
-              {selectedProfessional && (
-                <View>
-                  <Text style={styles.professionalName}>
-                    {selectedProfessional.nome}
-                  </Text>
-                  <Text style={styles.professionalDetail}>
-                    Especialidade: {selectedProfessional.especialidade}
-                  </Text>
-                  <Text style={styles.professionalDetail}>
-                    Conselho Regional: {selectedProfessional.conselhoRegional}
-                  </Text>
-                  <Text style={styles.professionalDetail}>
-                    Gênero: {selectedProfessional.genero}
-                  </Text>
-                  <Text style={styles.professionalDetail}>
-                    Data de Nascimento: {selectedProfessional.dataNascimento}
-                  </Text>
-                  <Text style={styles.professionalDetail}>
-                    Endereço: {selectedProfessional.contato.endereco.rua},{' '}
-                    {selectedProfessional.contato.endereco.numero},{' '}
-                    {selectedProfessional.contato.endereco.bairro},{' '}
-                    {selectedProfessional.contato.endereco.cidade},{' '}
-                    {selectedProfessional.contato.endereco.estado}, CEP:{' '}
-                    {selectedProfessional.contato.endereco.cep}
-                  </Text>
-                  <Text style={styles.professionalDetail}>
-                    Telefone: {selectedProfessional.contato.telefone}
-                  </Text>
-                  <Text style={styles.professionalDetail}>
-                    Email: {selectedProfessional.contato.email}
-                  </Text>
-                  <Text style={styles.professionalDetail}>
-                    Biografia: {selectedProfessional.biografia}
-                  </Text>
-                  <Button title="Mensagens" onPress={closeModal} />
-                  <Button title="Fechar" onPress={closeModal} />
-                </View>
-              )}
-            </View>
-          </View>
-        </Modal>
       </LinearGradient>
     </SafeAreaView>
   )
@@ -225,7 +102,6 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: '100%',
-    height: '100%',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

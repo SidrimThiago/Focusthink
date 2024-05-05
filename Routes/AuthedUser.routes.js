@@ -4,6 +4,7 @@ import SplashScreen from '../screens/Start/splashscreen'
 import login from '../screens/Auth/login'
 import Splash from '../screens/splash'
 import Chats from '../screens/Authed/Chats'
+import Profissionals from '../screens/Authed/profissionals'
 import EspecifedChat from '../screens/Authed/especifedChat'
 import Home from '../screens/Authed/Home'
 import Games from '../screens/Games/games'
@@ -25,6 +26,7 @@ export default function Routes() {
         <Stack.Screen name="NavBar" component={NavBar} />
         <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Profissionals" component={Profissionals} />
         <Stack.Screen name="Chats" component={Chats} />
         <Stack.Screen name="Chatbot" component={Chatbot} />
         <Stack.Screen name="Games" component={Games} />

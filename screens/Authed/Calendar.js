@@ -1,255 +1,316 @@
-import { React, useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
   StyleSheet,
   View,
   Text,
-  Image,
-  TextInput,
   SafeAreaView,
   TouchableOpacity,
-  FlatList,
   Modal,
+  TextInput,
+  FlatList,
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import {
-  FontAwesome5,
-  MaterialIcons,
-  Entypo,
-  Feather,
-} from '@expo/vector-icons'
-import { useNavigation } from '@react-navigation/native'
-import CalendarPicker from 'react-native-calendar-picker'
 import { Button } from 'react-native-paper'
-import SelectCategory from '../../components/selectCategory'
-import { TextInputMask } from 'react-native-masked-text'
+import CalendarPicker from 'react-native-calendar-picker'
+import { MaterialIcons } from '@expo/vector-icons'
+import { SelectList } from 'react-native-dropdown-select-list'
+import TimePicker from '../../components/TimePicker'
 
 export default function Calendar() {
-  const navigation = useNavigation()
-
-  const [timeList, setTimeList] = useState([])
-  const [selectedTime, setSelectedTime] = useState()
-  const [selectedDate, setSelectedDate] = useState()
-  const [isModalVisible, setModalVisible] = useState(false)
-  const [isModalTimeVisible, setModalTimeVisible] = useState(false)
+  const [tasks, setTasks] = useState([])
+  const [selectedStartDate, setSelectedStartDate] = useState(null)
+  const [selectedEndDate, setSelectedEndDate] = useState(null)
   const [taskName, setTaskName] = useState('')
   const [taskDescription, setTaskDescription] = useState('')
-  const [date, setDate] = useState('')
-  const [tasks, setTasks] = useState([])
+  const [isModalVisible, setModalVisible] = useState(false)
+  const [startTime, setStartTime] = useState('')
+  const [endTime, setEndTime] = useState('')
+  const [selectedTask, setSelectedTask] = useState(null)
+  const [isTaskModalVisible, setIsTaskModalVisible] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState(null)
+
+  const minDate = new Date() // Data mínima como hoje
+  const maxDate = new Date(2024, 11, 31) // Data máxima em 31 de dezembro de 2024
+
+  const categories = [
+    { key: '0', value: 'Sem categoria' },
+    { key: '1', value: 'Trabalhos' },
+    { key: '2', value: 'Pessoal' },
+    { key: '3', value: 'Lista de desejos' },
+    { key: '4', value: 'Estudos' },
+    { key: '5', value: 'Aniversários' },
+  ]
 
   const closeModal = () => {
-    if (!selectedDate || !taskName || !taskDescription) {
-      console.log(taskDescription, taskName, selectedDate)
-      return
+    if (
+      !selectedStartDate ||
+      !selectedEndDate ||
+      !taskName ||
+      !taskDescription ||
+      !startTime ||
+      !endTime ||
+      !selectedCategory
+    ) {
+      return (
+        console.log(selectedCategory),
+        console.log(selectedEndDate),
+        console.log(taskName),
+        console.log(taskDescription),
+        console.log(startTime),
+        console.log(endTime)
+      )
     }
 
     const newTask = {
-      Id: Math.random().toString(),
-      Date: date,
-      Name: taskName,
-      Description: taskDescription,
+      id: Math.random().toString(),
+      startDate: selectedStartDate.toString(),
+      endDate: selectedEndDate.toString(),
+      name: taskName,
+      description: taskDescription,
+      startTime,
+      endTime,
+      category: selectedCategory.value,
     }
 
     setTasks([...tasks, newTask])
-    setSelectedDate(null)
+    setSelectedStartDate(null)
+    setSelectedEndDate(null)
     setTaskName('')
     setTaskDescription('')
+    setStartTime('')
+    setEndTime('')
+    setSelectedCategory(null)
     setModalVisible(false)
-  }
-
-  const closeTimeModal = () => {
-    setModalTimeVisible(false)
-  }
-
-  const openTimeModal = () => {
-    isModalTimeVisible(true)
   }
 
   const handleVerifyClick = () => {
     setModalVisible(true)
   }
 
+  const handleFinishTask = (taskId) => {
+    const updatedTasks = tasks.map((task) =>
+      task.id === taskId ? { ...task, finished: true } : task,
+    )
+    setTasks(updatedTasks)
+  }
+
+  const handleTaskPress = (task) => {
+    setSelectedTask(task)
+    setIsTaskModalVisible(true)
+  }
+
+  const closeModal2 = () => {
+    setIsTaskModalVisible(false)
+  }
+
   return (
-    <SafeAreaView style={styles.container} className="w-full h-screen flex-1">
-      <LinearGradient
-        colors={['#633DE8', '#1C233F']}
-        style={styles.background}
-        className="justify-start flex-1"
-      >
-        <View className="">
+    <SafeAreaView style={styles.container}>
+      <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
+        <View style={styles.calendarContainer}>
           <CalendarPicker
-            className="bg-blue-700 p-20 w-56"
-            style={{ borderRadius: 15 }}
-            onDateChange={setSelectedDate}
-            minDate={Date.now()}
+            startFromMonday={true}
+            allowRangeSelection={true}
+            minDate={minDate}
+            maxDate={maxDate}
             todayBackgroundColor="#FF5C00"
             todayTextStyle="#633DE8"
-            selectedDayColor="transparent"
+            selectedDayColor="#633DE8"
             selectedDayTextColor="#000"
+            onDateChange={(date, type) => {
+              if (type === 'END_DATE') {
+                setSelectedEndDate(date)
+              } else {
+                setSelectedStartDate(date)
+                setSelectedEndDate(null)
+              }
+            }}
           />
         </View>
-        <View>
-          <Button onPress={handleVerifyClick}>Adicionar</Button>
+        <View style={styles.addButtonContainer}>
+          <Button mode="contained" onPress={handleVerifyClick}>
+            Adicionar Tarefa
+          </Button>
         </View>
-
         <View style={styles.tasksList}>
-          <Text>Tarefas:</Text>
-          {tasks.map((task) => (
-            <View key={task.Id} style={styles.taskItem}>
-              <Text style={styles.taskText}>
-                {task.Date} - {task.Name}
-              </Text>
-            </View>
-          ))}
-        </View>
-      </LinearGradient>
-
-      {/* Modal Content */}
-      <Modal
-        animationType="slideInUp"
-        animationInTiming={2000}
-        transparent={false}
-        visible={isModalVisible}
-      >
-        <SafeAreaView style={styles.modalContent} className="w-full h-screen">
-          <LinearGradient
-            colors={['#633DE8', '#1C233F']}
-            style={styles.background}
-            className="justify-start flex-1"
-          >
-            <Text style={styles.modalText}>Escolha uma data</Text>
-            <View className="">
-              <CalendarPicker
-                className="bg-blue-700 p-20 w-56"
-                style={{ borderRadius: 15 }}
-                onDateChange={setSelectedDate}
-                minDate={Date.now()}
-                todayBackgroundColor="#FF5C00"
-                todayTextStyle="#633DE8"
-                selectedDayColor="#633DE8"
-                selectedDayTextColor="#000"
-              />
-            </View>
-            {selectedDate && ( // Render only if selectedDate has a value
-              <TextInputMask
-                type="datetime"
-                options={{
-                  dateFormat: 'DD/MM/YYYY',
-                }}
-                onChangeText={(date) => setSelectedDate(date)}
-                style={styles.input}
-                keyboardType="numeric"
-                placeholder="data"
-              />
+          <Text style={styles.tasksListTitle}>Tarefas:</Text>
+          <FlatList
+            data={tasks}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.taskItem}
+                onPress={() => handleTaskPress(item)}
+              >
+                <View style={{ flex: 1 }}>
+                  <Text>{item.name}</Text>
+                  <Text>{item.endDate}</Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.checkButton}
+                  onPress={() => handleFinishTask(item.id)}
+                >
+                  <MaterialIcons name="check" size={24} color="green" />
+                </TouchableOpacity>
+              </TouchableOpacity>
             )}
+            keyExtractor={(item) => item.id}
+          />
+        </View>
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={isModalVisible}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>Adicionar Tarefa</Text>
+            <CalendarPicker
+              startFromMonday={true}
+              allowRangeSelection={true}
+              minDate={minDate}
+              maxDate={maxDate}
+              todayBackgroundColor="#FF5C00"
+              todayTextStyle="#633DE8"
+              selectedDayColor="#633DE8"
+              selectedDayTextColor="#000"
+              onDateChange={(date, type) => {
+                if (type === 'END_DATE') {
+                  setSelectedEndDate(date)
+                } else {
+                  setSelectedStartDate(date)
+                  setSelectedEndDate(null)
+                }
+              }}
+            />
             <TextInput
               style={styles.input}
-              placeholder="Nome da task"
+              placeholder="Nome da Tarefa"
               value={taskName}
               onChangeText={setTaskName}
             />
             <TextInput
               style={styles.input}
-              placeholder="Descrição da task"
+              placeholder="Descrição da Tarefa"
               value={taskDescription}
               onChangeText={setTaskDescription}
             />
-            <SelectCategory />
-
-            <Button onPress={closeModal}>Concluir</Button>
-          </LinearGradient>
-        </SafeAreaView>
-      </Modal>
-
-      <Modal
-        animationType="slideInUp"
-        animationInTiming={2000}
-        transparent={false}
-        visible={openTimeModal}
-      >
-        <Text>horário</Text>
-        <Button>Fechar</Button>
-      </Modal>
+            <TimePicker
+              label="Horário de Início"
+              value={startTime}
+              onChange={setStartTime}
+            />
+            <TimePicker
+              label="Horário de Término"
+              value={endTime}
+              onChange={setEndTime}
+            />
+            <View className="relative justify-center pr-8 pl-8 mb-3 w-full text-gray-500 text-lg">
+              <SelectList
+                setSelected={(val) => setSelectedCategory(val)}
+                data={categories}
+                value={selectedCategory ? selectedCategory.value : null}
+                search={false}
+                save="value"
+                placeholder="Categoria"
+                maxHeight={110}
+                arrowicon={
+                  <MaterialIcons
+                    style={{ position: 'absolute', top: 10, right: 12 }}
+                    name="keyboard-arrow-down"
+                    size={35}
+                    color="#707070"
+                  />
+                }
+                boxStyles={{
+                  backgroundColor: 'white',
+                  height: 56,
+                  alignItems: 'center',
+                  borderRadius: 15,
+                  borderColor: 'white',
+                }}
+                dropdownStyles={{ backgroundColor: 'white' }}
+                inputStyles={{ fontSize: 18, marginLeft: -7 }}
+                dropdownTextStyles={{ fontSize: 17 }}
+              />
+            </View>
+            <Button mode="contained" onPress={closeModal}>
+              Concluir
+            </Button>
+          </View>
+        </Modal>
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={isTaskModalVisible}
+          onRequestClose={closeModal2}
+        >
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>Detalhes da Tarefa</Text>
+            <Text>Nome: {selectedTask?.name}</Text>
+            <Text>Descrição: {selectedTask?.description}</Text>
+            <Text>Horário de Início: {selectedTask?.startTime}</Text>
+            <Text>Horário de Término: {selectedTask?.endTime}</Text>
+            <Text>Categoria: {selectedTask?.category}</Text>
+            <Button mode="contained" onPress={closeModal2}>
+              Fechar
+            </Button>
+          </View>
+        </Modal>
+      </LinearGradient>
     </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
-  quicksand: {
-    fontFamily: 'Quicksand-Bold',
-    marginBottom: 30,
-  },
-  quicksandRegular: {
-    fontFamily: 'Quicksand-Regular',
-  },
-  quicksandMedium: {
-    fontFamily: 'Quicksand-SemiBold',
-  },
-  tinyLogo: {
-    width: 50,
-    height: 50,
-    padding: 20,
-    position: 'absolute',
-    top: 55,
-    right: 22,
-  },
-  profileImage: {
-    width: 190,
-    height: 190,
-  },
-  textArea: {
-    textAlignVertical: 'top',
-    paddingTop: 15,
-  },
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   background: {
     flex: 1,
-    width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  selectedTime: {
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#fff',
-    borderRadius: 99,
-    paddingHorizontal: 18,
-    color: '#fff',
-    backgroundColor: '#4CAF50',
+  calendarContainer: {
+    marginBottom: 20,
   },
-  unselectedTime: {
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#fff',
-    borderRadius: 99,
-    paddingHorizontal: 18,
-    color: '#fff',
-  },
-  input: {
-    width: '85%',
-    backgroundColor: '#fff',
-    paddingBottom: 25,
-    marginBottom: 10,
-    fontSize: 18,
-    borderRadius: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
+  addButtonContainer: {
+    marginBottom: 20,
   },
   tasksList: {
-    marginTop: 20,
+    flex: 1,
+    width: '100%',
+    paddingHorizontal: 20,
+  },
+  tasksListTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
   taskItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 10,
+    paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },
-  taskText: {
-    fontSize: 16,
+  modalContent: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+  },
+  modalText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  input: {
+    width: '100%',
+    height: 40,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
   },
 })

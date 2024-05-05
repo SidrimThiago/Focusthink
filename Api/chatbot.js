@@ -13,6 +13,7 @@ import { MMKV } from 'react-native-mmkv'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Ionicons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
+import { StatusBar } from 'expo-status-bar'
 
 const storage = new MMKV()
 
@@ -69,12 +70,19 @@ export default function Consults() {
         style={styles.background}
         className="justify-between flex-1 h-full"
       >
-        <View className="w-full h-20 rounded-lg justify-between flex-row mb-10">
+        <View className=" justify-start items-center flex-row pt-10">
           <Image
-            className="rounded-full w-16 h-16"
+            className="rounded-full w-10 h-10 mx-5"
             alt="image"
             source={require('../assets/memory/death.png')}
           />
+
+          <Text
+            className=""
+            style={{ fontSize: 16, fontFamily: 'Quicksand-Bold' }}
+          >
+            {UserDetails}
+          </Text>
         </View>
         <FlatList
           data={data}
