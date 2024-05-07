@@ -7,6 +7,7 @@ import { MMKV } from 'react-native-mmkv'
 import axios from 'axios'
 import { useNavigation } from '@react-navigation/native'
 import { Modal } from 'react-native-paper';
+import { API_URL } from '../../.env/config';
 
 const storage = new MMKV()
 
@@ -20,7 +21,7 @@ export default function Profile() {
     try {
       const nomeUser = storage.getString('user.nameUser');
       const response = await axios.post(
-        'https://3dce-138-204-129-254.ngrok-free.app/UserDetails',
+        API_URL + '/UserDetails',
         { nomeUser },
       );
       const { status, data } = response.data;

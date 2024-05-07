@@ -19,6 +19,7 @@ import * as ImagePicker from 'expo-image-picker'
 import ReturnButton from '../../../components/returnbutton'
 import axios from 'axios'
 import { MMKV } from 'react-native-mmkv'
+import { API_URL } from '../../../.env/config'
 
 const storage = new MMKV({ id: 'user' })
 
@@ -99,7 +100,7 @@ export default function ProfileCreate({ navigation, route }) {
       user.tokenVerify = ''
       storage.set('user.token', '')
       axios
-        .post('https://3dce-138-204-129-254.ngrok-free.app/RegisterUser', {
+        .post(API_URL + '/RegisterUser', {
           nome: user.nome,
           nomeUser: user.nomeUser,
           email: user.email,
@@ -128,7 +129,7 @@ export default function ProfileCreate({ navigation, route }) {
       console.log(user.nomeUser)
       storage.set('user.token', '')
       axios
-        .post('https://3dce-138-204-129-254.ngrok-free.app/RegisterProf', {
+        .post(API_URL + '/RegisterProf', {
           nome: user.nome,
           nomeUser: user.nomeUser,
           email: user.email,

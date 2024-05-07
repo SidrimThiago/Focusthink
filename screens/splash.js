@@ -6,6 +6,8 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { MMKV } from 'react-native-mmkv'
 import * as Font from 'expo-font'
 import axios from 'axios'
+import { API_URL } from '../.env/config'
+
 const storage = new MMKV()
 
 export default function Splash() {
@@ -29,7 +31,7 @@ export default function Splash() {
     console.log(userData.nomeUser)
 
     axios
-      .post('https://3dce-138-204-129-254.ngrok-free.app/ValidateUser', userData)
+      .post(API_URL + '/ValidateUser', userData)
       
       .then((res) => {
         console.log(res.data)

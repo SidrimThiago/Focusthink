@@ -19,6 +19,7 @@ import { Formik } from 'formik'
 import auth from '@react-native-firebase/auth'
 import { MMKV } from 'react-native-mmkv'
 import axios from 'axios'
+import { API_URL } from '../../.env/config'
 const storage = new MMKV()
 
 export default function Start() {
@@ -214,10 +215,7 @@ export default function Start() {
                         await console.log(values.email, values.password)
 
                         axios
-                          .post(
-                            'https://3dce-138-204-129-254.ngrok-free.app/AuthLogin',
-                            userData,
-                          )
+                          .post(API_URL + '/AuthLogin', userData)
                           .then((res) => {
                             console.log(res.data)
                             const { status, data } = res.data
