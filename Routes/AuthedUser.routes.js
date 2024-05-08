@@ -10,6 +10,7 @@ import Home from '../screens/Authed/Home'
 import Games from '../screens/Games/games'
 import NavBar from './NavBar.routes'
 import Chatbot from '../Api/chatbot'
+import Stroop from './../screens/Games/Stroop/Stroop'
 import Game2048 from '../screens/Games/2048/2048'
 import Gamebody from '../screens/Games/MemoryGame/gamebody'
 
@@ -31,6 +32,7 @@ export default function Routes() {
         <Stack.Screen name="Chatbot" component={Chatbot} />
         <Stack.Screen name="Games" component={Games} />
         <Stack.Screen name="2048" component={Game2048} />
+        <Stack.Screen name="Stroop" component={Stroop} />
         <Stack.Screen name="MemoryGame" component={Gamebody} />
         <Stack.Screen name="especifedChat" component={EspecifedChat} />
         <Stack.Screen name="login" component={login} />

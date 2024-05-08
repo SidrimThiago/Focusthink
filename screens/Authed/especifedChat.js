@@ -17,12 +17,47 @@ import {
   Feather,
   Ionicons,
 } from '@expo/vector-icons'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
+import { MMKV } from 'react-native-mmkv'
+import { API_URL } from '../../.env/config'
+import SocketIOClient from 'socket.io-client'
+
+import axios from 'axios'
+
+const storage = new MMKV()
 
 export default function ChatFrom() {
   const navigation = useNavigation()
   const [data, setData] = useState([])
   const [userInput, setUserInput] = useState('')
+  const route = useRoute()
+  const { professionalData } = route.params
+
+  const socket = useEffect(() => {
+    const newSocket = SocketIOClient(API_URL)
+
+    newSocket.on('connect', () => {
+      console.log('Socket connected!')
+    })
+
+    newSocket.on('receive_message', (message) => {
+      setData((prevData) => [...prevData, message])
+    })
+
+    return () => newSocket.disconnect()
+  }, [])
+
+  const handleSend = () => {
+    if (userInput.trim() !== '') {
+      const message = {
+        from: 'user',
+        to: professionalData.id,
+        text: userInput,
+      }
+      socket.emit('send_message', message)
+      setUserInput('')
+    }
+  }
 
   return (
     <SafeAreaView style={styles.container} className="w-full h-screen flex-1">
@@ -40,10 +75,10 @@ export default function ChatFrom() {
         </View>
         <FlatList
           data={data}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={(item) => item.id} // Assuming messages have a unique ID
           renderItem={({ item }) => (
             <View className="p-10 flex-col">
-              <Text className="font-bold">{item.type}</Text>
+              <Text className="font-bold">{item.from}</Text>
               <Text className="">{item.text}</Text>
             </View>
           )}
@@ -64,9 +99,9 @@ export default function ChatFrom() {
           <View>
             <TouchableOpacity
               className="bg-white w-14 h-14 rounded-full items-center justify-center"
-              // onPress={HandlerSend}
+              onPress={handleSend}
             >
-              <Ionicons name="send" size={20} color="#999"></Ionicons>
+              <Ionicons name="send" size={20} color="#999" />
             </TouchableOpacity>
           </View>
         </View>

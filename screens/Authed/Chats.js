@@ -19,13 +19,29 @@ import {
 } from '@expo/vector-icons'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import axios from 'axios'
+import { MMKV } from 'react-native-mmkv'
+import { API_URL } from '../../.env/config'
+
+const storage = new MMKV()
 
 
 export default function Chats() {
   const navigation = useNavigation()
-  const [userInput, setUserInput] = useState('')
-  const route = useRoute();
-  const { professionalData } = route.params;
+
+  useEffect(() => {
+    const ExplainChats = async () => {
+      const nomeUser = storage.getString('nomeUser')
+      try {
+        const response = await axios.get(API_URL + '/ExplainChats', nomeUser)
+        const data = response.data
+        console.log(data)
+      } catch (error) {
+        console.error('Error fetching professionals:', error)
+      }
+    }
+
+    ExplainChats()
+  }, [])
 
 
   return (
@@ -35,38 +51,7 @@ export default function Chats() {
       style={styles.background}
       className="justify-between flex-1 h-full"
     >
-      <View className="w-full h-20 rounded-lg justify-between flex-row mb-10">
-        <Image
-          className="rounded-full w-16 h-16"
-          alt="image"
-          source={require('../assets/memory/death.png')}
-        />
-
-          <Text>Nome: {professionalData.nome}</Text>
-      </View>
-
-      <View className="flex flex-row bottom-0 pb-2 absolute w-full">
-        <View
-          className="relative justify-center h-14 mb-1 mr-2 ml-2"
-          style={{ width: '81%' }}
-        >
-          <TextInput
-            placeholder="Diga algo"
-            style={{ backgroundColor: 'white' }}
-            className="bg-white w-full h-full rounded-2xl border border-white p-2 text-lg pl-2"
-            onChangeText={(text) => setUserInput(text)}
-            value={userInput}
-          />
-        </View>
-        <View>
-          <TouchableOpacity
-            className="bg-white w-14 h-14 rounded-full items-center justify-center"
-            // onPress={HandlerSend}
-          >
-            <Ionicons name="send" size={20} color="#999"></Ionicons>
-          </TouchableOpacity>
-        </View>
-      </View>
+      
     </LinearGradient>
   </SafeAreaView>
   )

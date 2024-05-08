@@ -11,6 +11,7 @@ import {
   FlatList,
   ScrollView,
   Modal,
+  Alert,
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import {
@@ -23,6 +24,10 @@ import {
 
 import { useNavigation } from '@react-navigation/native'
 import axios from 'axios'
+import { MMKV } from 'react-native-mmkv'
+import { API_URL } from '../../.env/config'
+
+const storage = new MMKV()
 
 export default function Profissionals() {
   const navigation = useNavigation()
@@ -33,9 +38,7 @@ export default function Profissionals() {
   useEffect(() => {
     const fetchProfessionals = async () => {
       try {
-        const response = await axios.get(
-          'https://3dce-138-204-129-254.ngrok-free.app/ExplainProfissionals',
-        )
+        const response = await axios.get(API_URL + '/ExplainProfissionals')
         const data = response.data
         setProfessionalsData(data.data)
       } catch (error) {
@@ -56,10 +59,6 @@ export default function Profissionals() {
     setSelectedProfessional(null)
   }
 
-  const follow = async () => {
-    await console.log('segui')
-  }
-
   const sendMessage = async (professional) => {
     if (!selectedProfessional) return
 
@@ -71,6 +70,27 @@ export default function Profissionals() {
       setSelectedProfessional(null)
     } catch (error) {
       console.error('Erro ao enviar mensagem:', error)
+    }
+  }
+
+  const follow = async () => {
+    try {
+      const _id = { name: selectedProfessional._id }
+      const nomeUser = storage.getString('nomeUser')
+      const response = await axios.post(
+        API_URL + '/FollowProfessional',
+        _id,
+        nomeUser,
+      )
+      const data = response.data
+
+      if (data.status === 200) {
+        console.log('sucess')
+      } else {
+        console.log('error')
+      }
+    } catch (error) {
+      console.error('Error in follow this person because:', error)
     }
   }
 
@@ -125,7 +145,7 @@ export default function Profissionals() {
               {selectedProfessional && (
                 <View>
                   <Text style={styles.professionalName}>
-                    {selectedProfessional.nome}
+                    {selectedProfessional?.nome}
                   </Text>
                   <Text style={styles.professionalDetail}>
                     Especialidade: {selectedProfessional.especialidade}

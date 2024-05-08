@@ -7,10 +7,7 @@ export default function ReturnButton({ onPress }) {
 
   return (
     <View style={styles.button}>
-      <TouchableOpacity
-        style={styles.touchableButton}
-        onPress={onPress}
-      >
+      <TouchableOpacity style={styles.touchableButton} onPress={onPress}>
         <Image
           alt="image"
           resizeMode="contain"
@@ -40,6 +37,3 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 })
-
-
-

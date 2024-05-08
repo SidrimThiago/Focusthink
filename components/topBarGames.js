@@ -4,6 +4,7 @@ import { StyleSheet, View, Text, Button, Pressable } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { FontAwesome, FontAwesome5, Fontisto } from '@expo/vector-icons'
 import Modal from 'react-native-modal'
+import { MMKV } from 'react-native-mmkv'
 
 const TopBarGames = ({ restart, duration, onTimerFinish }) => {
   const navigation = useNavigation()
@@ -12,8 +13,19 @@ const TopBarGames = ({ restart, duration, onTimerFinish }) => {
   const [modalVisible, setModalVisible] = useState(false)
   const [isModalOptions, setModalOptions] = useState(false)
 
+  const storage = new MMKV()
+
   const optionsOpen = () => {
     setModalOptions(true)
+  }
+
+  const Comeback = () => {
+    const token = storage.getString('user.Token')
+    if (token) {
+      navigation.navigate('Home')
+    } else {
+      navigation.navigate('GameOptions')
+    }
   }
 
   useEffect(() => {
@@ -85,7 +97,7 @@ const TopBarGames = ({ restart, duration, onTimerFinish }) => {
           </Pressable>
 
           <Pressable
-            onPress={() => navigation.navigate('GameOptions')}
+            onPress={() => Comeback}
             style={[styles.options, { paddingBottom: 4 }]}
           >
             <FontAwesome5 name="home" size={65} color="black" />

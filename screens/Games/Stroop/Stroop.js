@@ -17,7 +17,7 @@ import {
 import LottieView from 'lottie-react-native'
 import TopBarGames from '../../../components/topBarGames.js'
 
-export default function TesteStroop() {
+export default function Stroop() {
   const navigation = useNavigation()
 
   const [faseAtual, setFaseAtual] = useState(1) // Controla a fase atual do teste

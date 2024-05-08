@@ -44,6 +44,11 @@ export default function Profile() {
               Quebra-Cabeça
             </Text>
           </View>
+
+          <Pressable onPress={() => navigation.navigate('Stroop')}>
+            <View style={styles.circle}></View>
+            <Text className="text-white text-xl self-center">Stroop Test</Text>
+          </Pressable>
         </View>
       </LinearGradient>
     </SafeAreaView>

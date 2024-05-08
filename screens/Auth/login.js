@@ -226,6 +226,7 @@ export default function Start() {
                               }
                               storage.set('user.nameUser', user.userName)
                               storage.set('user.token', user.token)
+                              storage.set('userType', user.tipo)
                               navigation.navigate('NavBar')
                             }
                           })
