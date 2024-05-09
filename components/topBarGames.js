@@ -49,15 +49,16 @@ const TopBarGames = ({ restart, duration, onTimerFinish }) => {
     return `${minutos.toString().padStart(2, '0')}:${segundosRestantes.toString().padStart(2, '0')}`
   }
 
-  const getSeconds = () => {
-    duration()
+  const handleRestart = () => {
+    setModalOptions(false);
+    restart();
   }
 
   return (
     <View
       style={{
         position: 'absolute',
-        top: 30,
+        top: 42,
         flexDirection: 'row',
         width: '100%',
         height: 45,
@@ -90,14 +91,14 @@ const TopBarGames = ({ restart, duration, onTimerFinish }) => {
       >
         <View style={styles.menu}>
           <Pressable
-            onPress={() => [restart, setModalOptions(false)]}
+            onPress={handleRestart}
             style={styles.options}
           >
             <FontAwesome name="undo" size={65} color="black" />
           </Pressable>
 
           <Pressable
-            onPress={() => Comeback}
+            onPress={() => navigation.navigate('NavBar')}
             style={[styles.options, { paddingBottom: 4 }]}
           >
             <FontAwesome5 name="home" size={65} color="black" />

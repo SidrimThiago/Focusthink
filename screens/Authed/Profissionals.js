@@ -3,37 +3,24 @@ import {
   StyleSheet,
   View,
   Text,
-  Image,
-  TextInput,
   SafeAreaView,
   TouchableOpacity,
-  Button,
   FlatList,
-  ScrollView,
   Modal,
-  Alert,
+  Button,
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import {
-  FontAwesome5,
-  MaterialIcons,
-  Entypo,
-  Feather,
-  FontAwesome6,
-} from '@expo/vector-icons'
-
-import { useNavigation } from '@react-navigation/native'
 import axios from 'axios'
 import { MMKV } from 'react-native-mmkv'
 import { API_URL } from '../../.env/config'
 
 const storage = new MMKV()
 
-export default function Profissionals() {
-  const navigation = useNavigation()
+export default function Profissionals({ navigation }) {
   const [professionalsData, setProfessionalsData] = useState([])
   const [modalVisible, setModalVisible] = useState(false)
   const [selectedProfessional, setSelectedProfessional] = useState(null)
+  const [isFoll, setIsFoll] = useState(false)
 
   useEffect(() => {
     const fetchProfessionals = async () => {
@@ -65,7 +52,8 @@ export default function Profissionals() {
     try {
       setModalVisible(false)
       setSelectedProfessional(professional)
-      navigation.navigate(() => 'chats', { professionalData: professional })
+      const profDetails = { selectedProfessional }
+      navigation.navigate('especifedChat', { profDetails })
 
       setSelectedProfessional(null)
     } catch (error) {
@@ -73,19 +61,21 @@ export default function Profissionals() {
     }
   }
 
-  const follow = async () => {
+  const follow = async (professional) => {
     try {
-      const _id = { name: selectedProfessional._id }
-      const nomeUser = storage.getString('nomeUser')
-      const response = await axios.post(
-        API_URL + '/FollowProfessional',
-        _id,
+      const nome = professional.nome
+      const nomeUser = storage.getString('user.nameUser')
+
+      const response = await axios.post(API_URL + '/FollowProfessional', {
+        nome,
         nomeUser,
-      )
+      })
       const data = response.data
 
-      if (data.status === 200) {
-        console.log('sucess')
+      if (response.status === 200 || response.status === 201) {
+        setIsFoll(data.isFollowing)
+        // Exibir mensagem na tela de acordo com a resposta do back-end
+        console.log(data.message)
       } else {
         console.log('error')
       }
@@ -95,41 +85,36 @@ export default function Profissionals() {
   }
 
   const renderProfessionalItem = ({ item }) => (
-    <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
-      }}
-      onTouchEnd={() => handleProfessionalPress(item)}
-    >
-      <View style={{ flex: 1 }}>
-        <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{item.nome}</Text>
-        <Text>{item.especialidade}</Text>
-      </View>
-      <Button title="Seguir" onPress={() => follow} />
+    <View style={styles.professionalContainer}>
+      <TouchableOpacity
+        style={styles.professionalInfo}
+        onPress={() => handleProfessionalPress(item)}
+      >
+        <Text style={styles.professionalName}>{item.nome}</Text>
+        <Text style={styles.professionalSpecialty}>{item.especialidade}</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.followButton}
+        onPress={() => follow(item)}
+      >
+        <Text style={styles.followButtonText}>
+          {isFoll ? 'Seguindo' : 'Seguir'}
+        </Text>
+      </TouchableOpacity>
     </View>
   )
-
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
-        <ScrollView
-          contentContainerStyle={{ paddingBottom: 20 }}
-          style={{ flex: 1 }}
-          className="h-full w-full"
-        >
-          <View>
-            <Text style={styles.title}>Lista de Profissionais</Text>
-            <FlatList
-              data={professionalsData}
-              renderItem={renderProfessionalItem}
-              keyExtractor={(item) => item._id}
-            />
-          </View>
-        </ScrollView>
+        <View className="w-full">
+          <Text style={styles.title}>Lista de Profissionais</Text>
+          <FlatList
+            data={professionalsData}
+            renderItem={renderProfessionalItem}
+            keyExtractor={(item) => item._id}
+          />
+        </View>
+
         <Button
           title="chatbot"
           onPress={() => navigation.navigate('Chatbot')}
@@ -175,7 +160,6 @@ export default function Profissionals() {
                   </Text>
                   <Button title="Mensagens" onPress={sendMessage} />
                   <Button title="Fechar" onPress={closeModal} />
-                  <Button title="Seguir" onPress={() => follow} />
                 </View>
               )}
             </View>
@@ -187,62 +171,58 @@ export default function Profissionals() {
 }
 
 const styles = StyleSheet.create({
-  quicksand: {
-    fontFamily: 'Quicksand-Bold',
-    marginBottom: 30,
+  container: {
+    flex: 1,
   },
-  quicksandRegular: {
-    fontFamily: 'Quicksand-Regular',
-  },
-  quicksandMedium: {
-    fontFamily: 'Quicksand-SemiBold',
-  },
-  tinyLogo: {
-    width: 50,
-    height: 50,
+  background: {
+    flex: 1,
     padding: 20,
-    position: 'absolute',
-    top: 55,
-    right: 22,
   },
-  profileImage: {
-    width: 190,
-    height: 190,
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 20,
+  },
+  professionalContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 10,
+  },
+  professionalName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  professionalSpecialty: {
+    fontSize: 16,
+    color: '#666',
+  },
+  followButton: {
+    backgroundColor: '#633DE8',
+    borderRadius: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  followButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
   textArea: {
     textAlignVertical: 'top',
     paddingTop: 15,
-  },
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  background: {
-    flex: 1,
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   modalContent: {
     backgroundColor: '#fff',
     padding: 20,
     borderRadius: 10,
   },
-  professionalName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
   professionalDetail: {
     fontSize: 16,
     marginBottom: 10,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    margin: 10,
-    color: '#fff',
   },
   modalContainer: {
     width: '100%',

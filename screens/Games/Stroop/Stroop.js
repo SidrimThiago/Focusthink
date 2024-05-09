@@ -27,6 +27,8 @@ export default function Stroop() {
   const [respostaCorreta, setRespostaCorreta] = useState(null)
 
   const [modalVisible, setModalVisible] = useState(false)
+  const [isModalOptions, setModalOptions] = useState(false)
+
 
   const handleTimerFinish = () => {
     setModalVisible(true)
@@ -201,9 +203,19 @@ export default function Stroop() {
   }
 
   const reiniciarJogo = () => {
-    setFaseAtual(1)
-    resetarPontuacao()
+    // Redefine o estado para os valores iniciais
+    setFaseAtual(0)
+    setCorReferencial(null)
+    setOpcoesCores([])
+    setIndiceRespostaCorreta(null)
+    setRespostaCorreta(null)
+    setModalVisible(false)
+    resetarPontuacao() // Chama a função para reiniciar a pontuação
+  
+    // Inicializa a primeira fase novamente
+    gerarFase()
   }
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -296,14 +308,16 @@ export default function Stroop() {
       )}
 
       {respostaCorreta === false && (
-        <View style={styles.lottieContainer}>
-          <LottieView
-            style={{ flex: 1, maxHeight: 200 }}
-            source={require('../../../assets/StroopTest/incorrect.json')}
-            autoPlay
-            loop={false}
-          />
-        </View>
+        <>
+          <View style={styles.lottieContainer}>
+            <LottieView
+              style={{ flex: 1, maxHeight: 200 }}
+              source={require('../../../assets/StroopTest/incorrect.json')}
+              autoPlay
+              loop={false}
+            />
+          </View>
+        </>
       )}
     </SafeAreaView>
   )

@@ -21,6 +21,7 @@ import Chatbot from '../Api/chatbot'
 import Game2048 from '../screens/Games/2048/2048'
 import Gamebody from '../screens/Games/MemoryGame/gamebody'
 import Stroop from '../screens/Games/Stroop/Stroop'
+import StroopInfo from '../screens/Games/Stroop/infostroop'
 
 const Stack = createNativeStackNavigator()
 
@@ -29,7 +30,8 @@ export default function Routes() {
     <NavigationContainer>
       <Stack.Navigator
         initialRouteName="Splash"
-        screenOptions={{ headerShown: false, animation: 'none' }}
+        screenOptions={{ headerShown: false }}
+        
       >
         <Stack.Screen name="Start" component={Start} />
         <Stack.Screen name="GamesTest" component={GamesTest} />
@@ -45,13 +47,16 @@ export default function Routes() {
         <Stack.Screen name="NewPassSMS" component={NewPassSMS} />
         <Stack.Screen name="ConfirmEmail" component={ConfirmEmail} />
         <Stack.Screen name="ConfirmSMS" component={ConfirmSMS} />
-        <Stack.Screen name="Stroop" component={Stroop} />
         <Stack.Screen name="NewPass" component={NewPass} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Games" component={Games} />
         <Stack.Screen name="Chatbot" component={Chatbot} />
+
         <Stack.Screen name="2048" component={Game2048} />
         <Stack.Screen name="MemoryGame" component={Gamebody} />
+        <Stack.Screen name="Stroop" component={Stroop} options={{ animation: 'slide_from_right'}} />
+        <Stack.Screen name="StroopInfo" component={StroopInfo} options={{ animation: 'fade_from_bottom'  }}/>
+
       </Stack.Navigator>
     </NavigationContainer>
   )

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   StyleSheet,
   View,
@@ -15,6 +15,11 @@ import CalendarPicker from 'react-native-calendar-picker'
 import { MaterialIcons } from '@expo/vector-icons'
 import { SelectList } from 'react-native-dropdown-select-list'
 import TimePicker from '../../components/TimePicker'
+import { API_URL } from '../../.env/config'
+import { MMKV } from 'react-native-mmkv'
+import axios from 'axios'
+
+const storage = new MMKV()
 
 export default function Calendar() {
   const [tasks, setTasks] = useState([])
@@ -32,6 +37,22 @@ export default function Calendar() {
   const minDate = new Date() // Data mínima como hoje
   const maxDate = new Date(2024, 11, 31) // Data máxima em 31 de dezembro de 2024
 
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = await axios.get(API_URL + '/GetTasks', {
+          params: { nomeUser: storage.getString('user.nameUser') },
+        })
+        const fetchedTasks = response.data
+        setTasks(fetchedTasks)
+      } catch (error) {
+        console.error('Error fetching tasks:', error)
+      }
+    }
+
+    fetchTasks()
+  }, [])
+
   const categories = [
     { key: '0', value: 'Sem categoria' },
     { key: '1', value: 'Trabalhos' },
@@ -41,7 +62,7 @@ export default function Calendar() {
     { key: '5', value: 'Aniversários' },
   ]
 
-  const closeModal = () => {
+  const closeModal = async () => {
     if (
       !selectedStartDate ||
       !selectedEndDate ||
@@ -69,7 +90,28 @@ export default function Calendar() {
       description: taskDescription,
       startTime,
       endTime,
-      category: selectedCategory.value,
+      category: selectedCategory,
+      nomeUser: storage.getString('user.nameUser'),
+    }
+
+    try {
+      console.log(newTask.nomeUser)
+      const response = await axios.post(
+        API_URL + '/CreateTasks',
+        newTask,
+
+        {
+          headers: { 'Content-Type': 'application/json' },
+        },
+      )
+      if (response.status === 200) {
+        const data = response.data
+        setTasks([...tasks, data])
+      } else {
+        console.error('Error creating task:', response.statusText)
+      }
+    } catch (error) {
+      console.error('Error creating task:', error)
     }
 
     setTasks([...tasks, newTask])
@@ -135,13 +177,14 @@ export default function Calendar() {
           <Text style={styles.tasksListTitle}>Tarefas:</Text>
           <FlatList
             data={tasks}
-            renderItem={({ item }) => (
+            renderItem={({ item, index }) => (
               <TouchableOpacity
                 style={styles.taskItem}
                 onPress={() => handleTaskPress(item)}
+                key={index}
               >
                 <View style={{ flex: 1 }}>
-                  <Text>{item.name}</Text>
+                  <Text>{item.nameTask}</Text>
                   <Text>{item.endDate}</Text>
                 </View>
                 <TouchableOpacity
@@ -152,7 +195,7 @@ export default function Calendar() {
                 </TouchableOpacity>
               </TouchableOpacity>
             )}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item, index) => index.toString()}
           />
         </View>
         <Modal
@@ -245,11 +288,11 @@ export default function Calendar() {
         >
           <View style={styles.modalContent}>
             <Text style={styles.modalText}>Detalhes da Tarefa</Text>
-            <Text>Nome: {selectedTask?.name}</Text>
+            <Text>Nome: {selectedTask?.nameTask}</Text>
             <Text>Descrição: {selectedTask?.description}</Text>
             <Text>Horário de Início: {selectedTask?.startTime}</Text>
             <Text>Horário de Término: {selectedTask?.endTime}</Text>
-            <Text>Categoria: {selectedTask?.category}</Text>
+            <Text>Categoria: {selectedTask?.tipoTask}</Text>
             <Button mode="contained" onPress={closeModal2}>
               Fechar
             </Button>

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Image, StyleSheet } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
@@ -23,6 +23,7 @@ export default function NavBar() {
   return (
     <Tab.Navigator
       initialRouteName="Home"
+      backBehavior='initialRoute'
       screenOptions={{
         headerShown: false,
         tabBarLabelStyle: {
@@ -40,9 +41,15 @@ export default function NavBar() {
       }}
     >
       <Tab.Screen
-        name="Games"
+        name="Jogos"
         component={Games}
+
         options={{
+          headerShown: true,
+          headerTitleStyle: ({ color: 'white', fontFamily: 'Quicksand-Bold', textAlign: 'center' }),
+          headerTitle: 'JOGOS',
+          headerTitleAlign: 'center',
+          headerStyle: ({ backgroundColor: '#633DE8', elevation: 2 }),
           tabBarIcon: ({ focused }) => (
             <TabBarItem
               iconName="game-controller"
@@ -52,7 +59,9 @@ export default function NavBar() {
               iconLibrary="Ionicons"
             />
           ),
+
         }}
+
       />
       <Tab.Screen
         name="Calendar"
@@ -137,6 +146,16 @@ const TabBarItem = ({ iconName, iconSize, focused, iconLibrary, label }) => {
   )
 }
 const styles = StyleSheet.create({
+  quicksand: {
+    fontFamily: 'Quicksand-Bold',
+    marginBottom: 30,
+  },
+  quicksandRegular: {
+    fontFamily: 'Quicksand-Regular',
+  },
+  quicksandMedium: {
+    fontFamily: 'Quicksand-SemiBold',
+  },
   container: {
     justifyContent: 'center',
     alignItems: 'center',
