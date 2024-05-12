@@ -42,7 +42,7 @@ export default function ChatFrom() {
           <Image
             className="rounded-full w-16 h-16"
             alt="image"
-            source={require('../assets/memory/death.png')}
+            source={require('../../assets/memory/death.png')}
           />
         </View>
         <FlatList

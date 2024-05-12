@@ -14,6 +14,7 @@ import Stroop from './../screens/Games/Stroop/Stroop'
 import Game2048 from '../screens/Games/2048/2048'
 import Gamebody from '../screens/Games/MemoryGame/gamebody'
 
+
 const Stack = createNativeStackNavigator()
 
 export default function Routes() {

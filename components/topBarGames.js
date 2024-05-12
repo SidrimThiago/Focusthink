@@ -129,6 +129,7 @@ const TopBarGames = ({ restart, duration, onTimerFinish }) => {
               onPress={() => {
                 setModalVisible(false)
                 onTimerFinish()
+                navigation.navigate('StroopInfo')
               }}
             />
           </View>

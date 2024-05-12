@@ -125,7 +125,6 @@ export default function Home() {
                 </View>
               </View>
 
-              <View style={{ height: 600, backgroundColor: 'black'}}></View>
             </ScrollView>
 
           </View>

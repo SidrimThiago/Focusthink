@@ -22,6 +22,8 @@ import Game2048 from '../screens/Games/2048/2048'
 import Gamebody from '../screens/Games/MemoryGame/gamebody'
 import Stroop from '../screens/Games/Stroop/Stroop'
 import StroopInfo from '../screens/Games/Stroop/infostroop'
+import Profissionals from '../screens/Authed/Profissionals'
+import EspecifedChat from '../screens/Authed/especifedChat'
 
 const Stack = createNativeStackNavigator()
 
@@ -41,7 +43,9 @@ export default function Routes() {
         <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen name="NavBar" component={NavBar} />
         <Stack.Screen name="Cadastro" component={Cadastro} />
+        <Stack.Screen name="especifedChat" component={EspecifedChat} />
         <Stack.Screen name="Profissional" component={ProfissionalCadastro} />
+        <Stack.Screen name="Profissionals" component={Profissionals} />
         <Stack.Screen name="ProfileCreate" component={ProfileCreate} />
         <Stack.Screen name="NewPassEmail" component={NewPassEmail} />
         <Stack.Screen name="NewPassSMS" component={NewPassSMS} />
