@@ -1,6 +1,6 @@
 // Timer.js
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Text, Button, Pressable } from 'react-native'
+import { StyleSheet, View, Text, Button, Pressable, StatusBar } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { FontAwesome, FontAwesome5, Fontisto } from '@expo/vector-icons'
 import Modal from 'react-native-modal'
@@ -17,15 +17,6 @@ const TopBarGames = ({ restart, duration, onTimerFinish }) => {
 
   const optionsOpen = () => {
     setModalOptions(true)
-  }
-
-  const Comeback = () => {
-    const token = storage.getString('user.Token')
-    if (token) {
-      navigation.navigate('Home')
-    } else {
-      navigation.navigate('GameOptions')
-    }
   }
 
   useEffect(() => {
@@ -55,63 +46,47 @@ const TopBarGames = ({ restart, duration, onTimerFinish }) => {
   }
 
   return (
-    <View
-      style={{
-        position: 'absolute',
-        top: 42,
-        flexDirection: 'row',
-        width: '100%',
-        height: 45,
-        backgroundColor: 'rgba(0, 0, 0, 0.4)',
-      }}
-    >
-      <Pressable
-        onPress={optionsOpen}
-        style={{
-          width: 45,
-          height: 45,
-          backgroundColor: 'white',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <Fontisto name="pause" size={30} color="black" />
-      </Pressable>
+      <View style={{ position: 'absolute', top: 0, marginTop: StatusBar.currentHeight, flexDirection: 'row', width: '100%', height: 45, backgroundColor: 'rgba(0, 0, 0, 0.4)' }}>
+        <Pressable
+          onPress={optionsOpen}
+          style={{ width: 45, height: 45, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center' }}>
+          <Fontisto name="pause" size={30} color="black" />
+        </Pressable>
 
-      <Text style={styles.timerText}>{formatarTempo(seconds)}</Text>
+        <Text style={styles.timerText}>{formatarTempo(seconds)}</Text>
 
-      <Modal
-        isVisible={isModalOptions}
-        className="self-center absolute h-full"
-        animationIn={'fadeInDown'}
-        animationInTiming={400}
-        animationOut={'fadeOutUp'}
-        animationOutTiming={400}
-        backdropOpacity={0.5}
-      >
-        <View style={styles.menu}>
-          <Pressable
-            onPress={handleRestart}
-            style={styles.options}
-          >
-            <FontAwesome name="undo" size={65} color="black" />
-          </Pressable>
+        <Modal
+          isVisible={isModalOptions}
+          className="self-center absolute h-full"
+          animationIn={'fadeInDown'}
+          animationInTiming={400}
+          animationOut={'fadeOutUp'}
+          animationOutTiming={400}
+          backdropOpacity={0.5}
+        >
+          <View style={styles.menu}>
+            <Pressable
+              onPress={handleRestart}
+              style={styles.options}
+            >
+              <FontAwesome name="undo" size={65} color="black" />
+            </Pressable>
 
-          <Pressable
-            onPress={() => navigation.navigate('NavBar')}
-            style={[styles.options, { paddingBottom: 4 }]}
-          >
-            <FontAwesome5 name="home" size={65} color="black" />
-          </Pressable>
+            <Pressable
+              onPress={() => navigation.navigate('NavBar')}
+              style={[styles.options, { paddingBottom: 4 }]}
+            >
+              <FontAwesome5 name="home" size={65} color="black" />
+            </Pressable>
 
-          <Pressable
-            onPress={() => setModalOptions(false)}
-            style={[styles.options, { paddingLeft: 10 }]}
-          >
-            <FontAwesome5 name="play" size={60} color="black" />
-          </Pressable>
-        </View>
-      </Modal>
+            <Pressable
+              onPress={() => setModalOptions(false)}
+              style={[styles.options, { paddingLeft: 10 }]}
+            >
+              <FontAwesome5 name="play" size={60} color="black" />
+            </Pressable>
+          </View>
+        </Modal>
 
       <Modal
         isVisible={modalVisible}

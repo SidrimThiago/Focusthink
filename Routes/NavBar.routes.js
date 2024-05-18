@@ -18,7 +18,7 @@ import Consults from '../screens/Authed/Consults'
 import * as Animatable from 'react-native-animatable'
 
 const Tab = createBottomTabNavigator()
-
+  
 export default function NavBar() {
   return (
     <Tab.Navigator
@@ -32,9 +32,6 @@ export default function NavBar() {
         },
         tabBarStyle: {
           height: 75,
-          position: 'absolute',
-          borderTopEndRadius: 10,
-          borderTopStartRadius: 10,
           backgroundColor: '#222222',
           borderColor: '#222222',
         },

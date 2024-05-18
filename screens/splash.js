@@ -15,11 +15,11 @@ export default function Splash() {
 
   const load = async () => {
     await Font.loadAsync({
-      'Quicksand-Bold': require('../assets/Quicksand-Bold.ttf'),
-      'Quicksand-Light': require('../assets/Quicksand-Light.ttf'),
-      'Quicksand-Medium': require('../assets/Quicksand-Medium.ttf'),
-      'Quicksand-Regular': require('../assets/Quicksand-Regular.ttf'),
-      'Quicksand-SemiBold': require('../assets/Quicksand-SemiBold.ttf'),
+      'Quicksand-Bold': require('../assets/Fonts/Quicksand-Bold.ttf'),
+      'Quicksand-Light': require('../assets/Fonts/Quicksand-Light.ttf'),
+      'Quicksand-Medium': require('../assets/Fonts/Quicksand-Medium.ttf'),
+      'Quicksand-Regular': require('../assets/Fonts/Quicksand-Regular.ttf'),
+      'Quicksand-SemiBold': require('../assets/Fonts/Quicksand-SemiBold.ttf'),
     })
 
     const userData = {

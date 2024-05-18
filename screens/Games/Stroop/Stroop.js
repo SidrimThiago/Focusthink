@@ -13,9 +13,9 @@ import {
   incrementarPontuacao,
   getPontuacao,
   resetarPontuacao,
-} from '../../../components/pontuacao.js'
+} from '../../../components/Games/pontuacao.js'
 import LottieView from 'lottie-react-native'
-import TopBarGames from '../../../components/topBarGames.js'
+import TopBarGames from '../../../components/Games/topBarGames.js'
 
 export default function Stroop() {
   const navigation = useNavigation()
