@@ -6,7 +6,6 @@ import GameOptions from '../screens/Start/gameoptions'
 import SplashScreen from '../screens/Start/splashscreen'
 import login from '../screens/Auth/login'
 import Splash from '../screens/splash'
-import Home from '../screens/Authed/Home'
 import Cadastro from '../screens/Auth/Register/Cadastro'
 import NewPassEmail from '../screens/Auth/ForgotPassword/newPassEmail'
 import NewPassSMS from '../screens/Auth/ForgotPassword/newPassSMS'
@@ -32,8 +31,7 @@ export default function Routes() {
     <NavigationContainer>
       <Stack.Navigator
         initialRouteName="Splash"
-        screenOptions={{ headerShown: false }}
-        
+        screenOptions={{ headerShown: false }}  
       >
         <Stack.Screen name="Start" component={Start} />
         <Stack.Screen name="GamesTest" component={GamesTest} />
@@ -52,7 +50,6 @@ export default function Routes() {
         <Stack.Screen name="ConfirmEmail" component={ConfirmEmail} />
         <Stack.Screen name="ConfirmSMS" component={ConfirmSMS} />
         <Stack.Screen name="NewPass" component={NewPass} />
-        <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Games" component={Games} />
         <Stack.Screen name="Chatbot" component={Chatbot} />
 

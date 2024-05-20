@@ -2,19 +2,12 @@ import { View, Image, StyleSheet } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import {
-  Feather,
-  FontAwesome5,
-  Ionicons,
-  Octicons,
-  FontAwesome6,
-  AntDesign,
-} from '@expo/vector-icons'
-import Home from '../screens/Authed/Home'
+import { Feather, FontAwesome5, Ionicons, Octicons, FontAwesome6, AntDesign } from '@expo/vector-icons'
 import Profile from '../screens/Authed/Profile'
 import Games from '../screens/Games/games'
 import Calendar from '../screens/Authed/Calendar'
 import Consults from '../screens/Authed/Consults'
+import HomeRoutes from './home.routes'
 import * as Animatable from 'react-native-animatable'
 
 const Tab = createBottomTabNavigator()
@@ -22,7 +15,7 @@ const Tab = createBottomTabNavigator()
 export default function NavBar() {
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="HomeRoutes"
       backBehavior='initialRoute'
       screenOptions={{
         headerShown: false,
@@ -40,7 +33,6 @@ export default function NavBar() {
       <Tab.Screen
         name="Jogos"
         component={Games}
-
         options={{
           headerShown: true,
           headerTitleStyle: ({ color: 'white', fontFamily: 'Quicksand-Bold', textAlign: 'center' }),
@@ -76,9 +68,10 @@ export default function NavBar() {
         }}
       />
       <Tab.Screen
-        name="Home"
-        component={Home}
+        name="HomeRoutes"
+        component={HomeRoutes}
         options={{
+          title: 'Home',
           tabBarIcon: ({ focused }) => (
             <TabBarItem
               iconName="home"

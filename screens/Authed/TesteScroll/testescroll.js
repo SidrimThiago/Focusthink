@@ -1,50 +1,60 @@
-/* eslint-disable prettier/prettier */
-import { React, useState } from 'react'
-import { StyleSheet, StatusBar, View, Text, Image, SafeAreaView, ScrollView, Pressable, ImageBackground } from 'react-native'
-import { LinearGradient } from 'expo-linear-gradient'
+import React, { useRef, useState, useEffect } from 'react';
+import { View, ScrollView, Image, Animated, Text, StatusBar, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'
-import { DrawerActions, useNavigation } from '@react-navigation/native'
-import { MMKV } from 'react-native-mmkv'
-import axios from 'axios'
-import { SocialIcon } from '@rneui/base'
+import { LinearGradient } from 'expo-linear-gradient'
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const storage = new MMKV()
+const BANNER_H = 450;
+const TOPNAVI_H = 250;
 
-export default function Home() {
-  const navigation = useNavigation()
+const TesteScroll = (props) => {
+  const scrollA = useRef(new Animated.Value(0)).current;
+  const safeArea = useSafeAreaInsets();
 
-  const details = storage.getString('user.nameUser')
+  const { title, scrollB } = props;
+  const isFloating = scrollB;
+  const [isTransparent, setTransparent] = useState(true);
+
+  useEffect(() => {
+    if (!scrollA) {
+      return;
+    }
+    const listenerId = scrollA.addListener(a => {
+      const topNaviOffset = BANNER_H - TOPNAVI_H - safeArea.top;
+      isTransparent !== a.value < topNaviOffset &&
+        setTransparent(!isTransparent);
+    });
+    return () => scrollA.removeListener(listenerId);
+  });
 
   return (
-    <SafeAreaView style={styles.container}>
-      <LinearGradient
-        colors={['#633DE8', '#1C233F']}
-        style={styles.background}
-      >
-        <ImageBackground
-          source={require('../../assets/Home/homeimage.png')}
-          style={{ width: '100%', height: '80%', position: 'absolute' }}
-        />
-  
-        <View style={{ marginTop: StatusBar.currentHeight, flexDirection: 'row', justifyContent: 'space-between', padding: 10 }}>
-          <View>
-            <Text style={{ fontFamily: 'Quicksand-Medium', fontSize: 24, color: '#ECECEC', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 1}}> Seja bem vindo ! </Text>
-            <Text style={{ fontFamily: 'Quicksand-Bold', fontSize: 42, color: 'white', textShadowOffset: {width: 5, height: 5}, textShadowRadius: 5 }}> {details}</Text>
-          </View>
-          <Pressable onPress={() => navigation.navigate("Chats")}>
-            <Ionicons name="chatbubble-outline" size={32} color="black" />
-          </Pressable>
+    <View>
+      <View style={{ marginTop: StatusBar.currentHeight, flexDirection: 'row', width: '100%', justifyContent: 'space-between', padding: 10, zIndex: 1 }}>
+        <View style={styles.container(safeArea, isFloating, isTransparent)}>
+          <Animated.Text style={[styles.title(isTransparent, scrollA), { fontFamily: 'Quicksand-Medium', fontSize: 24 }]}> Seja bem vindo ! </Animated.Text>
+          <Animated.Text style={ [styles.title(isTransparent, scrollA), { fontFamily: 'Quicksand-Bold', fontSize: 42 }] }> Adryel</Animated.Text>
         </View>
+        <Ionicons name="chatbubble-outline" size={32} color="black" />
+      </View>
 
-        <View style={{ borderTopRightRadius: 45, borderTopStartRadius: 45, overflow: 'hidden', height: '100%', paddingBottom: '40%' }}>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            style={{ borderRadius: 50 }}
-            contentContainerStyle={{ paddingTop: '45%' }}
-            overScrollMode='never' 
+      <Animated.Image
+        style={styles.banner(scrollA)}
+        source={require('../../../assets/Home/homeimage.png')}
+      />
+
+      <View style={{ borderTopRightRadius: 45, borderTopStartRadius: 45, overflow: 'hidden', height: '100%', paddingBottom: '40%' }}>
+
+        <Animated.ScrollView
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollA } } }],
+            { useNativeDriver: true },
+          )}
+          scrollEventThrottle={16}
+          contentContainerStyle={{ paddingTop: '45%' }}
           stickyHeaderIndices={[0]}
-          >
-          <View style={{ borderTopStartRadius: 45, borderTopEndRadius: 45, overflow: 'hidden' }}>
+        >
+
+          <View style={{ borderTopStartRadius: 45, borderTopEndRadius: 45, overflow: 'hidden', zIndex: 1 }}>
             <ScrollView style={{ backgroundColor: '#633DE8', paddingVertical: 10 }} contentContainerStyle={{ flexDirection: 'row' }} horizontal={true} showsHorizontalScrollIndicator={false}>
               <Pressable
                 onPress={() => console.log('Clicado')}
@@ -91,7 +101,7 @@ export default function Home() {
               </View>
               <Image
                 alt="specialist"
-                source={require('../../assets/Home/especialist.png')}
+                source={require('../../../assets/Home/especialist.png')}
                 resizeMode='contain'
                 style={{ height: 195, width: '50%' }}
               />
@@ -122,26 +132,50 @@ export default function Home() {
               <View style={{ height: 195, width: '49%', backgroundColor: 'white', borderRadius: 10 }}></View>
             </View>
           </LinearGradient>
-        </ScrollView>
+        </Animated.ScrollView>
       </View>
+    </View>
+  );
+};
 
-    </LinearGradient>
-    </SafeAreaView >
-  )
-}
+const styles = {
+  bannerContainer: {
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  banner: scrollA => ({
+    height: BANNER_H,
+    width: '100%',
+    position: 'absolute',
+    transform: [
+      {
+        translateY: scrollA.interpolate({
+          inputRange: [0, BANNER_H, BANNER_H],
+          outputRange: [0, -BANNER_H / 8, -BANNER_H / 8],
+        }),
+      },
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    height: '100%',
-    width: '100%',
-  },
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-    justifyContent: 'space-between',
-  },
+    ],
+  }),
+  container: (safeArea, isFloating, isTransparent) => ({
+    marginBottom: isFloating ? TOPNAVI_H - safeArea.top : 0,
+    height: -TOPNAVI_H + safeArea.top,
+    justifyContent: 'center',
+    shadowOffset: { y: 0 },
+    shadowOpacity: isTransparent ? 0 : 0.5,
+    zIndex: 100,
+  }),
+  title: (isTransparent, scrollA) => ({
+    color: '#FFF',
+    textShadowOffset: { width: 3, height: 3 },
+    textShadowRadius: isTransparent ? 1 : 0,
+    opacity: scrollA.interpolate({
+      inputRange: [0, BANNER_H - TOPNAVI_H],
+      outputRange: [1, 0],
+      extrapolate: 'clamp',
+    }),
+    
+  }),
   topBar: {
     width: 138,
     paddingVertical: 15,
@@ -156,6 +190,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Quicksand-Bold',
     color: 'black',
     fontSize: 16
-  }
+  },
+};
 
-})
+export default TesteScroll;

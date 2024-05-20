@@ -1,30 +1,13 @@
 import { React, useState } from 'react'
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  TextInput,
-  SafeAreaView,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-  ImageComponent,
-} from 'react-native'
+import { StyleSheet, View, Text, Image, TextInput, SafeAreaView, ScrollView, TouchableOpacity, Alert, ImageComponent } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import ButtonComponent from '../../../components/button'
 import { CheckBox } from '@rneui/themed'
-import {
-  FontAwesome5,
-  MaterialIcons,
-  Entypo,
-  Feather,
-} from '@expo/vector-icons'
+import { FontAwesome5, MaterialIcons, Entypo, Feather } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import Modal from 'react-native-modal'
 import ReturnButton from '../../../components/returnbutton'
 import ButtonSelectDiagnosis from './selectdiagnosis'
-import InsetShadow from 'react-native-inset-shadow'
 import DateInputComponent from '../../../components/datepicker'
 import { TextInputMask } from 'react-native-masked-text'
 import { useFormik } from 'formik'
@@ -143,14 +126,12 @@ export default function Cadastro() {
             </TouchableOpacity>
 
             <TouchableOpacity className="bg-white w-40 h-16 border-4 border-orange-500 rounded-xl mr-3">
-              <InsetShadow>
                 <Text
                   className="text-lg shadow-lg self-center mt-3"
                   style={styles.quicksandMedium}
                 >
                   Paciente
                 </Text>
-              </InsetShadow>
             </TouchableOpacity>
           </View>
 
