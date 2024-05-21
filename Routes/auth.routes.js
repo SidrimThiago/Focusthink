@@ -25,6 +25,7 @@ import StroopInfo from '../screens/Games/Stroop/infostroop'
 import Profissionals from '../screens/Authed/Profissionals'
 import Chats from '../screens/Authed/Chats'
 import EspecifedChat from '../screens/Authed/especifedChat'
+import CallPage from '../screens/Authed/callPage'
 
 const Stack = createNativeStackNavigator()
 
@@ -36,12 +37,17 @@ export default function Routes() {
         screenOptions={{ headerShown: false }}
       >
         <Stack.Screen name="Start" component={Start} />
+        <Stack.Screen name="CallPage" component={CallPage} />
         <Stack.Screen name="GamesTest" component={GamesTest} />
         <Stack.Screen name="GameOptions" component={GameOptions} />
         <Stack.Screen name="SplashScreen" component={SplashScreen} />
         <Stack.Screen name="login" component={login} />
         <Stack.Screen name="Splash" component={Splash} />
-        <Stack.Screen name="Chats" component={Chats} />
+        <Stack.Screen
+          name="Chats"
+          component={Chats}
+          options={{ title: 'Chat', headerShown: false }}
+        />
         <Stack.Screen name="NavBar" component={NavBar} />
         <Stack.Screen name="Cadastro" component={Cadastro} />
         <Stack.Screen name="especifedChat" component={EspecifedChat} />

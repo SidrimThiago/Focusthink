@@ -1,65 +1,74 @@
-/* eslint-disable prettier/prettier */
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { useEffect, useState } from 'react';
-import { Button, Image, Modal, SafeAreaView, StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-import { MMKV } from 'react-native-mmkv';
-import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
-import { API_URL } from '../../.env/config';
-import { TextInputMask } from 'react-native-masked-text';
-import * as FileSystem from 'expo-file-system';
-import * as ImagePicker from 'expo-image-picker';
+import { LinearGradient } from 'expo-linear-gradient'
+import React, { useEffect, useState } from 'react'
+import {
+  Button,
+  Image,
+  Modal,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  TouchableOpacity,
+} from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { MMKV } from 'react-native-mmkv'
+import axios from 'axios'
+import { useNavigation } from '@react-navigation/native'
+import { API_URL } from '../../.env/config'
+import { TextInputMask } from 'react-native-masked-text'
+import * as FileSystem from 'expo-file-system'
+import * as ImagePicker from 'expo-image-picker'
 
-const storage = new MMKV();
+const storage = new MMKV()
 
 export default function Profile() {
-  const [details, setDetails] = useState(null);
-  const [imageUrl, setImageUrl] = useState(null);
-  const [userType, setUserType] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [editingDetails, setEditingDetails] = useState({});
-  const [excloseAccount, setExcloseAccount] = useState('');
-  const [excluirModal, setExcluirModal] = useState(false);
-  const navigation = useNavigation();
+  const [details, setDetails] = useState(null)
+  const [imageUrl, setImageUrl] = useState(null)
+  const [userType, setUserType] = useState(null)
+  const [modalVisible, setModalVisible] = useState(false)
+  const [editingDetails, setEditingDetails] = useState({})
+  const [excloseAccount, setExcloseAccount] = useState('')
+  const [excluirModal, setExcluirModal] = useState(false)
+  const navigation = useNavigation()
 
-  const nomeUser = storage.getString('user.nameUser');
+  const nomeUser = storage.getString('user.nameUser')
   console.log(nomeUser)
 
   const loadDetails = async () => {
     try {
-      const nomeUser = storage.getString('user.nameUser');
-      const response = await axios.post(API_URL + '/UserDetails', { nomeUser });
-      const { status, data } = response.data;
+      const nomeUser = storage.getString('user.nameUser')
+      const response = await axios.post(API_URL + '/UserDetails', { nomeUser })
+      const { status, data } = response.data
 
       if (status === 'ok') {
-        setDetails(data);
-        setUserType(data.tipo);
-        setEditingDetails(data);
-        console.log(data);
+        setDetails(data)
+        setUserType(data.tipo)
+        setEditingDetails(data)
+        console.log(data)
 
         if (data.image) {
           const base64Image = await FileSystem.readAsStringAsync(data.image, {
             encoding: FileSystem.EncodingType.Base64,
-          });
-          setImageUrl(`data:image/jpeg;base64,${base64Image}`);
+          })
+          setImageUrl(`data:image/jpeg;base64,${base64Image}`)
         }
       }
     } catch (error) {
-      console.error('Erro durante a requisição:', error);
+      console.error('Erro durante a requisição:', error)
     }
-  };
+  }
 
   useEffect(() => {
-    loadDetails();
-  }, []);
+    loadDetails()
+  }, [])
 
   const handleInputChange = (key, value) => {
     setEditingDetails({
       ...editingDetails,
       [key]: value,
-    });
-  };
+    })
+  }
 
   const pickImage = async () => {
     try {
@@ -68,47 +77,72 @@ export default function Profile() {
         allowsEditing: true,
         aspect: [1, 1],
         quality: 1,
-      });
+        base64: true
+      })
 
-      if (!result.canceled) {
+      if (!result.canceled && result.uri) {
         const base64Image = await FileSystem.readAsStringAsync(result.uri, {
           encoding: FileSystem.EncodingType.Base64,
-        });
-        setImageUrl(`data:image/jpeg;base64,${base64Image}`);
+        })
+        setImageUrl(`data:image/jpeg;base64,${base64Image}`)
         setEditingDetails({
           ...editingDetails,
           image: `data:image/jpeg;base64,${base64Image}`,
-        });
+        })
       }
     } catch (error) {
-      console.error('Erro ao selecionar a imagem:', error);
+      console.error('Erro ao selecionar a imagem:', error)
     }
-  };
+  }
 
   const saveEdits = async () => {
     try {
-      const nameUser = storage.getString('user.nameUser');
-      editingDetails.nomeUser = nameUser;
+      const nameUser = storage.getString('user.nameUser')
+      editingDetails.nomeUser = nameUser
+  
+      // Verifica se há uma nova imagem a ser enviada
+      if (editingDetails.image !== imageUrl) {
+        const base64Image = editingDetails.image.split('data:image/jpeg;base64,')[1];
+        const formData = new FormData();
+        formData.append('image', base64Image);
+  
+        const responseImage = await axios.post(API_URL + '/UpdateProfileImage', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+  
+        if (responseImage.data.status === 'ok') {
+          console.log('Foto de perfil atualizada com sucesso no backend');
+        } else {
+          console.error('Erro ao atualizar foto de perfil no backend');
+        }
+      }
 
       const response = await axios.post(API_URL + '/UpdateUserDetails', editingDetails);
+  
       if (response.data.status === 'ok') {
         setDetails(editingDetails);
         setModalVisible(false);
+      } else {
+        console.error('Erro ao salvar alterações no perfil');
       }
     } catch (error) {
-      console.error('Erro ao salvar alterações:', error);
+      console.error('Erro ao salvar alterações:', error)
     }
-  };
+  }
+  
 
   const renderProfileDetails = () => {
     if (details) {
       if (userType === 'Paciente') {
         return (
           <View style={styles.userInfo}>
-            {imageUrl && (
+            {/* Renderização condicional da imagem */}
+            {(editingDetails.image || imageUrl) && (
               <Image
                 alt="image"
-                source={{ uri: imageUrl }}
+                source={{ uri: editingDetails.image || imageUrl }}
                 style={styles.profileImage}
               />
             )}
@@ -145,34 +179,35 @@ export default function Profile() {
     }
     return null;
   };
+  
 
   const logout = async () => {
-    const keys = storage.getAllKeys();
-    storage.clearAll(keys);
-    navigation.navigate('login');
-  };
+    const keys = storage.getAllKeys()
+    storage.clearAll(keys)
+    navigation.navigate('login')
+  }
 
   const ExcluirConta = async () => {
     try {
-      const nomeUser = storage.getString('user.nameUser');
-      
+      const nomeUser = storage.getString('user.nameUser')
+
       if (nomeUser === excloseAccount) {
-        const response = await axios.post(API_URL + '/DeleteUser', { nomeUser });
+        const response = await axios.post(API_URL + '/DeleteUser', { nomeUser })
         if (response.data.status === 'ok') {
-          navigation.navigate('login');
-          console.log("Conta apagada com sucesso");
+          navigation.navigate('login')
+          console.log('Conta apagada com sucesso')
         }
       } else {
-        console.log("Nome de usuário não corresponde");
+        console.log('Nome de usuário não corresponde')
       }
     } catch (error) {
-      console.error('Erro ao excluir a conta:', error);
+      console.error('Erro ao excluir a conta:', error)
     }
-  };
+  }
 
   const EditarPerfil = () => {
-    setModalVisible(true);
-  };
+    setModalVisible(true)
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -181,20 +216,18 @@ export default function Profile() {
           <Feather name="settings" size={32} color="white" />
         </View>
 
-    <ScrollView>
-        {renderProfileDetails()}
-
         <View>
-          <Button title='Sair da conta' onPress={logout} />
-          <Button title='Apagar minha conta' onPress={() => setExcluirModal(true)} />
+          <Button title="Sair da conta" onPress={logout} />
+          <Button
+            title="Apagar minha conta"
+            onPress={() => setExcluirModal(true)}
+          />
           <Button title="Editar perfil" onPress={EditarPerfil} />
         </View>
 
-        <Modal
-          visible={modalVisible}
-          animationType="slide"
-          transparent={true}
-        >
+        {renderProfileDetails()}
+
+        <Modal visible={modalVisible} animationType="slide" transparent={true}>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>Editar Perfil</Text>
@@ -202,7 +235,11 @@ export default function Profile() {
                 <>
                   <TouchableOpacity onPress={pickImage}>
                     {imageUrl ? (
-                      <Image source={{ uri: imageUrl }} style={styles.profileImage} />
+                      <Image
+                        alt="image"
+                        source={{ uri: imageUrl }}
+                        style={styles.profileImage}
+                      />
                     ) : (
                       <View style={[styles.profileImage, styles.placeholder]}>
                         <Text>Adicionar Foto</Text>
@@ -225,19 +262,25 @@ export default function Profile() {
                     }}
                     style={styles.input}
                     value={editingDetails.telefone}
-                    onChangeText={(value) => handleInputChange('telefone', value)}
+                    onChangeText={(value) =>
+                      handleInputChange('telefone', value)
+                    }
                   />
                   <Text style={styles.label}>Biografia:</Text>
                   <TextInput
                     style={styles.input}
                     value={editingDetails.biografia}
-                    onChangeText={(value) => handleInputChange('biografia', value)}
+                    onChangeText={(value) =>
+                      handleInputChange('biografia', value)
+                    }
                   />
                   <Text style={styles.label}>Diagnóstico:</Text>
                   <TextInput
                     style={styles.input}
                     value={editingDetails.diagnostico}
-                    onChangeText={(value) => handleInputChange('diagnostico', value)}
+                    onChangeText={(value) =>
+                      handleInputChange('diagnostico', value)
+                    }
                   />
                 </>
               )}
@@ -245,7 +288,11 @@ export default function Profile() {
                 <>
                   <TouchableOpacity onPress={pickImage}>
                     {imageUrl ? (
-                      <Image alt="image" source={{ uri: imageUrl }} style={styles.profileImage} />
+                      <Image
+                        alt="image"
+                        source={{ uri: imageUrl }}
+                        style={styles.profileImage}
+                      />
                     ) : (
                       <View style={[styles.profileImage, styles.placeholder]}>
                         <Text>Adicionar Foto</Text>
@@ -262,7 +309,9 @@ export default function Profile() {
                   <TextInput
                     style={styles.input}
                     value={editingDetails.telefone}
-                    onChangeText={(value) => handleInputChange('telefone', value)}
+                    onChangeText={(value) =>
+                      handleInputChange('telefone', value)
+                    }
                   />
                 </>
               )}
@@ -272,15 +321,14 @@ export default function Profile() {
           </View>
         </Modal>
 
-        <Modal
-          visible={excluirModal}
-          animationType="slide"
-          transparent={true}
-        >
+        <Modal visible={excluirModal} animationType="slide" transparent={true}>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>Excluir Conta</Text>
-              <Text>Para confirmar a exclusão da conta, escreva seu nome de usuário abaixo:</Text>
+              <Text>
+                Para confirmar a exclusão da conta, escreva seu nome de usuário
+                abaixo:
+              </Text>
               <Text className="font-quick-bold">{nomeUser}</Text>
               <TextInput
                 placeholder={`Digite "${nomeUser}" para confirmar`}
@@ -293,10 +341,9 @@ export default function Profile() {
             </View>
           </View>
         </Modal>
-        </ScrollView>
       </LinearGradient>
     </SafeAreaView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -357,4 +404,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#e1e1e1',
   },
-});
+})

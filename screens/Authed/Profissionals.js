@@ -51,11 +51,7 @@ export default function Profissionals({ navigation }) {
 
     try {
       setModalVisible(false)
-      setSelectedProfessional(professional)
-      const profDetails = { selectedProfessional }
-      navigation.navigate('especifedChat', { profDetails })
-
-      setSelectedProfessional(null)
+      navigation.navigate('especifedChat', { professional })
     } catch (error) {
       console.error('Erro ao enviar mensagem:', error)
     }
@@ -65,7 +61,6 @@ export default function Profissionals({ navigation }) {
     try {
       const nome = professional.nome
       const nomeUser = storage.getString('user.nameUser')
-
       const response = await axios.post(API_URL + '/FollowProfessional', {
         nome,
         nomeUser,
@@ -74,7 +69,6 @@ export default function Profissionals({ navigation }) {
 
       if (response.status === 200 || response.status === 201) {
         setIsFoll(data.isFollowing)
-        // Exibir mensagem na tela de acordo com a resposta do back-end
         console.log(data.message)
       } else {
         console.log('error')
@@ -115,10 +109,6 @@ export default function Profissionals({ navigation }) {
           />
         </View>
 
-        <Button
-          title="chatbot"
-          onPress={() => navigation.navigate('Chatbot')}
-        />
         <Modal
           visible={modalVisible}
           animationType="slide"
@@ -138,7 +128,6 @@ export default function Profissionals({ navigation }) {
                   <Text style={styles.professionalDetail}>
                     Conselho Regional: {selectedProfessional.conselhoRegional}
                   </Text>
-
                   <Text style={styles.professionalDetail}>
                     Data de Nascimento: {selectedProfessional.dataNascimento}
                   </Text>
@@ -158,7 +147,10 @@ export default function Profissionals({ navigation }) {
                   <Text style={styles.professionalDetail}>
                     Biografia: {selectedProfessional.biografia}
                   </Text>
-                  <Button title="Mensagens" onPress={sendMessage} />
+                  <Button
+                    title="Mensagens"
+                    onPress={() => sendMessage(selectedProfessional)}
+                  />
                   <Button title="Fechar" onPress={closeModal} />
                 </View>
               )}
@@ -173,25 +165,25 @@ export default function Profissionals({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   background: {
     flex: 1,
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 20,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   professionalContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 10,
-    backgroundColor: '#fff',
+    marginVertical: 10,
     padding: 10,
+    backgroundColor: '#fff',
     borderRadius: 10,
+  },
+  professionalInfo: {
+    flexDirection: 'column',
   },
   professionalName: {
     fontSize: 18,
@@ -199,21 +191,23 @@ const styles = StyleSheet.create({
   },
   professionalSpecialty: {
     fontSize: 16,
-    color: '#666',
+    color: '#888',
   },
   followButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: '#633DE8',
     borderRadius: 5,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
+    padding: 10,
   },
   followButtonText: {
     color: '#fff',
     fontWeight: 'bold',
   },
-  textArea: {
-    textAlignVertical: 'top',
-    paddingTop: 15,
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modalContent: {
     backgroundColor: '#fff',
@@ -221,14 +215,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   professionalDetail: {
-    fontSize: 16,
-    marginBottom: 10,
+    fontSize: 14,
+    marginVertical: 5,
   },
-  modalContainer: {
-    width: '100%',
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginVertical: 20,
   },
 })

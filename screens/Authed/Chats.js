@@ -1,98 +1,99 @@
-/* eslint-disable prettier/prettier */
 import { React, useState, useEffect } from 'react'
 import {
   StyleSheet,
   View,
   Text,
-  Image,
-  TextInput,
   SafeAreaView,
+  FlatList,
   TouchableOpacity,
- FlatList } from 'react-native'
+} from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import {
-  FontAwesome5,
-  MaterialIcons,
-  Entypo,
-  Feather,
-  Ionicons,
-} from '@expo/vector-icons'
-import { useNavigation, useRoute } from '@react-navigation/native'
 import axios from 'axios'
+import { useNavigation } from '@react-navigation/native'
 import { MMKV } from 'react-native-mmkv'
 import { API_URL } from '../../.env/config'
 
 const storage = new MMKV()
 
-
 export default function Chats() {
+  const [chats, setChats] = useState([])
   const navigation = useNavigation()
+  const nomeUser = storage.getString('user.nameUser')
 
   useEffect(() => {
-    const ExplainChats = async () => {
-      const nomeUser = storage.getString('nomeUser')
+    const fetchChats = async () => {
       try {
-        const response = await axios.get(API_URL + '/ExplainChats', nomeUser)
-        const data = response.data
-        console.log(data)
+        const response = await axios.get(API_URL + '/chats', nomeUser)
+        setChats(response.data)
       } catch (error) {
-        console.error('Error fetching professionals:', error)
+        console.error('Error fetching chats:', error)
       }
     }
 
-    ExplainChats()
-  }, [])
+    fetchChats()
+  }, [nomeUser])
 
+  const handleChatPress = (chat) => {
+    navigation.navigate('especifedChat', { professional: chat.professional })
+  }
+
+  const renderChatItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.chatContainer}
+      onPress={() => handleChatPress(item)}
+    >
+      <Text style={styles.chatName}>{item.professional.nome}</Text>
+      <Text style={styles.chatLastMessage}>{item.lastMessage}</Text>
+      <Text style={styles.chatTime}>{item.time}</Text>
+    </TouchableOpacity>
+  )
 
   return (
-    <SafeAreaView style={styles.container} className="w-full h-screen flex-1">
-    <LinearGradient
-      colors={['#633DE8', '#1C233F']}
-      style={styles.background}
-      className="justify-between flex-1 h-full"
-    >
-      
-    </LinearGradient>
-  </SafeAreaView>
+    <SafeAreaView style={styles.container}>
+      <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
+        <Text style={styles.title}>Conversas</Text>
+        <FlatList
+          data={chats}
+          renderItem={renderChatItem}
+          keyExtractor={(item) => item._id}
+        />
+      </LinearGradient>
+    </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
-  quicksand: {
-    fontFamily: 'Quicksand-Bold',
-    marginBottom: 30,
-  },
-  quicksandRegular: {
-    fontFamily: 'Quicksand-Regular',
-  },
-  quicksandMedium: {
-    fontFamily: 'Quicksand-SemiBold',
-  },
-  tinyLogo: {
-    width: 50,
-    height: 50,
-    padding: 20,
-    position: 'absolute',
-    top: 55,
-    right: 22,
-  },
-  profileImage: {
-    width: 190,
-    height: 190,
-  },
-  textArea: {
-    textAlignVertical: 'top',
-    paddingTop: 15,
-  },
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   background: {
     flex: 1,
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: 10,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 10,
+  },
+  chatContainer: {
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  chatName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  chatLastMessage: {
+    fontSize: 16,
+    color: '#888',
+    marginVertical: 5,
+  },
+  chatTime: {
+    textAlign: 'right',
+    color: '#999',
+    fontSize: 12,
   },
 })

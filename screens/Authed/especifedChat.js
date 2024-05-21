@@ -1,81 +1,117 @@
-import { React, useState, useEffect } from 'react'
+import { React, useState, useEffect, useRef } from 'react'
 import {
   StyleSheet,
   View,
   Text,
-  Image,
   TextInput,
   SafeAreaView,
   TouchableOpacity,
   FlatList,
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import {
-  FontAwesome5,
-  MaterialIcons,
-  Entypo,
-  Feather,
-  Ionicons,
-} from '@expo/vector-icons'
+import { Ionicons, Feather } from '@expo/vector-icons'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import { MMKV } from 'react-native-mmkv'
+import io from 'socket.io-client'
 import { API_URL } from '../../.env/config'
-import axios from 'axios'
+import { MMKV } from 'react-native-mmkv'
 
 const storage = new MMKV()
 
-export default function ChatFrom() {
+const socket = io(API_URL)
+
+export default function EspecifedChat() {
   const navigation = useNavigation()
-  const [data, setData] = useState([])
-  const [userInput, setUserInput] = useState('')
   const route = useRoute()
-  const { professionalData } = route.params
+  const { professional } = route.params
+  const [messages, setMessages] = useState([])
+  const [userInput, setUserInput] = useState('')
+  const flatListRef = useRef()
+  const nomeUser = storage.getString('user.nameUser')
+
+  useEffect(() => {
+    socket.emit('findRoom', professional._id)
+
+    socket.on('foundRoom', (roomMessages) => {
+      setMessages(roomMessages)
+    })
+
+    socket.on('roomMessage', (newMessage) => {
+      setMessages((prevMessages) => [...prevMessages, newMessage])
+    })
+
+    return () => {
+      socket.off('foundRoom')
+      socket.off('roomMessage')
+    }
+  }, [professional._id])
+
+  const handleSend = () => {
+    if (userInput.trim()) {
+      const newMessage = {
+        room_id: professional._id,
+        message: userInput,
+        user: nomeUser,
+        timestamp: {
+          hour: new Date().getHours(),
+          mins: new Date().getMinutes(),
+        },
+      }
+      socket.emit('newMessage', newMessage)
+      setUserInput('')
+    }
+  }
+
+  const makeCall = () => {
+    const callId = generateRandomId(5)
+    navigation.navigate('CallPage', { id: callId })
+  }
+
+  const generateRandomId = (length) => {
+    const characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    let result = ''
+    const charactersLength = characters.length
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength))
+    }
+    return result
+  }
 
   return (
-    <SafeAreaView style={styles.container} className="w-full h-screen flex-1">
-      <LinearGradient
-        colors={['#633DE8', '#1C233F']}
-        style={styles.background}
-        className="justify-between flex-1 h-full"
-      >
-        <View className="w-full h-20 rounded-lg justify-between flex-row mb-10">
-          <Image
-            className="rounded-full w-16 h-16"
-            alt="image"
-            source={require('../../assets/memory/death.png')}
-          />
+    <SafeAreaView style={styles.container}>
+      <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons name="arrow-back" size={26} color="white" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>{professional.nome}</Text>
+          <Feather name="video" size={26} color="white" onPress={makeCall} />
         </View>
         <FlatList
-          data={data}
-          keyExtractor={(item, index) => index.toString()}
+          ref={flatListRef}
+          data={messages}
+          keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <View className="p-10 flex-col">
-              <Text className="font-bold">{item.type}</Text>
-              <Text className="">{item.text}</Text>
+            <View style={styles.messageContainer}>
+              <Text style={styles.messageUser}>{item.user}</Text>
+              <Text style={styles.messageText}>{item.text}</Text>
+              <Text style={styles.messageTime}>{item.time}</Text>
             </View>
           )}
+          onContentSizeChange={() =>
+            flatListRef.current.scrollToEnd({ animated: true })
+          }
         />
-        <View className="flex flex-row bottom-0 pb-2 absolute w-full">
-          <View
-            className="relative justify-center h-14 mb-1 mr-2 ml-2"
-            style={{ width: '81%' }}
-          >
-            <TextInput
-              placeholder="Diga algo"
-              style={{ backgroundColor: 'white' }}
-              className="bg-white w-full h-full rounded-2xl border border-white p-2 text-lg pl-2"
-              onChangeText={(text) => setUserInput(text)}
-              value={userInput}
-            />
-          </View>
-          <View>
-            <TouchableOpacity
-              className="bg-white w-14 h-14 rounded-full items-center justify-center"
-              // onPress={HandlerSend}
-            >
-              <Ionicons name="send" size={20} color="#999"></Ionicons>
-            </TouchableOpacity>
-          </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Diga algo"
+            value={userInput}
+            onChangeText={setUserInput}
+          />
+          <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
+            <Ionicons name="send" size={20} color="#999" />
+          </TouchableOpacity>
         </View>
       </LinearGradient>
     </SafeAreaView>
@@ -83,41 +119,60 @@ export default function ChatFrom() {
 }
 
 const styles = StyleSheet.create({
-  quicksand: {
-    fontFamily: 'Quicksand-Bold',
-    marginBottom: 30,
-  },
-  quicksandRegular: {
-    fontFamily: 'Quicksand-Regular',
-  },
-  quicksandMedium: {
-    fontFamily: 'Quicksand-SemiBold',
-  },
-  tinyLogo: {
-    width: 50,
-    height: 50,
-    padding: 20,
-    position: 'absolute',
-    top: 55,
-    right: 22,
-  },
-  profileImage: {
-    width: 190,
-    height: 190,
-  },
-  textArea: {
-    textAlignVertical: 'top',
-    paddingTop: 15,
-  },
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   background: {
     flex: 1,
-    width: '100%',
+    padding: 10,
+  },
+  header: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    padding: 10,
+    backgroundColor: '#000',
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  headerTitle: {
+    color: 'white',
+    fontSize: 20,
+  },
+  messageContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 10,
+    marginVertical: 5,
+  },
+  messageUser: {
+    fontWeight: 'bold',
+  },
+  messageText: {
+    marginVertical: 5,
+  },
+  messageTime: {
+    textAlign: 'right',
+    color: '#999',
+    fontSize: 12,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+  },
+  input: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: '#eee',
+    borderRadius: 10,
+  },
+  sendButton: {
+    padding: 10,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    marginLeft: 10,
   },
 })
