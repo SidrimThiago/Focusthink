@@ -57,6 +57,7 @@ export default function Home(props) {
           contentContainerStyle={{ paddingTop: '45%' }}
           stickyHeaderIndices={[0]}
           overScrollMode='never'
+          showsVerticalScrollIndicator={false}
         >
 
           <View style={{ borderTopStartRadius: 45, borderTopEndRadius: 45, overflow: 'hidden', zIndex: 1 }}>

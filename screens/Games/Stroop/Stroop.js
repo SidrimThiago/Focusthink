@@ -220,7 +220,7 @@ export default function Stroop() {
   return (
     <SafeAreaView style={styles.container}>
       <TopBarGames
-        duration={31}
+        duration={500}
         onTimerFinish={handleTimerFinish}
         restart={reiniciarJogo}
       />

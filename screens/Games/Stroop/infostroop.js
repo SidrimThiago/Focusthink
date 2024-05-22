@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import {
-    StyleSheet,
-    View,
-    Text,
-    SafeAreaView,
-    TouchableOpacity,
-    Image,
-    ScrollView,
-    Pressable
-} from 'react-native'
+import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity, Image, ScrollView, Pressable } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { AntDesign } from '@expo/vector-icons'
@@ -75,7 +66,7 @@ export default function StroopInfo() {
                                 Você deve selecionar a cor em que a palavra está escrita.
                             </Text>
                             <LottieView
-                                style={{ flex: 1, maxHeight: 600,}}
+                                style={{ flex: 1, maxHeight: 600, }}
                                 source={require('../../../assets/GamesScreen/tutorial.json')}
                                 autoPlay
                                 loop={true}

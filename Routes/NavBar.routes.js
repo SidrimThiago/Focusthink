@@ -1,17 +1,14 @@
-import { View, Image, StyleSheet } from 'react-native'
-import { StatusBar } from 'expo-status-bar'
+import { Image } from 'react-native'
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { Feather, FontAwesome5, Ionicons, Octicons, FontAwesome6, AntDesign } from '@expo/vector-icons'
 import Profile from '../screens/Authed/Profile'
 import Games from '../screens/Games/games'
 import Calendar from '../screens/Authed/Calendar'
 import Consults from '../screens/Authed/Consults'
 import HomeRoutes from './home.routes'
-import * as Animatable from 'react-native-animatable'
 
 const Tab = createBottomTabNavigator()
-  
+
 export default function NavBar() {
   return (
     <Tab.Navigator
@@ -21,6 +18,7 @@ export default function NavBar() {
         headerShown: false,
         tabBarLabelStyle: {
           bottom: 10,
+          
           zIndex: 2,
         },
         tabBarStyle: {
@@ -40,13 +38,10 @@ export default function NavBar() {
           headerTitleAlign: 'center',
           headerStyle: ({ backgroundColor: '#633DE8', elevation: 2 }),
           tabBarIcon: ({ focused }) => (
-            <TabBarItem
-              iconName="game-controller"
-              iconSize={30}
-              iconColor="#633DE8"
-              focused={focused}
-              iconLibrary="Ionicons"
-            />
+            focused
+              ? <Image source={require('./NavBarIcons/calendariooff.svg')} />
+
+              : <Image source={require('./NavBarIcons/calendariooff.svg')} />
           ),
 
         }}
@@ -57,13 +52,10 @@ export default function NavBar() {
         component={Calendar}
         options={{
           tabBarIcon: ({ focused }) => (
-            <TabBarItem
-              iconName="calendar"
-              iconSize={30}
-              iconColor="#633DE8"
-              focused={focused}
-              iconLibrary="Octicons"
-            />
+            focused
+            ? <Image source={require('./NavBarIcons/calendariooff.svg')} />
+
+            : <Image source={require('./NavBarIcons/calendariooff.svg')} />
           ),
         }}
       />
@@ -73,13 +65,10 @@ export default function NavBar() {
         options={{
           title: 'Home',
           tabBarIcon: ({ focused }) => (
-            <TabBarItem
-              iconName="home"
-              iconSize={30}
-              iconColor="#633DE8"
-              focused={focused}
-              iconLibrary="Ionicons"
-            />
+            focused
+            ? <Image source={require('./NavBarIcons/calendariooff.svg')} />
+
+            : <Image source={require('./NavBarIcons/calendariooff.svg')} />
           ),
         }}
       />
@@ -88,13 +77,10 @@ export default function NavBar() {
         component={Consults}
         options={{
           tabBarIcon: ({ focused }) => (
-            <TabBarItem
-              iconName="star"
-              iconSize={30}
-              iconColor="#633DE8"
-              focused={focused}
-              iconLibrary="FontAwesome6"
-            />
+            focused
+            ? <Image source={require('./NavBarIcons/calendariooff.svg')} />
+
+            : <Image source={require('./NavBarIcons/calendariooff.svg')} />
           ),
         }}
       />
@@ -103,60 +89,13 @@ export default function NavBar() {
         component={Profile}
         options={{
           tabBarIcon: ({ focused }) => (
-            <TabBarItem
-              iconName="person-outline"
-              iconSize={30}
-              iconColor="#633DE8"
-              focused={focused}
-              iconLibrary="Ionicons"
-            />
+            focused
+            ? <Image source={require('./NavBarIcons/calendariooff.svg')} />
+
+            : <Image source={require('./NavBarIcons/calendariooff.svg')} />
           ),
         }}
       />
     </Tab.Navigator>
   )
 }
-
-const TabBarItem = ({ iconName, iconSize, focused, iconLibrary, label }) => {
-  const IconComponent =
-    iconLibrary === 'Ionicons'
-      ? Ionicons
-      : iconLibrary === 'FontAwesome5'
-        ? FontAwesome5
-        : Feather
-  const iconColor = focused ? '#FF5C00' : '#633DE8'
-
-  return (
-    <Animatable.View iterationCount="infinite" style={styles.container}>
-      {focused && <Animatable.View style={styles.circle} />}
-      <IconComponent name={iconName} size={iconSize} color={iconColor} />
-      {/* Se desejar, você pode adicionar o rótulo aqui */}
-      {/* {label && <Text style={{ color: iconColor }}>{label}</Text>} */}
-    </Animatable.View>
-  )
-}
-const styles = StyleSheet.create({
-  quicksand: {
-    fontFamily: 'Quicksand-Bold',
-    marginBottom: 30,
-  },
-  quicksandRegular: {
-    fontFamily: 'Quicksand-Regular',
-  },
-  quicksandMedium: {
-    fontFamily: 'Quicksand-SemiBold',
-  },
-  container: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  circle: {
-    position: 'absolute',
-    backgroundColor: '#5E5E5E',
-    opacity: 0.5,
-    width: 65,
-    height: 65,
-    borderRadius: 50,
-    top: -10,
-  },
-})
