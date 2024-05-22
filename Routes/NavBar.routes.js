@@ -18,12 +18,12 @@ import Consults from '../screens/Authed/Consults'
 import * as Animatable from 'react-native-animatable'
 
 const Tab = createBottomTabNavigator()
-  
+
 export default function NavBar() {
   return (
     <Tab.Navigator
       initialRouteName="Home"
-      backBehavior='initialRoute'
+      backBehavior="initialRoute"
       screenOptions={{
         headerShown: false,
         tabBarLabelStyle: {
@@ -40,13 +40,16 @@ export default function NavBar() {
       <Tab.Screen
         name="Jogos"
         component={Games}
-
         options={{
           headerShown: true,
-          headerTitleStyle: ({ color: 'white', fontFamily: 'Quicksand-Bold', textAlign: 'center' }),
+          headerTitleStyle: {
+            color: 'white',
+            fontFamily: 'Quicksand-Bold',
+            textAlign: 'center',
+          },
           headerTitle: 'JOGOS',
           headerTitleAlign: 'center',
-          headerStyle: ({ backgroundColor: '#633DE8', elevation: 2 }),
+          headerStyle: { backgroundColor: '#633DE8', elevation: 2 },
           tabBarIcon: ({ focused }) => (
             <TabBarItem
               iconName="game-controller"
@@ -56,9 +59,7 @@ export default function NavBar() {
               iconLibrary="Ionicons"
             />
           ),
-
         }}
-
       />
       <Tab.Screen
         name="Calendar"

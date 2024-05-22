@@ -53,7 +53,10 @@ export default function Profile() {
           <Pressable style={styles.alternanciasButtons}>
             <Text style={styles.opcoesAlternancias}>MINIGAMES</Text>
           </Pressable>
-          <Pressable style={styles.alternanciasButtons1}>
+          <Pressable
+            style={styles.alternanciasButtons1}
+            onPress={() => navigation.navigate('Ranking')}
+          >
             <Text style={styles.opcoesAlternancias}>RANKING</Text>
           </Pressable>
         </View>

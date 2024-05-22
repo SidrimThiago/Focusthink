@@ -52,6 +52,9 @@ export default function Profile() {
             encoding: FileSystem.EncodingType.Base64,
           })
           setImageUrl(`data:image/jpeg;base64,${base64Image}`)
+          if (imageUrl === '' || imageUrl === undefined) {
+            console.log('imagem não existe no dispositivo')
+          }
         }
       }
     } catch (error) {
@@ -77,17 +80,15 @@ export default function Profile() {
         allowsEditing: true,
         aspect: [1, 1],
         quality: 1,
-        base64: true
+        base64: true,
       })
 
-      if (!result.canceled && result.uri) {
-        const base64Image = await FileSystem.readAsStringAsync(result.uri, {
-          encoding: FileSystem.EncodingType.Base64,
-        })
-        setImageUrl(`data:image/jpeg;base64,${base64Image}`)
+      if (!result.canceled && result.assets && result.assets[0].uri) {
+        const { uri, base64 } = result.assets[0]
+        setImageUrl(`data:image/jpeg;base64,${base64}`)
         setEditingDetails({
           ...editingDetails,
-          image: `data:image/jpeg;base64,${base64Image}`,
+          image: `data:image/jpeg;base64,${base64}`,
         })
       }
     } catch (error) {
@@ -95,50 +96,63 @@ export default function Profile() {
     }
   }
 
+  const createConsultorio = async () => {
+    // aqui eu quero que você abra um modal com as informações básicas do consultório médico, área para salvar fotos
+    // nome do consultório, cep descrição e localização com a api do google maps
+  }
+
   const saveEdits = async () => {
     try {
       const nameUser = storage.getString('user.nameUser')
       editingDetails.nomeUser = nameUser
-  
-      // Verifica se há uma nova imagem a ser enviada
+
       if (editingDetails.image !== imageUrl) {
-        const base64Image = editingDetails.image.split('data:image/jpeg;base64,')[1];
-        const formData = new FormData();
-        formData.append('image', base64Image);
-  
-        const responseImage = await axios.post(API_URL + '/UpdateProfileImage', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
+        const base64Image = editingDetails.image.split(
+          'data:image/jpeg;base64,',
+        )[1]
+        const formData = new FormData()
+        formData.append('image', base64Image)
+
+        console.log(formData)
+
+        const responseImage = await axios.post(
+          API_URL + '/UpdateProfileImage',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
           },
-        });
-  
+        )
+
         if (responseImage.data.status === 'ok') {
-          console.log('Foto de perfil atualizada com sucesso no backend');
+          console.log('Foto de perfil atualizada com sucesso no backend')
         } else {
-          console.error('Erro ao atualizar foto de perfil no backend');
+          console.error('Erro ao atualizar foto de perfil no backend')
         }
       }
 
-      const response = await axios.post(API_URL + '/UpdateUserDetails', editingDetails);
-  
+      const response = await axios.post(
+        API_URL + '/UpdateUserDetails',
+        editingDetails,
+      )
+
       if (response.data.status === 'ok') {
-        setDetails(editingDetails);
-        setModalVisible(false);
+        setDetails(editingDetails)
+        setModalVisible(false)
       } else {
-        console.error('Erro ao salvar alterações no perfil');
+        console.error('Erro ao salvar alterações no perfil')
       }
     } catch (error) {
       console.error('Erro ao salvar alterações:', error)
     }
   }
-  
 
   const renderProfileDetails = () => {
     if (details) {
       if (userType === 'Paciente') {
         return (
           <View style={styles.userInfo}>
-            {/* Renderização condicional da imagem */}
             {(editingDetails.image || imageUrl) && (
               <Image
                 alt="image"
@@ -163,7 +177,7 @@ export default function Profile() {
             <Text style={styles.label}>Focuspoints:</Text>
             <Text style={styles.value}>{details.focuspoints}</Text>
           </View>
-        );
+        )
       } else if (userType === 'Profissional') {
         return (
           <View style={styles.userInfo}>
@@ -173,13 +187,13 @@ export default function Profile() {
             <Text style={styles.value}>{details.email}</Text>
             <Text style={styles.label}>Telefone:</Text>
             <Text style={styles.value}>{details.telefone}</Text>
+            <Button title="adicionar consultório" onPress={createConsultorio} />
           </View>
-        );
+        )
       }
     }
-    return null;
-  };
-  
+    return null
+  }
 
   const logout = async () => {
     const keys = storage.getAllKeys()
