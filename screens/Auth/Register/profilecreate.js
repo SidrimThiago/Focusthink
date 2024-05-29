@@ -74,13 +74,40 @@ export default function ProfileCreate({ navigation, route }) {
     }
   }
 
-  const saveImage = async (image) => {
+  const saveImage = async (imageUri) => {
     try {
-      setImage(image)
+      if (imageUri) {
+        const base64Image = await convertImageToBase64(imageUri)
+        setImage(base64Image)
+      } else {
+        setImage(null)
+      }
       setModalVisible(false)
     } catch (error) {
       console.log(`Erro ao salvar a imagem ${error}`)
     }
+  }
+
+  const convertImageToBase64 = async (imageUri) => {
+    try {
+      const response = await fetch(imageUri)
+      const blob = await response.blob()
+      const base64 = await convertBlobToBase64(blob)
+      return base64
+    } catch (error) {
+      throw new Error('Erro ao converter imagem para base64: ' + error.message)
+    }
+  }
+
+  const convertBlobToBase64 = (blob) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onerror = reject
+      reader.onload = () => {
+        resolve(reader.result.split(',')[1])
+      }
+      reader.readAsDataURL(blob)
+    })
   }
 
   function userData() {
@@ -190,7 +217,7 @@ export default function ProfileCreate({ navigation, route }) {
               style={styles.profileImage}
               className="justify-end rounded-full"
               resizeMode="contain"
-              source={{ uri: image }}
+              source={{ uri: `data:image/jpeg;base64,${image}` }}
               onPress={() => setModalVisible(true)}
             />
           </Pressable>

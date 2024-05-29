@@ -27,6 +27,7 @@ import Chats from '../screens/Authed/Chats'
 import EspecifedChat from '../screens/Authed/especifedChat'
 import CallPage from '../screens/Authed/callPage'
 import Ranking from '../screens/Authed/Ranking'
+import Consultorio from '../screens/Authed/Consultorio'
 
 const Stack = createNativeStackNavigator()
 
@@ -58,6 +59,7 @@ export default function Routes() {
         <Stack.Screen name="ProfileCreate" component={ProfileCreate} />
         <Stack.Screen name="NewPassEmail" component={NewPassEmail} />
         <Stack.Screen name="NewPassSMS" component={NewPassSMS} />
+        <Stack.Screen name="Consultorio" component={Consultorio} />
         <Stack.Screen name="ConfirmEmail" component={ConfirmEmail} />
         <Stack.Screen name="ConfirmSMS" component={ConfirmSMS} />
         <Stack.Screen name="NewPass" component={NewPass} />

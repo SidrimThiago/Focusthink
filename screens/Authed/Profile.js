@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { LinearGradient } from 'expo-linear-gradient'
 import React, { useEffect, useState } from 'react'
 import {
@@ -17,7 +18,6 @@ import axios from 'axios'
 import { useNavigation } from '@react-navigation/native'
 import { API_URL } from '../../.env/config'
 import { TextInputMask } from 'react-native-masked-text'
-import * as FileSystem from 'expo-file-system'
 import * as ImagePicker from 'expo-image-picker'
 
 const storage = new MMKV()
@@ -33,28 +33,21 @@ export default function Profile() {
   const navigation = useNavigation()
 
   const nomeUser = storage.getString('user.nameUser')
-  console.log(nomeUser)
 
   const loadDetails = async () => {
     try {
       const nomeUser = storage.getString('user.nameUser')
-      const response = await axios.post(API_URL + '/UserDetails', { nomeUser })
+      const response = await axios.post(`${API_URL}/UserDetails`, { nomeUser })
       const { status, data } = response.data
 
       if (status === 'ok') {
         setDetails(data)
         setUserType(data.tipo)
         setEditingDetails(data)
-        console.log(data)
 
         if (data.image) {
-          const base64Image = await FileSystem.readAsStringAsync(data.image, {
-            encoding: FileSystem.EncodingType.Base64,
-          })
-          setImageUrl(`data:image/jpeg;base64,${base64Image}`)
-          if (imageUrl === '' || imageUrl === undefined) {
-            console.log('imagem não existe no dispositivo')
-          }
+          console.log(data.consultorio)
+          setImageUrl(`data:image/jpeg;base64,${data.image}`)
         }
       }
     } catch (error) {
@@ -84,11 +77,11 @@ export default function Profile() {
       })
 
       if (!result.canceled && result.assets && result.assets[0].uri) {
-        const { uri, base64 } = result.assets[0]
+        const { base64 } = result.assets[0]
         setImageUrl(`data:image/jpeg;base64,${base64}`)
         setEditingDetails({
           ...editingDetails,
-          image: `data:image/jpeg;base64,${base64}`,
+          image: base64,
         })
       }
     } catch (error) {
@@ -96,44 +89,13 @@ export default function Profile() {
     }
   }
 
-  const createConsultorio = async () => {
-    // aqui eu quero que você abra um modal com as informações básicas do consultório médico, área para salvar fotos
-    // nome do consultório, cep descrição e localização com a api do google maps
-  }
-
   const saveEdits = async () => {
     try {
       const nameUser = storage.getString('user.nameUser')
       editingDetails.nomeUser = nameUser
 
-      if (editingDetails.image !== imageUrl) {
-        const base64Image = editingDetails.image.split(
-          'data:image/jpeg;base64,',
-        )[1]
-        const formData = new FormData()
-        formData.append('image', base64Image)
-
-        console.log(formData)
-
-        const responseImage = await axios.post(
-          API_URL + '/UpdateProfileImage',
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          },
-        )
-
-        if (responseImage.data.status === 'ok') {
-          console.log('Foto de perfil atualizada com sucesso no backend')
-        } else {
-          console.error('Erro ao atualizar foto de perfil no backend')
-        }
-      }
-
       const response = await axios.post(
-        API_URL + '/UpdateUserDetails',
+        `${API_URL}/UpdateUserDetails`,
         editingDetails,
       )
 
@@ -147,19 +109,30 @@ export default function Profile() {
       console.error('Erro ao salvar alterações:', error)
     }
   }
-
   const renderProfileDetails = () => {
     if (details) {
       if (userType === 'Paciente') {
         return (
           <View style={styles.userInfo}>
-            {(editingDetails.image || imageUrl) && (
+            {editingDetails.image || imageUrl ? (
               <Image
                 alt="image"
-                source={{ uri: editingDetails.image || imageUrl }}
+                source={{ uri: imageUrl }}
                 style={styles.profileImage}
               />
+            ) : (
+              <View style={[styles.profileImage, styles.placeholder]}>
+                <Text>Adicionar Foto</Text>
+              </View>
             )}
+            <View>
+              <Button title="Sair da conta" onPress={logout} />
+              <Button
+                title="Apagar minha conta"
+                onPress={() => setExcluirModal(true)}
+              />
+              <Button title="Editar perfil" onPress={EditarPerfil} />
+            </View>
             <Text style={styles.label}>Nome de usuário:</Text>
             <Text style={styles.value}>{details.userName}</Text>
             <Text style={styles.label}>Email:</Text>
@@ -181,13 +154,33 @@ export default function Profile() {
       } else if (userType === 'Profissional') {
         return (
           <View style={styles.userInfo}>
+            {editingDetails.image || imageUrl ? (
+              <Image
+                alt="image"
+                source={{ uri: imageUrl }}
+                style={styles.profileImage}
+              />
+            ) : (
+              <View style={[styles.profileImage, styles.placeholder]}>
+                <Text>Adicionar Foto</Text>
+              </View>
+            )}
             <Text style={styles.label}>Nome de usuário:</Text>
             <Text style={styles.value}>{details.nomeUser}</Text>
             <Text style={styles.label}>Email:</Text>
             <Text style={styles.value}>{details.email}</Text>
             <Text style={styles.label}>Telefone:</Text>
             <Text style={styles.value}>{details.telefone}</Text>
-            <Button title="adicionar consultório" onPress={createConsultorio} />
+            <View>
+              <Button title="Sair da conta" onPress={logout} />
+              <Button
+                title="Apagar minha conta"
+                onPress={() => setExcluirModal(true)}
+              />
+              <Button title="Editar perfil" onPress={EditarPerfil} />
+
+              <Button title="Consultório" onPress={() => navigation.navigate('Consultorio')} />
+            </View>
           </View>
         )
       }
@@ -206,7 +199,7 @@ export default function Profile() {
       const nomeUser = storage.getString('user.nameUser')
 
       if (nomeUser === excloseAccount) {
-        const response = await axios.post(API_URL + '/DeleteUser', { nomeUser })
+        const response = await axios.post(`${API_URL}/DeleteUser`, { nomeUser })
         if (response.data.status === 'ok') {
           navigation.navigate('login')
           console.log('Conta apagada com sucesso')
@@ -226,17 +219,15 @@ export default function Profile() {
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
-        <View className="w-full justify-end top-0">
+        <View
+          style={{
+            width: '100%',
+            justifyContent: 'flex-end',
+            alignItems: 'flex-end',
+            padding: 10,
+          }}
+        >
           <Feather name="settings" size={32} color="white" />
-        </View>
-
-        <View>
-          <Button title="Sair da conta" onPress={logout} />
-          <Button
-            title="Apagar minha conta"
-            onPress={() => setExcluirModal(true)}
-          />
-          <Button title="Editar perfil" onPress={EditarPerfil} />
         </View>
 
         {renderProfileDetails()}
@@ -343,7 +334,7 @@ export default function Profile() {
                 Para confirmar a exclusão da conta, escreva seu nome de usuário
                 abaixo:
               </Text>
-              <Text className="font-quick-bold">{nomeUser}</Text>
+              <Text style={styles.label}>{nomeUser}</Text>
               <TextInput
                 placeholder={`Digite "${nomeUser}" para confirmar`}
                 value={excloseAccount}
