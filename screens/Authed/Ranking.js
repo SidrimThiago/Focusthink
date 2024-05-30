@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react'
 import {
   SafeAreaView,
@@ -10,7 +11,6 @@ import {
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import axios from 'axios'
-import RNFS from 'react-native-fs'
 import { MMKV } from 'react-native-mmkv'
 import { API_URL } from '../../.env/config'
 
@@ -27,12 +27,15 @@ export default function Ranking({ navigation }) {
         console.log(data)
 
         // Convert image URLs to base64
-        const updatedRanking = await Promise.all(
-          data.data.pacientesDetails.map(async (paciente) => {
-            const base64Image = await convertToBase64(paciente.image)
-            return { ...paciente, image: base64Image }
-          }),
-        )
+        const updatedRanking = data.data.pacientesDetails.map((paciente) => {
+          if (paciente.image) {
+            return {
+              ...paciente,
+              image: `data:image/jpeg;base64,${paciente.image}`
+            }
+          }
+          return paciente
+        })
 
         setRanking(updatedRanking)
       } catch (error) {
@@ -42,20 +45,10 @@ export default function Ranking({ navigation }) {
     fetchRanking()
   }, [])
 
-  const convertToBase64 = async (fileUrl) => {
-    try {
-      const base64String = await RNFS.readFile(fileUrl, 'base64')
-      return `data:image/jpeg;base64,${base64String}`
-    } catch (error) {
-      console.error('Error converting file to base64', error)
-      return null
-    }
-  }
-
   const renderItem = ({ item }) => (
     <View style={styles.itemContainer}>
       {item.image ? (
-        <Image source={{ uri: item.image }} style={styles.itemImage} />
+        <Image alt="image" source={{ uri: item.image }} style={styles.itemImage} />
       ) : (
         <View style={styles.placeholderImage} />
       )}
