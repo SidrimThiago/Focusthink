@@ -11,7 +11,6 @@ import {
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Button } from 'react-native-paper'
-import CalendarPicker from 'react-native-calendar-picker'
 import { MaterialIcons } from '@expo/vector-icons'
 import { SelectList } from 'react-native-dropdown-select-list'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
@@ -160,6 +159,19 @@ export default function Calendar() {
     setEndTime(currentDate)
   }
 
+  const handleEditTask = (taskId) => {
+    const taskToEdit = tasks.find((task) => task.id === taskId)
+    if (taskToEdit) {
+      setSelectedTask(taskToEdit)
+      setTaskName(taskToEdit.name)
+      setTaskDescription(taskToEdit.description)
+      setStartTime(new Date(taskToEdit.startTime))
+      setEndTime(new Date(taskToEdit.endTime))
+      setSelectedCategory(taskToEdit.category)
+      setModalVisible(true)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
@@ -180,14 +192,13 @@ export default function Calendar() {
           <Text style={styles.tasksListTitle}>Tarefas:</Text>
           <FlatList
             data={tasks}
-            renderItem={({ item, index }) => (
+            renderItem={({ item }) => (
               <TouchableOpacity
                 style={styles.taskItem}
                 onPress={() => handleTaskPress(item)}
-                key={index}
               >
                 <View style={{ flex: 1 }}>
-                  <Text>{item.nameTask}</Text>
+                  <Text>{item.name}</Text>
                   <Text>{item.endDate}</Text>
                 </View>
                 <TouchableOpacity
@@ -196,9 +207,15 @@ export default function Calendar() {
                 >
                   <MaterialIcons name="check" size={24} color="green" />
                 </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.editButton}
+                  onPress={() => handleEditTask(item.id)}
+                >
+                  <MaterialIcons name="edit" size={24} color="blue" />
+                </TouchableOpacity>
               </TouchableOpacity>
             )}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(item) => item.id}
           />
         </View>
         <Modal
@@ -208,25 +225,7 @@ export default function Calendar() {
           onRequestClose={() => setModalVisible(false)}
         >
           <View style={styles.modalContent}>
-            <Text style={styles.modalText}>Adicionar Tarefa</Text>
-            <CalendarPicker
-              startFromMonday={true}
-              allowRangeSelection={true}
-              minDate={minDate}
-              maxDate={maxDate}
-              todayBackgroundColor="#FF5C00"
-              todayTextStyle="#633DE8"
-              selectedDayColor="#633DE8"
-              selectedDayTextColor="#000"
-              onDateChange={(date, type) => {
-                if (type === 'END_DATE') {
-                  setSelectedEndDate(date)
-                } else {
-                  setSelectedStartDate(date)
-                  setSelectedEndDate(null)
-                }
-              }}
-            />
+            <Text style={styles.modalText}>Adicionar/Edit Tarefa</Text>
             <TextInput
               style={styles.input}
               placeholder="Nome da Tarefa"
@@ -294,7 +293,7 @@ export default function Calendar() {
           <View style={styles.modalContent}>
             {selectedTask && (
               <>
-                <Text style={styles.modalText}>{selectedTask.nameTask}</Text>
+                <Text style={styles.modalText}>{selectedTask.name}</Text>
                 <Text>{selectedTask.description}</Text>
                 <Text>
                   Data de Início:{' '}
@@ -352,6 +351,10 @@ const styles = StyleSheet.create({
   },
   checkButton: {
     justifyContent: 'center',
+  },
+  editButton: {
+    justifyContent: 'center',
+    marginLeft: 10,
   },
   modalContent: {
     flex: 1,
