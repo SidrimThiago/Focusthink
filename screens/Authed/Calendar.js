@@ -1,59 +1,136 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
   Text,
   SafeAreaView,
+  FlatList,
+  ActivityIndicator,
   TouchableOpacity,
   Modal,
   TextInput,
-  FlatList,
-} from 'react-native'
-import { LinearGradient } from 'expo-linear-gradient'
-import { Button } from 'react-native-paper'
-import { MaterialIcons } from '@expo/vector-icons'
-import { SelectList } from 'react-native-dropdown-select-list'
-import RNDateTimePicker from '@react-native-community/datetimepicker'
-import { API_URL } from '../../.env/config'
-import { MMKV } from 'react-native-mmkv'
-import axios from 'axios'
+  Button,
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import axios from 'axios';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { API_URL } from '../../.env/config'; // Certifique-se de que esse caminho está correto e a API_URL está definida corretamente
+import { MMKV } from 'react-native-mmkv';
+import { SelectList } from 'react-native-dropdown-select-list';
+import { MaterialIcons } from '@expo/vector-icons';
 
-const storage = new MMKV()
+const storage = new MMKV();
 
 export default function Calendar() {
-  const [tasks, setTasks] = useState([])
-  const [selectedStartDate, setSelectedStartDate] = useState(null)
-  const [selectedEndDate, setSelectedEndDate] = useState(null)
-  const [taskName, setTaskName] = useState('')
-  const [taskDescription, setTaskDescription] = useState('')
-  const [isModalVisible, setModalVisible] = useState(false)
-  const [startTime, setStartTime] = useState(new Date())
-  const [endTime, setEndTime] = useState(new Date())
-  const [selectedTask, setSelectedTask] = useState(null)
-  const [isTaskModalVisible, setIsTaskModalVisible] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState(null)
-  const [showStartTimePicker, setShowStartTimePicker] = useState(false)
-  const [showEndTimePicker, setShowEndTimePicker] = useState(false)
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [createModalVisible, setCreateModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
-  const minDate = new Date() // Data mínima como hoje
-  const maxDate = new Date(2024, 11, 31) // Data máxima em 31 de dezembro de 2024
+  // State para criação de nova tarefa
+  const [newTask, setNewTask] = useState({
+    name: '',
+    description: '',
+    startDate: new Date(),
+    endDate: new Date(),
+    startTime: new Date(),
+    endTime: new Date(),
+    category: '',
+  });
+
+  // State para edição de tarefa
+  const [editTask, setEditTask] = useState({
+    oldTaskName: '',
+    newTaskName: '',
+    description: '',
+    startDate: new Date(),
+    endDate: new Date(),
+    startTime: new Date(),
+    endTime: new Date(),
+    category: '',
+  });
+
+  const [showStartDatePicker, setShowStartDatePicker] = useState(false);
+  const [showEndDatePicker, setShowEndDatePicker] = useState(false);
+  const [showStartTimePicker, setShowStartTimePicker] = useState(false);
+  const [showEndTimePicker, setShowEndTimePicker] = useState(false);
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const nomeUser = storage.getString('user.nameUser')
-        const response = await axios.get(API_URL + '/GetTasks', {
+        const nomeUser = storage.getString('user.nameUser');
+        const response = await axios.get(`${API_URL}/GetTasks`, {
           params: { nomeUser },
-        })
-        const fetchedTasks = response.data
-        setTasks(fetchedTasks)
+        });
+        setTasks(response.data);
       } catch (error) {
-        console.error('Error fetching tasks:', error)
+        setError(error.message);
+      } finally {
+        setLoading(false);
       }
-    }
+    };
 
-    fetchTasks()
-  }, [])
+    fetchTasks();
+  }, []);
+
+  const openModal = (task) => {
+    setSelectedTask(task);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setSelectedTask(null);
+    setModalVisible(false);
+  };
+
+  const openCreateModal = () => {
+    setCreateModalVisible(true);
+  };
+
+  const closeCreateModal = () => {
+    setCreateModalVisible(false);
+    setNewTask({
+      name: '',
+      description: '',
+      startDate: new Date(),
+      endDate: new Date(),
+      startTime: new Date(),
+      endTime: new Date(),
+      category: '',
+    });
+  };
+
+  const openEditModal = (task) => {
+    setEditTask({
+      oldTaskName: task.nameTask,
+      newTaskName: task.nameTask,
+      description: task.description,
+      startDate: new Date(task.startDate),
+      endDate: new Date(task.endDate),
+      startTime: new Date(task.startTime),
+      endTime: new Date(task.endTime),
+      category: task.tipoTask,
+    });
+    setEditModalVisible(true);
+  };
+
+  const closeEditModal = () => {
+    setEditModalVisible(false);
+    setEditTask({
+      oldTaskName: '',
+      newTaskName: '',
+      description: '',
+      startDate: new Date(),
+      endDate: new Date(),
+      startTime: new Date(),
+      endTime: new Date(),
+      category: '',
+    });
+  };
 
   const categories = [
     { key: '0', value: 'Sem categoria' },
@@ -62,260 +139,327 @@ export default function Calendar() {
     { key: '3', value: 'Lista de desejos' },
     { key: '4', value: 'Estudos' },
     { key: '5', value: 'Aniversários' },
-  ]
+  ];
 
-  const closeModal = async () => {
-    if (
-      !selectedStartDate ||
-      !selectedEndDate ||
-      !taskName ||
-      !taskDescription ||
-      !startTime ||
-      !endTime ||
-      !selectedCategory
-    ) {
-      return (
-        console.log(selectedCategory),
-        console.log(selectedEndDate),
-        console.log(taskName),
-        console.log(taskDescription),
-        console.log(startTime),
-        console.log(endTime)
-      )
-    }
-
-    const newTask = {
-      id: Math.random().toString(),
-      startDate: selectedStartDate.toString(),
-      endDate: selectedEndDate.toString(),
-      name: taskName,
-      description: taskDescription,
-      startTime: startTime.toString(),
-      endTime: endTime.toString(),
-      category: selectedCategory,
-      nomeUser: storage.getString('user.nameUser'),
-    }
-
+  const handleCreateTask = async () => {
     try {
-      console.log(newTask.nomeUser)
-      const response = await axios.post(
-        API_URL + '/CreateTasks',
-        newTask,
-
-        {
-          headers: { 'Content-Type': 'application/json' },
-        },
-      )
-      if (response.status === 200) {
-        const data = response.data
-        setTasks([...tasks, data])
+      const nomeUser = storage.getString('user.nameUser');
+      const response = await axios.post(`${API_URL}/CreateTasks`, {
+        ...newTask,
+        nomeUser,
+      });
+      if (response.data.status === 200) {
+        setTasks((prevTasks) => [...prevTasks, newTask]);
+        closeCreateModal();
       } else {
-        console.error('Error creating task:', response.statusText)
+        alert('Erro ao criar tarefa');
       }
     } catch (error) {
-      console.error('Error creating task:', error)
+      alert('Erro ao criar tarefa');
     }
+  };
 
-    setTasks([...tasks, newTask])
-    setSelectedStartDate(null)
-    setSelectedEndDate(null)
-    setTaskName('')
-    setTaskDescription('')
-    setStartTime(new Date())
-    setEndTime(new Date())
-    setSelectedCategory(null)
-    setModalVisible(false)
-  }
-
-  const handleVerifyClick = () => {
-    setModalVisible(true)
-  }
-
-  const handleFinishTask = (taskId) => {
-    const updatedTasks = tasks.map((task) =>
-      task.id === taskId ? { ...task, finished: true } : task,
-    )
-    setTasks(updatedTasks)
-  }
-
-  const handleTaskPress = (task) => {
-    setSelectedTask(task)
-    setIsTaskModalVisible(true)
-  }
-
-  const closeModal2 = () => {
-    setIsTaskModalVisible(false)
-  }
-
-  const onChangeStartTime = (event, selectedDate) => {
-    const currentDate = selectedDate || startTime
-    setShowStartTimePicker(false)
-    setStartTime(currentDate)
-  }
-
-  const onChangeEndTime = (event, selectedDate) => {
-    const currentDate = selectedDate || endTime
-    setShowEndTimePicker(false)
-    setEndTime(currentDate)
-  }
-
-  const handleEditTask = (taskId) => {
-    const taskToEdit = tasks.find((task) => task.id === taskId)
-    if (taskToEdit) {
-      setSelectedTask(taskToEdit)
-      setTaskName(taskToEdit.name)
-      setTaskDescription(taskToEdit.description)
-      setStartTime(new Date(taskToEdit.startTime))
-      setEndTime(new Date(taskToEdit.endTime))
-      setSelectedCategory(taskToEdit.category)
-      setModalVisible(true)
+  const handleEditTask = async () => {
+    try {
+      const nomeUser = storage.getString('user.nameUser');
+      console.log(editTask)
+      const response = await axios.post(`${API_URL}/EditTask`, {
+        ...editTask,
+        nomeUser,
+      });
+      if (response.data.message === 'Task edited successfully') {
+        setTasks((prevTasks) =>
+          prevTasks.map((task) =>
+            task.nameTask === editTask.oldTaskName ? { ...editTask, nameTask: editTask.newTaskName } : task
+          )
+        );
+        closeEditModal();
+      } else {
+        alert('Erro ao editar tarefa');
+      }
+    } catch (error) {
+      alert('Erro ao editar tarefa');
     }
+  };
+
+  const handleDateChange = (event, selectedDate, type, isEdit = false) => {
+    if (selectedDate) {
+      if (isEdit) {
+        setEditTask((prevTask) => ({
+          ...prevTask,
+          [type]: selectedDate,
+        }));
+      } else {
+        setNewTask((prevTask) => ({
+          ...prevTask,
+          [type]: selectedDate,
+        }));
+      }
+    }
+    if (type === 'startDate') {
+      setShowStartDatePicker(false);
+    } else if (type === 'endDate') {
+      setShowEndDatePicker(false);
+    }
+  };
+
+  const handleTimeChange = (event, selectedTime, type, isEdit = false) => {
+    if (selectedTime) {
+      if (isEdit) {
+        setEditTask((prevTask) => ({
+          ...prevTask,
+          [type]: selectedTime,
+        }));
+      } else {
+        setNewTask((prevTask) => ({
+          ...prevTask,
+          [type]: selectedTime,
+        }));
+      }
+    }
+    if (type === 'startTime') {
+      setShowStartTimePicker(false);
+    } else if (type === 'endTime') {
+      setShowEndTimePicker(false);
+    }
+  };
+
+  const handleDeleteTask = async (taskName) => {
+    try {
+      const nomeUser = storage.getString('user.nameUser');
+      const response = await axios.post(`${API_URL}/DeleteTask`, { taskName, nomeUser });
+      if (response.data.message === 'Task deleted successfully') {
+        setTasks((prevTasks) => prevTasks.filter((task) => task.nameTask !== taskName));
+        closeModal();
+      } else {
+        alert('Erro ao deletar tarefa');
+      }
+    } catch (error) {
+      alert('Erro ao deletar tarefa');
+    }
+  };
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
+          <ActivityIndicator size="large" color="#fff" />
+        </LinearGradient>
+      </SafeAreaView>
+    );
   }
+
+  if (error) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
+          <Text style={styles.errorText}>Error: {error}</Text>
+        </LinearGradient>
+      </SafeAreaView>
+    );
+  }
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity style={styles.taskItem} onPress={() => openModal(item)}>
+      <Text style={styles.taskTitle}>{item.nameTask}</Text>
+      <Text style={styles.taskDates}>{`End: ${item.endDate}`}</Text>
+      <View style={styles.taskActions}>
+        <TouchableOpacity onPress={() => openEditModal(item)}>
+          <Text style={styles.editButton}>Edit</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => handleDeleteTask(item.nameTask)}>
+          <Text style={styles.deleteButton}>Delete</Text>
+        </TouchableOpacity>
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
-        <View style={styles.calendarContainer}>
-          <RNDateTimePicker
-            mode="date"
-            value={new Date()}
-            is24Hour={true}
-            display="calendar"
-          />
-        </View>
-        <View style={styles.addButtonContainer}>
-          <Button mode="contained" onPress={handleVerifyClick}>
-            Adicionar Tarefa
-          </Button>
-        </View>
-        <View style={styles.tasksList}>
-          <Text style={styles.tasksListTitle}>Tarefas:</Text>
-          <FlatList
-            data={tasks}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.taskItem}
-                onPress={() => handleTaskPress(item)}
-              >
-                <View style={{ flex: 1 }}>
-                  <Text>{item.name}</Text>
-                  <Text>{item.endDate}</Text>
-                </View>
-                <TouchableOpacity
-                  style={styles.checkButton}
-                  onPress={() => handleFinishTask(item.id)}
-                >
-                  <MaterialIcons name="check" size={24} color="green" />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.editButton}
-                  onPress={() => handleEditTask(item.id)}
-                >
-                  <MaterialIcons name="edit" size={24} color="blue" />
-                </TouchableOpacity>
+        <FlatList
+          data={tasks}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.nameTask}
+        />
+        <TouchableOpacity style={styles.addButton} onPress={openCreateModal}>
+          <MaterialIcons name="add" size={24} color="#fff" />
+        </TouchableOpacity>
+      </LinearGradient>
+
+      {selectedTask && (
+        <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={closeModal}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>{selectedTask.nameTask}</Text>
+              <Text style={styles.modalDescription}>{selectedTask.description}</Text>
+              <Text style={styles.modalDates}>{`Start: ${selectedTask.startDate}`}</Text>
+              <Text style={styles.modalDates}>{`End: ${selectedTask.endDate}`}</Text>
+              <TouchableOpacity onPress={closeModal}>
+                <Text style={styles.closeButton}>Close</Text>
               </TouchableOpacity>
-            )}
-            keyExtractor={(item) => item.id}
-          />
-        </View>
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={isModalVisible}
-          onRequestClose={() => setModalVisible(false)}
-        >
+            </View>
+          </View>
+        </Modal>
+      )}
+
+      {/* Modal para criar nova tarefa */}
+      <Modal animationType="slide" transparent={true} visible={createModalVisible} onRequestClose={closeCreateModal}>
+        <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalText}>Adicionar/Edit Tarefa</Text>
+            <Text style={styles.modalTitle}>Create Task</Text>
             <TextInput
               style={styles.input}
-              placeholder="Nome da Tarefa"
-              value={taskName}
-              onChangeText={setTaskName}
+              placeholder="Name"
+              value={newTask.name}
+              onChangeText={(text) => setNewTask({ ...newTask, name: text })}
             />
             <TextInput
               style={styles.input}
-              placeholder="Descrição da Tarefa"
-              value={taskDescription}
-              onChangeText={setTaskDescription}
+              placeholder="Description"
+              value={newTask.description}
+              onChangeText={(text) => setNewTask({ ...newTask, description: text })}
             />
-            <TouchableOpacity onPress={() => setShowStartTimePicker(true)}>
-              <Text style={styles.timePickerText}>
-                Horário de Início: {startTime.toLocaleTimeString()}{' '}
-                {/* coloque um <RNDateTimePicker mode="time" value={new Date()} is24Hour={true} /> */}
-              </Text>
+            <TouchableOpacity onPress={() => setShowStartDatePicker(true)}>
+              <Text style={styles.dateInput}>Start Date: {newTask.startDate.toLocaleDateString()}</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setShowEndTimePicker(true)}>
-              <Text style={styles.timePickerText}>
-                Horário de Término: {endTime.toLocaleTimeString()}
-                {/* coloque um <RNDateTimePicker mode="time" value={new Date()} is24Hour={true} /> */}
-              </Text>
+            {showStartDatePicker && (
+              <DateTimePicker
+                value={newTask.startDate}
+                mode="date"
+                display="default"
+                onChange={(event, date) => handleDateChange(event, date, 'startDate')}
+              />
+            )}
+            <TouchableOpacity onPress={() => setShowEndDatePicker(true)}>
+              <Text style={styles.dateInput}>End Date: {newTask.endDate.toLocaleDateString()}</Text>
+            </TouchableOpacity>
+            {showEndDatePicker && (
+              <DateTimePicker
+                value={newTask.endDate}
+                mode="date"
+                display="default"
+                onChange={(event, date) => handleDateChange(event, date, 'endDate')}
+              />
+            )}
+            <TouchableOpacity onPress={() => setShowStartTimePicker(true)}>
+              <Text style={styles.dateInput}>Start Time: {newTask.startTime.toLocaleTimeString()}</Text>
             </TouchableOpacity>
             {showStartTimePicker && (
-              <RNDateTimePicker
-                value={startTime}
+              <DateTimePicker
+                value={newTask.startTime}
                 mode="time"
-                display="spinner"
-                onChange={onChangeStartTime}
-                is24Hour={true}
+                display="default"
+                onChange={(event, time) => handleTimeChange(event, time, 'startTime')}
               />
             )}
+            <TouchableOpacity onPress={() => setShowEndTimePicker(true)}>
+              <Text style={styles.dateInput}>End Time: {newTask.endTime.toLocaleTimeString()}</Text>
+            </TouchableOpacity>
             {showEndTimePicker && (
-              <RNDateTimePicker
-                value={endTime}
+              <DateTimePicker
+                value={newTask.endTime}
                 mode="time"
-                display="spinner"
-                onChange={onChangeEndTime}
-                is24Hour={true}
+                display="default"
+                onChange={(event, time) => handleTimeChange(event, time, 'endTime')}
               />
             )}
-            <View style={styles.dropdownContainer}>
-              <SelectList
-                setSelected={setSelectedCategory}
-                data={categories}
-                search={false}
-                defaultOption={{ key: '0', value: 'Sem categoria' }}
-              />
-            </View>
-            <Button mode="contained" onPress={closeModal}>
-              Salvar
-            </Button>
-            <Button mode="outlined" onPress={() => setModalVisible(false)}>
-              Cancelar
-            </Button>
+            <SelectList
+              data={categories}
+              setSelected={(value) => setSelectedCategory(value)}
+              placeholder="Select Category"
+              searchPlaceholder="Search..."
+              boxStyles={styles.input}
+              dropdownStyles={styles.dropdown}
+              defaultOption={categories[0]}
+            />
+            <Button title="Create" onPress={handleCreateTask} />
+            <TouchableOpacity onPress={closeCreateModal}>
+              <Text style={styles.closeButton}>Close</Text>
+            </TouchableOpacity>
           </View>
-        </Modal>
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={isTaskModalVisible}
-          onRequestClose={closeModal2}
-        >
+        </View>
+      </Modal>
+
+      {/* Modal para editar tarefa */}
+      <Modal animationType="slide" transparent={true} visible={editModalVisible} onRequestClose={closeEditModal}>
+        <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            {selectedTask && (
-              <>
-                <Text style={styles.modalText}>{selectedTask.name}</Text>
-                <Text>{selectedTask.description}</Text>
-                <Text>
-                  Data de Início:{' '}
-                  {new Date(selectedTask.startDate).toLocaleDateString()}
-                </Text>
-                <Text>
-                  Data de Término:{' '}
-                  {new Date(selectedTask.endDate).toLocaleDateString()}
-                </Text>
-                <Text>Horário de Início: {selectedTask.startTime}</Text>
-                <Text>Horário de Término: {selectedTask.endTime}</Text>
-                <Text>Categoria: {selectedTask.category}</Text>
-              </>
+            <Text style={styles.modalTitle}>Edit Task</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="New Name"
+              value={editTask.newTaskName}
+              onChangeText={(text) => setEditTask({ ...editTask, newTaskName: text })}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Description"
+              value={editTask.description}
+              onChangeText={(text) => setEditTask({ ...editTask, description: text })}
+            />
+            <TouchableOpacity onPress={() => setShowStartDatePicker(true)}>
+              <Text style={styles.dateInput}>Start Date: {editTask.startDate.toLocaleDateString()}</Text>
+            </TouchableOpacity>
+            {showStartDatePicker && (
+              <DateTimePicker
+                value={editTask.startDate}
+                mode="date"
+                display="default"
+                onChange={(event, date) => handleDateChange(event, date, 'startDate', true)}
+              />
             )}
-            <Button mode="outlined" onPress={closeModal2}>
-              Fechar
-            </Button>
+            <TouchableOpacity onPress={() => setShowEndDatePicker(true)}>
+              <Text style={styles.dateInput}>End Date: {editTask.endDate.toLocaleDateString()}</Text>
+            </TouchableOpacity>
+            {showEndDatePicker && (
+              <DateTimePicker
+                value={editTask.endDate}
+                mode="date"
+                display="default"
+                onChange={(event, date) => handleDateChange(event, date, 'endDate', true)}
+              />
+            )}
+            <TouchableOpacity onPress={() => setShowStartTimePicker(true)}>
+              <Text style={styles.dateInput}>Start Time: {editTask.startTime.toLocaleTimeString()}</Text>
+            </TouchableOpacity>
+            {showStartTimePicker && (
+              <DateTimePicker
+                value={editTask.startTime}
+                mode="time"
+                display="default"
+                onChange={(event, time) => handleTimeChange(event, time, 'startTime', true)}
+              />
+            )}
+            <TouchableOpacity onPress={() => setShowEndTimePicker(true)}>
+              <Text style={styles.dateInput}>End Time: {editTask.endTime.toLocaleTimeString()}</Text>
+            </TouchableOpacity>
+            {showEndTimePicker && (
+              <DateTimePicker
+                value={editTask.endTime}
+                mode="time"
+                display="default"
+                onChange={(event, time) => handleTimeChange(event, time, 'endTime', true)}
+              />
+            )}
+            <SelectList
+              data={categories}
+              setSelected={(value) => setEditTask({ ...editTask, category: value })}
+              placeholder="Select Category"
+              searchPlaceholder="Search..."
+              boxStyles={styles.input}
+              dropdownStyles={styles.dropdown}
+              defaultOption={categories.find((cat) => cat.value === editTask.category)}
+            />
+            <Button title="Save" onPress={handleEditTask} />
+            <TouchableOpacity onPress={closeEditModal}>
+              <Text style={styles.closeButton}>Close</Text>
+            </TouchableOpacity>
           </View>
-        </Modal>
-      </LinearGradient>
+        </View>
+      </Modal>
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -325,60 +469,94 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
   },
-  calendarContainer: {
-    flex: 3,
-    justifyContent: 'center',
-  },
-  addButtonContainer: {
-    margin: 10,
-  },
-  tasksList: {
-    flex: 3,
-    paddingHorizontal: 10,
-  },
-  tasksListTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
+  errorText: {
+    color: 'red',
   },
   taskItem: {
-    flexDirection: 'row',
     padding: 10,
     marginVertical: 5,
-    backgroundColor: '#fff',
-    borderRadius: 5,
+    marginHorizontal: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: 10,
   },
-  checkButton: {
-    justifyContent: 'center',
+  taskTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  taskDates: {
+    fontSize: 14,
+    color: '#333',
+  },
+  taskActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
   },
   editButton: {
-    justifyContent: 'center',
-    marginLeft: 10,
+    color: 'blue',
   },
-  modalContent: {
+  deleteButton: {
+    color: 'red',
+  },
+  addButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: '#633DE8',
+    borderRadius: 50,
+    padding: 15,
+  },
+  modalContainer: {
     flex: 1,
     justifyContent: 'center',
-    padding: 20,
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  modalText: {
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+    alignItems: 'center',
+  },
+  modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 20,
+  },
+  modalDescription: {
+    marginTop: 10,
+    fontSize: 16,
+  },
+  modalDates: {
+    marginTop: 10,
+    fontSize: 14,
+    color: '#333',
+  },
+  closeButton: {
+    marginTop: 20,
+    color: 'red',
+    fontWeight: 'bold',
   },
   input: {
     height: 40,
-    borderColor: '#ccc',
+    borderColor: 'gray',
     borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 10,
-    paddingHorizontal: 10,
-  },
-  timePickerText: {
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  dropdownContainer: {
     marginBottom: 20,
+    paddingHorizontal: 10,
+    width: '100%',
   },
-})
+  dateInput: {
+    height: 40,
+    justifyContent: 'center',
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 20,
+    paddingHorizontal: 10,
+    width: '100%',
+  },
+  dropdown: {
+    width: '100%',
+  },
+});
