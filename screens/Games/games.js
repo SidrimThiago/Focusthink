@@ -10,13 +10,15 @@ const storage = new MMKV()
 export default function Games() {
   const navigation = useNavigation()
   const [pontuacoes, setPontuacoes] = useState([]);
+  const [sequenciaDiaria, setSequenciaDiaria] = useState(0);
 
   const spinValue = new Animated.Value(0)
 
   useEffect(() => {
-    // Recupera a array de pontuações do MMKV e atualiza o estado
+    const sequenciaSalva = JSON.parse(storage.getItem('sequenciaDiaria'));
     const ultimasPontuacoes = JSON.parse(storage.getString('ultimasPontuacoes') || '[]');
     setPontuacoes(ultimasPontuacoes);
+    setSequenciaDiaria(sequenciaSalva);
     calcularSomaPontuacoes()
   }, []);
 
@@ -128,7 +130,7 @@ export default function Games() {
                   color: '#FF792F',
                 }}
               >
-                0
+                 {sequenciaDiaria}
                 <Text
                   style={{
                     fontSize: 15,
