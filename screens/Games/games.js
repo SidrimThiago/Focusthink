@@ -127,7 +127,7 @@ export default function Games() {
                   color: '#FF792F',
                 }}
               >
-                 {sequenciaDiaria}
+                 0
                 <Text
                   style={{
                     fontSize: 15,
