@@ -30,6 +30,7 @@ export default function Stroop() {
   const [indiceRespostaCorreta, setIndiceRespostaCorreta] = useState(null) // Índice da alternativa correta
   const [respostaCorreta, setRespostaCorreta] = useState(null)
   const [pontuacoes, setPontuacoes] = useState([]);
+  const [sequenciaDiaria, setSequenciaDiaria] = useState(0); 
 
   const [modalVisible, setModalVisible] = useState(false)
   const [isModalOptions, setModalOptions] = useState(false)
@@ -55,9 +56,9 @@ export default function Stroop() {
 
   }
 
-  const atualizarFocusPoints = async() => {
-    const pontuacaoAtual = getPontuacao();
-
+  const atualizarFocusPoints = async () => {
+    const pont = getPontuacao();
+    const pontuacaoAtual = pont * 5
     try {
       const nomeUser = storage.getString('user.nameUser')
       const response = await fetch(API_URL + '/updateFocusPoints', {
@@ -70,6 +71,14 @@ export default function Stroop() {
   
       if (response.status === 200) {
         console.log('Focus points atualizados com sucesso no backend.');
+        const lastUpdateTimestamp = storage.getInt('lastUpdateTimestamp') || 0;
+        const currentTimestamp = Math.floor(Date.now() / 1000); 
+        const hoursSinceLastUpdate = (currentTimestamp - lastUpdateTimestamp) / 3600;
+
+        if (hoursSinceLastUpdate >= 24) {
+          setSequenciaDiaria((prev) => prev + 1);
+          storage.setInt('lastUpdateTimestamp', currentTimestamp);
+        }
       } else {
         console.error('Erro ao atualizar focus points no backend.');
       }
