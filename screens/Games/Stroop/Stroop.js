@@ -56,7 +56,7 @@ export default function Stroop() {
   }
 
   const atualizarFocusPoints = async() => {
-    const somaPontuacoes = ultimasPontuacoes.reduce((total, pontuacao) => total + pontuacao, 0); // Calcula a soma das pontuações
+    const pontuacaoAtual = getPontuacao();
 
     try {
       const nomeUser = storage.getString('user.nameUser')
@@ -65,7 +65,7 @@ export default function Stroop() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ focusPoints: somaPontuacoes, nomeUser: nomeUser }),
+        body: JSON.stringify({ focusPoints: pontuacaoAtual, nomeUser: nomeUser }),
       });
   
       if (response.status === 200) {
