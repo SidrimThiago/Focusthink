@@ -17,7 +17,7 @@ export default function Games() {
     // Recupera a array de pontuações do MMKV e atualiza o estado
     const ultimasPontuacoes = JSON.parse(storage.getString('ultimasPontuacoes') || '[]');
     setPontuacoes(ultimasPontuacoes);
-    console.log(ultimasPontuacoes)
+    calcularSomaPontuacoes()
   }, []);
 
   // Calcula a soma das pontuações presentes na array
