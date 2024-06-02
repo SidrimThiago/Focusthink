@@ -3,11 +3,27 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, View, Text, Animated, Easing, SafeAreaView, Pressable, Image, ScrollView } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useNavigation } from '@react-navigation/native'
+import { MMKV } from 'react-native-mmkv'
 
-export default function Profile() {
+const storage = new MMKV()
+
+export default function Games() {
   const navigation = useNavigation()
+  const [pontuacoes, setPontuacoes] = useState([]);
 
   const spinValue = new Animated.Value(0)
+
+  useEffect(() => {
+    // Recupera a array de pontuações do MMKV e atualiza o estado
+    const ultimasPontuacoes = JSON.parse(storage.getString('ultimasPontuacoes') || '[]');
+    setPontuacoes(ultimasPontuacoes);
+    console.log(ultimasPontuacoes)
+  }, []);
+
+  // Calcula a soma das pontuações presentes na array
+  const calcularSomaPontuacoes = () => {
+    return pontuacoes.reduce((total, pontuacao) => total + pontuacao, 0);
+  };
 
   useEffect(() => {
     Animated.loop(
@@ -90,7 +106,7 @@ export default function Profile() {
                   color: '#FF792F',
                 }}
               >
-                0
+                {calcularSomaPontuacoes()}
                 <Text
                   style={{
                     fontSize: 15,

@@ -13,9 +13,22 @@ import { useNavigation } from '@react-navigation/native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { AntDesign } from '@expo/vector-icons'
 import LottieView from 'lottie-react-native'
+import { MMKV } from 'react-native-mmkv'
+const storage = new MMKV()
 
 export default function StroopInfo() {
     const navigation = useNavigation();
+    const [ultimasPontuacoes, setUltimasPontuacoes] = useState([])
+    const [melhorPontuacao, setMelhorPontuacao] = useState(0)
+  
+    useEffect(() => {
+      const pontuacoes = JSON.parse(storage.getString('ultimasPontuacoes') || '[]')
+      setUltimasPontuacoes(pontuacoes)
+      const melhor = storage.getNumber('melhorPontuacao') || 0
+      setMelhorPontuacao(melhor * 5)
+      
+    }, [])
+  
 
     return (
         <SafeAreaView style={styles.container}>
@@ -47,7 +60,7 @@ export default function StroopInfo() {
 
                         <View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 35 }}>
                             <View style={{ width: 150, height: 80, borderWidth: 1.5, borderColor: '#B8B8B8', justifyContent: 'flex-end', alignItems: 'center', borderRadius: 16, marginRight: 10 }}>
-                                <Text style={{ fontSize: 38, color: 'white', fontFamily: 'Quicksand-SemiBold' }}>0</Text>
+                                <Text style={{ fontSize: 38, color: 'white', fontFamily: 'Quicksand-SemiBold' }}>{ultimasPontuacoes[ultimasPontuacoes.length - 1] * 5}</Text>
                                 <Text style={{ fontSize: 14, color: '#D8D8D8', fontFamily: 'Quicksand-Medium', bottom: 5 }}>Ultima pontuação</Text>
                             </View>
                             <View style={{ width: 150, height: 80, borderWidth: 1.5, borderColor: '#B8B8B8', justifyContent: 'flex-end', alignItems: 'center', borderRadius: 16, marginLeft: 10 }}>
@@ -56,13 +69,13 @@ export default function StroopInfo() {
                                         source={require('../../../assets/GamesScreen/trophy.png')}
                                         style={{ width: 28, height: 28, top: 20 }}
                                     />
-                                    <Text style={{ fontSize: 38, color: 'white', fontFamily: 'Quicksand-SemiBold', marginLeft: 5 }}>300</Text>
+                                    <Text style={{ fontSize: 38, color: 'white', fontFamily: 'Quicksand-SemiBold', marginLeft: 5 }}>{melhorPontuacao}</Text>
                                 </View>
                                 <Text style={{ fontSize: 14, color: '#D8D8D8', fontFamily: 'Quicksand-Medium', bottom: 5 }}>Melhor pontuação</Text>
                             </View>
                         </View>
 
-                        <Text style={{ fontSize: 17, color: 'white', fontFamily: 'Quicksand-Regular', marginTop: 25 }}>O Teste de Cores e Palavras permite detetar problemas neurológicos e cerebrais, avaliando os efeitos de interferência entre
+                        <Text style={{ fontSize: 17, color: 'white', fontFamily: 'Quicksand-Regular', marginTop: 25 }}>O Teste de Cores e Palavras permite detetar problemas neurológicos e cerebrais, avaliando os efeitos de interferência entre
                             os dois hemisférios cerebrais. O Teste poderá ser utilizado em diversas situações clínicas (p.e., lesões cerebrais, demência,
                             psicopatologia, etc.) independentemente do nível cultural do sujeito. As tarefas requeridas pelo Teste implicam a identificação de cores e de palavras.
                         </Text>

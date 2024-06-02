@@ -260,7 +260,7 @@ export default function Calendar() {
   }
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.taskItem} onPress={() => openModal(item)}>
+    <TouchableOpacity style={styles.taskItem} onPress={() => openModal(item)} className="mt-10">
       <Text style={styles.taskTitle}>{item.nameTask}</Text>
       <Text style={styles.taskDates}>{`End: ${item.endDate}`}</Text>
       <View style={styles.taskActions}>
