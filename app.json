@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "Focusthink",
+    "slug": "Focusthink",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.focusthink"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptative-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.focusthink"
+    },
+    "compilerOptions": {
+      "baseUrl": ".",
+      "paths": {
+        "@/*": [
+          "./*"
+        ]
+      }
+    },
+    "plugins": [
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "dab4f2a3-de14-4e4e-8084-7b217d40fe21"
+      }
+    }
+  }
+}
