@@ -71,15 +71,7 @@ export default function Stroop() {
   
       if (response.status === 200) {
         console.log('Focus points atualizados com sucesso no backend.');
-        const lastUpdateTimestamp = storage.getInt('lastUpdateTimestamp') || 0;
-        const currentTimestamp = Math.floor(Date.now() / 1000); 
-        const hoursSinceLastUpdate = (currentTimestamp - lastUpdateTimestamp) / 3600;
-
-        if (hoursSinceLastUpdate >= 24) {
-          setSequenciaDiaria((prev) => prev + 1);
-          storage.setInt('lastUpdateTimestamp', currentTimestamp);
-          storage.setItem('sequenciaDiaria', JSON.stringify(novaSequencia));
-        }
+        
       } else {
         console.error('Erro ao atualizar focus points no backend.');
       }

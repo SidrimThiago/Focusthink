@@ -10,15 +10,12 @@ const storage = new MMKV()
 export default function Games() {
   const navigation = useNavigation()
   const [pontuacoes, setPontuacoes] = useState([]);
-  const [sequenciaDiaria, setSequenciaDiaria] = useState(0);
 
   const spinValue = new Animated.Value(0)
 
   useEffect(() => {
-    const sequenciaSalva = JSON.parse(storage.getItem('sequenciaDiaria'));
     const ultimasPontuacoes = JSON.parse(storage.getString('ultimasPontuacoes') || '[]');
     setPontuacoes(ultimasPontuacoes);
-    setSequenciaDiaria(sequenciaSalva);
     calcularSomaPontuacoes()
   }, []);
 
