@@ -37,6 +37,10 @@ export default function Consults() {
           title="chatbot"
           onPress={() => navigation.navigate('Chatbot')}
         />
+        <Button
+          title="Questionário"
+          onPress={() => navigation.navigate('Questionary')}
+        />
       </LinearGradient>
     </SafeAreaView>
   )

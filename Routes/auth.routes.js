@@ -28,6 +28,7 @@ import EspecifedChat from '../screens/Authed/especifedChat'
 import CallPage from '../screens/Authed/callPage'
 import Ranking from '../screens/Authed/Ranking'
 import Consultorio from '../screens/Authed/Consultorio'
+import Questionary from '../screens/Authed/Questionary'
 
 const Stack = createNativeStackNavigator()
 
@@ -39,6 +40,7 @@ export default function Routes() {
         screenOptions={{ headerShown: false }}
       >
         <Stack.Screen name="Start" component={Start} />
+        <Stack.Screen name="Questionary" component={Questionary} />
         <Stack.Screen name="CallPage" component={CallPage} />
         <Stack.Screen name="Ranking" component={Ranking} />
         <Stack.Screen name="GamesTest" component={GamesTest} />
