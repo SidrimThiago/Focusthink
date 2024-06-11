@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
-import { Text, View, TouchableOpacity, StyleSheet, SafeAreaView, TextInput } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Text, View, TouchableOpacity, StyleSheet, SafeAreaView, TextInput, Modal } from "react-native";
 
 const QuestInfo = () => {
     const Asks = {
@@ -9,7 +9,7 @@ const QuestInfo = () => {
             "Com que frequência você tem dificuldade para fazer um trabalho que exige organização?",
             "Com que frequência você tem dificuldade para lembrar de compromissos ou obrigações?",
             "Com que frequência você fica se mexendo na cadeira ou balançando as mãos ou os pés quando precisa ficar sentado (a) por muito tempo?",
-            "Com que frequência você se sente ativo (a) demais e necessitando fazer coisas, como se estivesse “com um motor ligado”?"
+            "Com que frequência você se sente ativo (a) demais e necessitando fazer coisas, como se estivesse 'com um motor ligado'?"
         ],
         SetorB: [
             "Com que frequência você comete erros bobos por falta de atenção quando tem de trabalhar num projeto chato ou difícil?",
@@ -37,6 +37,59 @@ const QuestInfo = () => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [responses, setResponses] = useState({ SetorA: [], SetorB: [], SetorC: ["", "", "", ""] });
     const [relatorio, setRelatorio] = useState({ SetorA: [], SetorB: [], SetorC: [] });
+    const [pontuacaoTotal, setPontuacaoTotal] = useState(0);
+    const [probabilidadeTDAH, setProbabilidadeTDAH] = useState("");
+    const [showDisclaimerModal, setShowDisclaimerModal] = useState(true);
+    const [showResultModal, setShowResultModal] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+
+    useEffect(() => {
+        const calcularPontuacaoTotal = () => {
+            let pontuacao = 0;
+
+            Object.values(responses).forEach((setorRespostas) => {
+                setorRespostas.forEach((resposta) => {
+                    switch (resposta) {
+                        case "Nunca":
+                            pontuacao += 0;
+                            break;
+                        case "Quase Nunca":
+                            pontuacao += 1;
+                            break;
+                        case "Às vezes":
+                            pontuacao += 2;
+                            break;
+                        case "Quase Sempre":
+                            pontuacao += 3;
+                            break;
+                        case "Sempre":
+                            pontuacao += 4;
+                            break;
+                        default:
+                            break;
+                    }
+                });
+            });
+
+            return pontuacao;
+        };
+
+        const determinarProbabilidadeTDAH = (pontuacao) => {
+            if (pontuacao >= 0 && pontuacao <= 15) {
+                return "Baixa probabilidade de TDAH";
+            } else if (pontuacao >= 16 && pontuacao <= 30) {
+                return "Moderada probabilidade de TDAH";
+            } else {
+                return "Alta probabilidade de TDAH";
+            }
+        };
+
+        const pontuacao = calcularPontuacaoTotal();
+        const probabilidade = determinarProbabilidadeTDAH(pontuacao);
+
+        setPontuacaoTotal(pontuacao);
+        setProbabilidadeTDAH(probabilidade);
+    }, [responses]);
 
     const handleSelectOption = (response) => {
         setResponses((prevResponses) => {
@@ -67,10 +120,13 @@ const QuestInfo = () => {
                 setCurrentSetor(setors[currentSetorIndex + 1]);
                 setCurrentQuestionIndex(0);
             } else {
+                setShowDisclaimerModal(true);
+                setShowResultModal(true);
                 console.log("Questionario completo", relatorio);
             }
         }
     };
+
 
 
     const handleGoBack = () => {
@@ -94,6 +150,7 @@ const QuestInfo = () => {
             return newResponses;
         });
     };
+
 
     const renderCurrentQuestion = () => {
         const question = Asks[currentSetor][currentQuestionIndex];
@@ -148,6 +205,54 @@ const QuestInfo = () => {
                     </TouchableOpacity>
                 </View>
                 {renderCurrentQuestion()}
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={showDisclaimerModal}
+                    onRequestClose={() => setShowDisclaimerModal(false)}
+                >
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <Text style={styles.modalText}>
+                                Nenhum teste substitui uma avaliação psiquiátrica.
+                                O resultado deste teste não serve como diagnóstico conclusivo nem tem validade jurídica ou como atestado médico, para nenhuma finalidade.
+                                Não inicie nenhum tratamento baseado no resultado de qualquer teste da internet, sem uma consulta médica antes.
+                            </Text>
+                            <TouchableOpacity
+                                style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+                                onPress={() => {
+                                    setShowResultModal(true);
+                                    setShowDisclaimerModal(false);
+                                }}
+                            >
+                                <Text style={styles.textStyle}>Continuar</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => {
+                        setModalVisible(!modalVisible);
+                    }}
+                >
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <Text style={styles.modalText}>Relatório e Pontuação</Text>
+                            <Text style={styles.reportText}>Pontuação Total: {pontuacaoTotal}</Text>
+                            <Text style={styles.reportText}>Probabilidade de TDAH: {probabilidadeTDAH}</Text>
+                            <TouchableOpacity
+                                style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+                                onPress={() => setModalVisible(!modalVisible)}
+                            >
+                                <Text style={styles.textStyle}>Fechar</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+
             </View>
         </View>
     );
@@ -162,7 +267,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-
     questionContainer: {
         marginBottom: 15,
     },
@@ -201,6 +305,26 @@ const styles = StyleSheet.create({
     submitButtonText: {
         color: 'white',
         fontSize: 16,
+    },
+    backButton: {
+        backgroundColor: '#633DE8',
+        padding: 10,
+        borderRadius: 4,
+        alignSelf: 'flex-start',
+    },
+    backButtonText: {
+        color: 'white',
+        fontSize: 16,
+    },
+    innerContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    navigationContainer: {
+        position: 'absolute',
+        top: 20,
+        left: 20,
     },
 });
 
