@@ -49,10 +49,17 @@ const QuestInfo = () => {
         if (currentQuestionIndex < questionsLength - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         } else {
-            setRelatorio((prevRelatorio) => ({
-                ...prevRelatorio,
-                [currentSetor]: responses[currentSetor],
-            }));
+            if (currentSetor === "SetorC") {
+                setRelatorio((prevRelatorio) => ({
+                    ...prevRelatorio,
+                    [currentSetor]: responses[currentSetor],
+                }));
+            } else {
+                setRelatorio((prevRelatorio) => ({
+                    ...prevRelatorio,
+                    [currentSetor]: responses[currentSetor],
+                }));
+            }
 
             const setors = Object.keys(Asks);
             const currentSetorIndex = setors.indexOf(currentSetor);
@@ -64,6 +71,7 @@ const QuestInfo = () => {
             }
         }
     };
+
 
     const handleGoBack = () => {
         if (currentQuestionIndex > 0) {
