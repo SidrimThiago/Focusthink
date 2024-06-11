@@ -121,7 +121,6 @@ const QuestInfo = () => {
                 setCurrentQuestionIndex(0);
             } else {
                 setShowDisclaimerModal(true);
-                setShowResultModal(true);
                 console.log("Questionario completo", relatorio);
             }
         }

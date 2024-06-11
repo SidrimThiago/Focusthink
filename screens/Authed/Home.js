@@ -41,7 +41,7 @@ export default function Home(props) {
           <Animated.Text style={[styles.title(isTransparent, scrollA), { fontFamily: 'Quicksand-Medium', fontSize: 24 }]}> Seja bem vindo ! </Animated.Text>
           <Animated.Text style={[styles.title(isTransparent, scrollA), { fontFamily: 'Quicksand-Bold', fontSize: 42 }]}> Adryel</Animated.Text>
         </View>
-        <Ionicons name="chatbubble-outline" size={32} color="black" />
+        <Ionicons name="chatbubble-outline" size={32} color="white" />
       </View>
 
       <Animated.Image
