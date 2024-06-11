@@ -35,19 +35,32 @@ const QuestInfo = () => {
 
     const [currentSetor, setCurrentSetor] = useState("SetorA");
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [responses, setResponses] = useState({ SetorA: [], SetorB: [], SetorC: ["", "", "", ""] });
+    const [relatorio, setRelatorio] = useState({ SetorA: [], SetorB: [], SetorC: [] });
 
-    const handleSelectOption = () => {
+    const handleSelectOption = (response) => {
+        setResponses((prevResponses) => {
+            const newResponses = { ...prevResponses };
+            newResponses[currentSetor][currentQuestionIndex] = response;
+            return newResponses;
+        });
+
         const questionsLength = Asks[currentSetor].length;
         if (currentQuestionIndex < questionsLength - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         } else {
+            setRelatorio((prevRelatorio) => ({
+                ...prevRelatorio,
+                [currentSetor]: responses[currentSetor],
+            }));
+
             const setors = Object.keys(Asks);
             const currentSetorIndex = setors.indexOf(currentSetor);
             if (currentSetorIndex < setors.length - 1) {
                 setCurrentSetor(setors[currentSetorIndex + 1]);
                 setCurrentQuestionIndex(0);
             } else {
-                console.log("Questionnaire complete");
+                console.log("Questionnaire complete", relatorio);
             }
         }
     };
@@ -66,6 +79,14 @@ const QuestInfo = () => {
         }
     };
 
+    const handleTextInputChange = (text) => {
+        setResponses((prevResponses) => {
+            const newResponses = { ...prevResponses };
+            newResponses[currentSetor][currentQuestionIndex] = text;
+            return newResponses;
+        });
+    };
+
     const renderCurrentQuestion = () => {
         const question = Asks[currentSetor][currentQuestionIndex];
         return (
@@ -78,14 +99,16 @@ const QuestInfo = () => {
                         {currentSetor === "SetorC" ? (
                             <View style={styles.inputContainer}>
                                 <TextInput
-                                className="mt-5"
+                                    className="mt-5"
                                     style={styles.textInput}
                                     multiline
                                     numberOfLines={4}
                                     placeholder="Digite sua resposta aqui..."
-                                    onSubmitEditing={handleSelectOption}
+                                    value={responses[currentSetor][currentQuestionIndex]}
+                                    onChangeText={handleTextInputChange}
+                                    onSubmitEditing={() => handleSelectOption(responses[currentSetor][currentQuestionIndex])}
                                 />
-                                <TouchableOpacity style={styles.submitButton} onPress={handleSelectOption}>
+                                <TouchableOpacity style={styles.submitButton} onPress={() => handleSelectOption(responses[currentSetor][currentQuestionIndex])}>
                                     <Text style={styles.submitButtonText}>Próxima</Text>
                                 </TouchableOpacity>
                             </View>
@@ -95,7 +118,7 @@ const QuestInfo = () => {
                                     <TouchableOpacity
                                         key={i}
                                         style={styles.radioContainer}
-                                        onPress={handleSelectOption}
+                                        onPress={() => handleSelectOption(option)}
                                     >
                                         <Text style={styles.radioText}>○ {option}</Text>
                                     </TouchableOpacity>
