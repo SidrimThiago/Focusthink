@@ -67,7 +67,7 @@ const QuestInfo = () => {
                 setCurrentSetor(setors[currentSetorIndex + 1]);
                 setCurrentQuestionIndex(0);
             } else {
-                console.log("Questionnaire complete", relatorio);
+                console.log("Questionario completo", relatorio);
             }
         }
     };
