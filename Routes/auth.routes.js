@@ -29,6 +29,7 @@ import CallPage from '../screens/Authed/callPage'
 import Ranking from '../screens/Authed/Ranking'
 import Consultorio from '../screens/Authed/Consultorio'
 import Questionary from '../screens/Authed/Questionary'
+import IaQuestionary from '../screens/Authed/IaQuestionary'
 
 const Stack = createNativeStackNavigator()
 
@@ -41,6 +42,7 @@ export default function Routes() {
       >
         <Stack.Screen name="Start" component={Start} />
         <Stack.Screen name="Questionary" component={Questionary} />
+        <Stack.Screen name="IaQuestionary" component={IaQuestionary} />
         <Stack.Screen name="CallPage" component={CallPage} />
         <Stack.Screen name="Ranking" component={Ranking} />
         <Stack.Screen name="GamesTest" component={GamesTest} />

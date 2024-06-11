@@ -213,7 +213,7 @@ const QuestInfo = () => {
                 >
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
-                            <Text style={styles.modalText}>
+                            <Text style={styles.modalText} className="font-quick-medium">
                                 Nenhum teste substitui uma avaliação psiquiátrica.
                                 O resultado deste teste não serve como diagnóstico conclusivo nem tem validade jurídica ou como atestado médico, para nenhuma finalidade.
                                 Não inicie nenhum tratamento baseado no resultado de qualquer teste da internet, sem uma consulta médica antes.

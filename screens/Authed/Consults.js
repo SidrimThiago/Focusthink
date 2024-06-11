@@ -41,6 +41,10 @@ export default function Consults() {
           title="Questionário"
           onPress={() => navigation.navigate('Questionary')}
         />
+        <Button
+          title="Questionário com Ia"
+          onPress={() => navigation.navigate('IaQuestionary')}
+        />
       </LinearGradient>
     </SafeAreaView>
   )
