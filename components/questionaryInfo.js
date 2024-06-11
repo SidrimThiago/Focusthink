@@ -52,6 +52,20 @@ const QuestInfo = () => {
         }
     };
 
+    const handleGoBack = () => {
+        if (currentQuestionIndex > 0) {
+            setCurrentQuestionIndex(currentQuestionIndex - 1);
+        } else {
+            const setors = Object.keys(Asks);
+            const currentSetorIndex = setors.indexOf(currentSetor);
+            if (currentSetorIndex > 0) {
+                const previousSetor = setors[currentSetorIndex - 1];
+                setCurrentSetor(previousSetor);
+                setCurrentQuestionIndex(Asks[previousSetor].length - 1);
+            }
+        }
+    };
+
     const renderCurrentQuestion = () => {
         const question = Asks[currentSetor][currentQuestionIndex];
         return (
@@ -97,6 +111,11 @@ const QuestInfo = () => {
     return (
         <View style={styles.container}>
             <View style={styles.innerContainer}>
+                <View style={styles.navigationContainer}>
+                    <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
+                        <Text style={styles.backButtonText}>Voltar</Text>
+                    </TouchableOpacity>
+                </View>
                 {renderCurrentQuestion()}
             </View>
         </View>
