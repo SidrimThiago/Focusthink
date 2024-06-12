@@ -3,6 +3,7 @@
     "name": "Focusthink",
     "slug": "Focusthink",
     "scheme": "Focusthink",
+    "owner": "sidrinho",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -34,9 +35,15 @@
         ]
       }
     },
-    "plugins": [
-      "expo-font"
+    "expo": {
+      "plugins": [
+        "expo-font",
+        "@react-native-google-signin/google-signin"
     ],
+    "android": {
+      "googleServicesFile": "./google-services.json"
+    }
+  },
     "config": {
     "googleMaps": {
       "apiKey": "AIzaSyBB0NnuLix6tj8RsN_5OPxBcGVEP3UnfMk"

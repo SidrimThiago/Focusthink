@@ -1645,10 +1645,10 @@
   dependencies:
     plist "^3.1.0"
 
-"@react-native-google-signin/google-signin@^11.0.1":
-  version "11.0.1"
-  resolved "https://registry.npmjs.org/@react-native-google-signin/google-signin/-/google-signin-11.0.1.tgz"
-  integrity sha512-ZRSEd1ME31XZ+azS3Qe6TRb8NRicGmtRdD1vT4Tz2birnlTfNfRgy4qLrEKNZyMUTodA6+J2UvA2JWwT8ZQ/dw==
+"@react-native-google-signin/google-signin@^12.2.1":
+  version "12.2.1"
+  resolved "https://registry.yarnpkg.com/@react-native-google-signin/google-signin/-/google-signin-12.2.1.tgz#242247ab18ea7bb3a1dcabb50df7ad236f104294"
+  integrity sha512-qt2Cb+bN2NS8BBT06M3UbLVS1gaSYTenNh4uZtPNmyJC23xZAynLkuhvsC6gmeEnxcj0wLVUn1Es+LSHw0OhVQ==
 
 "@react-native/assets-registry@0.74.83", "@react-native/assets-registry@~0.74.83":
   version "0.74.83"
@@ -2943,14 +2943,6 @@ cli-spinners@^2.0.0, cli-spinners@^2.5.0:
   resolved "https://registry.npmjs.org/cli-spinners/-/cli-spinners-2.9.2.tgz"
   integrity sha512-ywqV+5MmyL4E7ybXgKys4DugZbX0FC6LnwrhjuykIjnK9k8OQacQ7axGKnjDXWNhns0xot3bZI5h55H8yo9cJg==
 
-cli@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/cli/-/cli-1.0.1.tgz"
-  integrity sha512-41U72MB56TfUMGndAKK8vJ78eooOD4Z5NOL4xEfjc0c23s+6EYKXlXsmACBVclLP1yOfWCgEganVzddVrSNoTg==
-  dependencies:
-    exit "0.1.2"
-    glob "^7.1.1"
-
 cliui@^4.0.0:
   version "4.1.0"
   resolved "https://registry.npmjs.org/cliui/-/cliui-4.1.0.tgz"
@@ -4037,11 +4029,6 @@ execa@^5.0.0, execa@^5.1.1:
     signal-exit "^3.0.3"
     strip-final-newline "^2.0.0"
 
-exit@0.1.2:
-  version "0.1.2"
-  resolved "https://registry.npmjs.org/exit/-/exit-0.1.2.tgz"
-  integrity sha512-Zk/eNKV2zbjpKzrsQ+n1G6poVbErQxJ0LBOJXaKZ1EViLzH+hrLu9cdXI4zw9dBQJslwBEpbQ2P1oS7nDxs6jQ==
-
 expand-template@^2.0.3:
   version "2.0.3"
   resolved "https://registry.npmjs.org/expand-template/-/expand-template-2.0.3.tgz"
@@ -4122,7 +4109,7 @@ expo-linear-gradient@~13.0.2:
   resolved "https://registry.npmjs.org/expo-linear-gradient/-/expo-linear-gradient-13.0.2.tgz"
   integrity sha512-EDcILUjRKu4P1rtWcwciN6CSyGtH7Bq4ll3oTRV7h3h8oSzSilH1g6z7kTAMlacPBKvMnkkWOGzW6KtgMKEiTg==
 
-expo-linking@~6.3.0:
+expo-linking@~6.3.0, expo-linking@~6.3.1:
   version "6.3.1"
   resolved "https://registry.yarnpkg.com/expo-linking/-/expo-linking-6.3.1.tgz#05aef8a42bd310391d0b00644be40d80ece038d9"
   integrity sha512-xuZCntSBGWCD/95iZ+mTUGTwHdy8Sx+immCqbUBxdvZ2TN61P02kKg7SaLS8A4a/hLrSCwrg5tMMwu5wfKr35g==
@@ -7217,13 +7204,6 @@ react-native-gesture-handler@~2.16.1:
     hoist-non-react-statics "^3.3.0"
     invariant "^2.2.4"
     lodash "^4.17.21"
-    prop-types "^15.7.2"
-
-react-native-inset-shadow@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.npmjs.org/react-native-inset-shadow/-/react-native-inset-shadow-1.0.3.tgz"
-  integrity sha512-4UXuSrenJtOWKcV0zSqHLQ47Oxn+BXdmxFxYXf5rE8KletbTvQq8ziZsX8MSEegUGWDcJJ3Mw+1OVbPJxm4lZg==
-  dependencies:
     prop-types "^15.7.2"
 
 react-native-keep-awake@^4.0.0:

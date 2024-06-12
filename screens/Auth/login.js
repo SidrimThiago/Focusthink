@@ -17,11 +17,17 @@ import ButtonComponent from '../../components/button'
 import { useNavigation } from '@react-navigation/native'
 import { MaterialIcons, Entypo } from '@expo/vector-icons'
 import { Formik } from 'formik'
-import auth from '@react-native-firebase/auth'
 import { MMKV } from 'react-native-mmkv'
 import axios from 'axios'
 import { API_URL } from '../../.env/config'
 import * as AuthSession from 'expo-auth-session'
+import { GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
+
+GoogleSignin.configure({
+  scopes: ['email', 'profile'],
+  webClientId: '1046030188594-6tfjdtergfr6tk9l2bvdfb6l2kuvekq2.apps.googleusercontent.com',
+  iosClientId: '1046030188594-ncnuq46els218u5r7f0gnr87hcsl5ua2.apps.googleusercontent.com'
+});
 
 const storage = new MMKV()
 
@@ -40,26 +46,15 @@ export default function Start() {
 
   async function handleGoogleSignIn() {
     try {
-      const CLIENT_ID = '541274265608-7955nenbgsvdi8o5mb28v9497h2sh4be.apps.googleusercontent.com'
-      const REDIRECT_URI = 'https://auth.expo.io/@sidrim/Focusthink'
-      const SCOPE = encodeURI("profile email")
-      const RESPONSE_TYPE = 'token'
+      const { idToken } = await GoogleSignin.signIn();
 
-      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPE}&resonse_type=${RESPONSE_TYPE}`
+      if(idToken) {
+        const credentials = Realm.Credentials.jwt(idToken);
 
-      const result = await AuthSession.loadAsync({ authUrl });
-
-
-
-      if(result.type  === 'success'){
-        const response = await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${params.access_token}`)
-        const user = await response.json()
-        console.log(user)
-
+        await app.logIn(credentials);
       }
-      
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 

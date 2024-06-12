@@ -24,7 +24,7 @@ import { useNavigation } from '@react-navigation/native'
 import Modal from 'react-native-modal'
 import ReturnButton from '../../../components/returnbutton'
 import DateInputComponent from '../../../components/datepicker'
-import InsetShadow from 'react-native-inset-shadow'
+
 import { TextInputMask } from 'react-native-masked-text'
 
 
@@ -132,14 +132,14 @@ export default function ProfissionalCadastro() {
 
         <View className="flex-row-reverse mb-5">
           <TouchableOpacity className="bg-white w-40 h-16 border-4 border-orange-500 rounded-xl ml-3">
-            <InsetShadow>
+    
               <Text
                 className="text-lg shadow-lg self-center mt-3"
                 style={styles.quicksandMedium}
               >
                 Profissional
               </Text>
-            </InsetShadow>
+            
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate('Cadastro')}
