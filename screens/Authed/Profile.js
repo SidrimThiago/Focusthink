@@ -204,7 +204,7 @@ export default function Profile() {
 
   const logout = async () => {
     storage.set('user.nameUser', '')
-    storage.set('tokenVerify', '')
+    storage.set('user.token', '')
     navigation.navigate('login')
 
   }

@@ -32,15 +32,9 @@ export default function ProfissionalCadastro() {
   const [nome, setNome] = useState('')
   const [nomeUser, setNomeUser] = useState('')
   const [cep, setCep] = useState('')
-  const [rua, setRua] = useState('')
-  const [bairro, setbairro] = useState('')
-  const [cidade, setCidade] = useState('')
-  const [estado, setEstado] = useState('')
-  const [numero, setNumero] = useState('')
   const [biografia, setBiografia] = useState('')
   const [tipo, setTipo] = useState('Profissional')
   const [genero, setGenero] = useState('')
-  const [endereco, setEndereco] = useState('')
   const [especialidade, setEspecialidade] = useState('')
   const [codigo, setcodigo] = useState('')
   const [isModalVisible, setModalVisible] = useState(false)
@@ -53,6 +47,8 @@ export default function ProfissionalCadastro() {
   const [visiblePassword, setVisiblePassword] = useState(true)
   const [termoscondicoes, setTermosCondicoes] = useState(false)
   const [notificacao, setNotificacao] = useState(false)
+  const [date, setDate] = useState('')
+  const [dataNascimento, setDataNascimento] = useState('')
 
   const toggleCheckbox = () => setTermosCondicoes(!termoscondicoes)
   const toggleCheckbox2 = () => setNotificacao(!notificacao)
@@ -64,9 +60,10 @@ export default function ProfissionalCadastro() {
         nomeUser,
         nome,
         genero,
-        endereco,
+        cep,
         email,
         telefone,
+        dataNascimento,
         password,
         codigo,
         focuspoints,
@@ -75,7 +72,7 @@ export default function ProfissionalCadastro() {
         especialidade,
       }
       
-      console.log('Usuário :', newProfissional)
+      newProfissional.dataNascimento = date
       navigation.navigate('ProfileCreate', { newProfissional })
     } else {
       Alert.alert('Erro', 'Senha inválida')
@@ -90,6 +87,23 @@ export default function ProfissionalCadastro() {
 
   const handleVerifyClick = () => {
     setModalVisible(true)
+  }
+
+  const handleDateChange = (text) => {
+    const numericText = text.replace(/[^0-9]/g, '')
+
+    if (numericText.length > 2 && numericText.length <= 4) {
+      const formattedDate = `${numericText.slice(0, 2)}/${numericText.slice(2)}`
+      setDate(formattedDate)
+      console.log(date)
+    } else if (numericText.length > 4) {
+      const formattedDate = `${numericText.slice(0, 2)}/${numericText.slice(2, 4)}/${numericText.slice(4)}`
+      setDate(formattedDate)
+      console.log(date)
+    } else {
+      setDate(numericText)
+      console.log(date)
+    }
   }
 
   return (
@@ -166,7 +180,17 @@ export default function ProfissionalCadastro() {
         <Text className="text-white text-base ml-9 self-start">
           Data de nascimento
         </Text>
-        <DateInputComponent />
+
+        <View className="relative justify-center h-14 mb-3 pr-8 pl-8 w-full">
+            <TextInput
+              className="bg-white w-full h-full rounded-2xl border border-white p-2 text-lg pl-4"
+              placeholder="DD/MM/YYYY"
+              keyboardType="numeric"
+              maxLength={10} // Limitar a quantidade de caracteres
+              value={date}
+              onChangeText={handleDateChange}
+            />
+          </View>
 
         <Text className="text-white text-base ml-9 self-start">Gênero</Text>
         <View className="relative justify-center h-14 mb-3 pr-8 pl-8 w-full">
@@ -197,9 +221,9 @@ export default function ProfissionalCadastro() {
         <View className="relative justify-center h-14 mb-3 pr-8 pl-8 w-full">
           <TextInput
             style={styles.input}
-            onChangeText={setEndereco}
-            value={endereco}
-            placeholder="Endereço"
+            onChangeText={setCep}
+            value={cep}
+            placeholder="Cep"
             className="bg-white w-full h-full rounded-2xl border border-white p-2 text-lg pl-4"
           />
           <FontAwesome5

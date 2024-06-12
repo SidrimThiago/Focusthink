@@ -173,12 +173,7 @@ export default function ProfileCreate({ navigation, route }) {
           tipo: user.type,
           biografia: user.biografia,
           telefone: user.telefone,
-          rua: user.rua,
-          bairro: user.bairro,
-          cidade: user.cidade,
           cep: user.cep,
-          estado: user.estado,
-          numero: user.numero,
           especialidade: user.especialidade,
           password: user.password,
           crm: user.codigo,
@@ -193,7 +188,7 @@ export default function ProfileCreate({ navigation, route }) {
           console.error('Erro ao fazer requisição:', error)
         })
 
-      // navigation.navigate('login')
+      navigation.navigate('login')
     }
   }
 
