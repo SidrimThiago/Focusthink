@@ -176,7 +176,7 @@ export default function ProfileCreate({ navigation, route }) {
           cep: user.cep,
           especialidade: user.especialidade,
           password: user.password,
-          crm: user.codigo,
+          crm: user.codigo, 
           image: user.image,
           tokenVerify: user.tokenVerify,
           focuspoints: user.focuspoints,

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   StyleSheet,
   View,
@@ -20,17 +21,46 @@ import auth from '@react-native-firebase/auth'
 import { MMKV } from 'react-native-mmkv'
 import axios from 'axios'
 import { API_URL } from '../../.env/config'
+import * as AuthSession from 'expo-auth-session'
+
 const storage = new MMKV()
 
 export default function Start() {
   const [password, onChangePassword] = useState('')
   const [loginStatus, setLoginStatus] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
+  const [sucess, setSucess] = useState('')
+  const [params, setParams] = useState({})
   const [visiblePassword, setVisiblePassword] = useState(true)
   const navigation = useNavigation()
 
   const isValidEmail = (email) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  }
+
+  async function handleGoogleSignIn() {
+    try {
+      const CLIENT_ID = '541274265608-7955nenbgsvdi8o5mb28v9497h2sh4be.apps.googleusercontent.com'
+      const REDIRECT_URI = 'https://auth.expo.io/@sidrim/Focusthink'
+      const SCOPE = encodeURI("profile email")
+      const RESPONSE_TYPE = 'token'
+
+      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPE}&resonse_type=${RESPONSE_TYPE}`
+
+      const result = await AuthSession.loadAsync({ authUrl });
+
+
+
+      if(result.type  === 'success'){
+        const response = await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${params.access_token}`)
+        const user = await response.json()
+        console.log(user)
+
+      }
+      
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
@@ -180,7 +210,7 @@ export default function Start() {
                   className="w-full px-5 pr-8 pl-8"
                   style={{ marginBottom: '10' }}
                 >
-                  <TouchableOpacity className=" border-white w-full border rounded-full flex-row items-center justify-center p-3 mb-3 py-5">
+                  <TouchableOpacity onPress={() => handleGoogleSignIn()} className=" border-white w-full border rounded-full flex-row items-center justify-center p-3 mb-3 py-5">
                     <Image
                       alt="image"
                       className="px-1 mr-4 absolute left-5"
