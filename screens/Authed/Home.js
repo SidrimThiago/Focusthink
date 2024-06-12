@@ -14,6 +14,7 @@ const TOPNAVI_H = 250;
 
 export default function Home(props) {
   const navigation = useNavigation();
+  const nomeUser = storage.getString('user.nameUser')
 
   const scrollA = useRef(new Animated.Value(0)).current;
   const safeArea = useSafeAreaInsets();
@@ -39,7 +40,7 @@ export default function Home(props) {
       <View style={{ marginTop: StatusBar.currentHeight, flexDirection: 'row', width: '100%', justifyContent: 'space-between', padding: 10, zIndex: 1 }}>
         <View style={styles.container(safeArea, isFloating, isTransparent)}>
           <Animated.Text style={[styles.title(isTransparent, scrollA), { fontFamily: 'Quicksand-Medium', fontSize: 24 }]}> Seja bem vindo ! </Animated.Text>
-          <Animated.Text style={[styles.title(isTransparent, scrollA), { fontFamily: 'Quicksand-Bold', fontSize: 42 }]}> Adryel</Animated.Text>
+          <Animated.Text style={[styles.title(isTransparent, scrollA), { fontFamily: 'Quicksand-Bold', fontSize: 42 }]}> {nomeUser}</Animated.Text>
         </View>
         <Ionicons name="chatbubble-outline" size={32} color="white" />
       </View>

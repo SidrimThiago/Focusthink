@@ -36,6 +36,11 @@
     "plugins": [
       "expo-font"
     ],
+    "config": {
+    "googleMaps": {
+      "apiKey": "AIzaSyBB0NnuLix6tj8RsN_5OPxBcGVEP3UnfMk"
+    }
+  },
     "extra": {
       "eas": {
         "projectId": "dab4f2a3-de14-4e4e-8084-7b217d40fe21"

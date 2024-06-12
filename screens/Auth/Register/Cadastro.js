@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { React, useState } from 'react'
 import {
   StyleSheet,
@@ -24,9 +25,9 @@ import Modal from 'react-native-modal'
 import ReturnButton from '../../../components/returnbutton'
 import ButtonSelectDiagnosis from './selectdiagnosis'
 import InsetShadow from 'react-native-inset-shadow'
-import DateInputComponent from '../../../components/datepicker'
 import { TextInputMask } from 'react-native-masked-text'
 import { useFormik } from 'formik'
+import { SelectList } from 'react-native-dropdown-select-list'
 
 export default function Cadastro() {
   const {
@@ -39,6 +40,7 @@ export default function Cadastro() {
       telefone,
       password,
       tipo,
+      dataNascimento,
       focuspoints,
       tokenVerify,
       diagnostico,
@@ -51,6 +53,7 @@ export default function Cadastro() {
       endereco: '',
       email: '',
       telefone: '',
+      dataNascimento: '',
       password: '',
       diagnostico: '',
       tokenVerify: '',
@@ -63,6 +66,8 @@ export default function Cadastro() {
   const [visiblePassword, setVisiblePassword] = useState(true)
   const [termoscondicoes, setTermosCondicoes] = useState(false)
   const [notificacao, setNotificacao] = useState(false)
+  const [date, setDate] = useState('')
+  const [diag, setDiag] = useState('')
 
   const toggleCheckbox = () => setTermosCondicoes(!termoscondicoes)
   const toggleCheckbox2 = () => setNotificacao(!notificacao)
@@ -76,13 +81,17 @@ export default function Cadastro() {
         genero,
         endereco,
         email,
+        dataNascimento,
         telefone,
         password,
         focuspoints,
         tokenVerify,
         diagnostico,
       }
+      newUser.diagnostico = diag
+      newUser.dataNascimento = date
 
+      console.log(newUser.diagnostico)
       navigation.navigate('ProfileCreate', { newUser })
     } else {
       Alert.alert('Erro', 'Senha inválida')
@@ -97,6 +106,32 @@ export default function Cadastro() {
 
   const handleVerifyClick = () => {
     setModalVisible(true)
+  }
+
+  const [selected, setSelected] = useState('')
+
+  const data = [
+    { key: '1', value: 'Tipo desatento' },
+    { key: '2', value: 'Tipo hiperativo/impulsivo' },
+    { key: '3', value: 'Tipo combinado' },
+    { key: '4', value: 'Não sou diagnósticado' },
+  ]
+
+  const handleDateChange = (text) => {
+    const numericText = text.replace(/[^0-9]/g, '')
+
+    if (numericText.length > 2 && numericText.length <= 4) {
+      const formattedDate = `${numericText.slice(0, 2)}/${numericText.slice(2)}`
+      setDate(formattedDate)
+      console.log(date)
+    } else if (numericText.length > 4) {
+      const formattedDate = `${numericText.slice(0, 2)}/${numericText.slice(2, 4)}/${numericText.slice(4)}`
+      setDate(formattedDate)
+      console.log(date)
+    } else {
+      setDate(numericText)
+      console.log(date)
+    }
   }
 
   return (
@@ -179,7 +214,17 @@ export default function Cadastro() {
           <Text className="text-white text-base ml-9 self-start">
             Data de nascimento
           </Text>
-          <DateInputComponent />
+
+          <View className="relative justify-center h-14 mb-3 pr-8 pl-8 w-full">
+            <TextInput
+              className="bg-white w-full h-full rounded-2xl border border-white p-2 text-lg pl-4"
+              placeholder="DD/MM/YYYY"
+              keyboardType="numeric"
+              maxLength={10} // Limitar a quantidade de caracteres
+              value={date}
+              onChangeText={handleDateChange}
+            />
+          </View>
 
           <Text className="text-white text-base ml-9 self-start">Gênero</Text>
           <View className="relative justify-center h-14 mb-3 pr-8 pl-8 w-full">
@@ -231,7 +276,36 @@ export default function Cadastro() {
           <Text className="text-white text-base ml-9 self-start">
             Diagnóstico
           </Text>
-          <ButtonSelectDiagnosis value={diagnostico} />
+          <View className="relative justify-center pr-8 pl-8 mb-3 w-full text-gray-500 text-lg">
+
+            <SelectList
+              setSelected={(value) => setDiag(value)}
+              data={data}
+              value={selected}
+              save="value"
+              search={false}
+              placeholder="Diagnóstico"
+              maxHeight={110}
+              arrowicon={
+                <MaterialIcons
+                  style={{ position: 'absolute', top: 10, right: 12 }}
+                  name="keyboard-arrow-down"
+                  size={35}
+                  color="#707070"
+                />
+              }
+              boxStyles={{
+                backgroundColor: 'white',
+                height: 56,
+                alignItems: 'center',
+                borderRadius: 15,
+                borderColor: 'white',
+              }}
+              dropdownStyles={{ backgroundColor: 'white' }}
+              inputStyles={{ fontSize: 18, marginLeft: -7 }}
+              dropdownTextStyles={{ fontSize: 17 }}
+            />
+          </View>
 
           <View className="text-center justify-center items-center w-full px-10 bottom-0">
             <ButtonComponent title="Continuar" onPress={handleVerifyClick} />

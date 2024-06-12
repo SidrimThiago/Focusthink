@@ -18,6 +18,7 @@ import LottieView from 'lottie-react-native'
 import TopBarGames from '../../../components/Games/topBarGames.js'
 import { MMKV } from 'react-native-mmkv'
 import { API_URL } from '../../../.env/config.js'
+import axios from 'axios'
 
 const storage = new MMKV()
 
@@ -61,13 +62,7 @@ export default function Stroop() {
     const pontuacaoAtual = pont * 5
     try {
       const nomeUser = storage.getString('user.nameUser')
-      const response = await fetch(API_URL + '/updateFocusPoints', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ focusPoints: pontuacaoAtual, nomeUser: nomeUser }),
-      });
+      const response = await axios.post(API_URL + '/updateFocusPoints', {focusPoints: pontuacaoAtual, nomeUser: nomeUser})
   
       if (response.status === 200) {
         console.log('Focus points atualizados com sucesso no backend.');

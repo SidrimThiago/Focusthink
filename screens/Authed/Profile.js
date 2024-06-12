@@ -11,6 +11,7 @@ import {
   TextInput,
   View,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import { MMKV } from 'react-native-mmkv'
@@ -31,6 +32,7 @@ export default function Profile() {
   const [excloseAccount, setExcloseAccount] = useState('')
   const [excluirModal, setExcluirModal] = useState(false)
   const navigation = useNavigation()
+  const [loading, setLoading] = useState(true);
 
   const nomeUser = storage.getString('user.nameUser')
 
@@ -52,6 +54,8 @@ export default function Profile() {
       }
     } catch (error) {
       console.error('Erro durante a requisição:', error)
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -64,6 +68,16 @@ export default function Profile() {
       ...editingDetails,
       [key]: value,
     })
+  }
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
+          <ActivityIndicator size="large" color="#fff" />
+        </LinearGradient>
+      </SafeAreaView>
+    );
   }
 
   const pickImage = async () => {
@@ -189,9 +203,10 @@ export default function Profile() {
   }
 
   const logout = async () => {
-    const keys = storage.getAllKeys()
-    storage.clearAll(keys)
+    storage.set('user.nameUser', '')
+    storage.set('tokenVerify', '')
     navigation.navigate('login')
+
   }
 
   const ExcluirConta = async () => {

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { React, useState, useEffect } from 'react'
@@ -139,6 +140,7 @@ export default function ProfileCreate({ navigation, route }) {
           email: user.email,
           tipo: user.type,
           biografia: user.biografia,
+          dataNascimento: user.dataNascimento,
           telefone: user.telefone,
           endereco: user.endereco,
           diagnostico: user.diagnostico,
@@ -155,6 +157,7 @@ export default function ProfileCreate({ navigation, route }) {
         })
 
       navigation.navigate('login')
+      
     } else if (newProfissional) {
       user.tokenVerify = ''
       user.nomeUser = nomeUser
@@ -190,7 +193,7 @@ export default function ProfileCreate({ navigation, route }) {
           console.error('Erro ao fazer requisição:', error)
         })
 
-      navigation.navigate('login')
+      // navigation.navigate('login')
     }
   }
 

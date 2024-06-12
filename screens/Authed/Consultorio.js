@@ -1,25 +1,33 @@
 import React, { useEffect, useState } from 'react'
-import MapView from 'react-native-maps'
 import {
   View,
-  Text,
   TextInput,
   Button,
-  SafeAreaView,
   StyleSheet,
-  ScrollView,
-  Image,
+  SafeAreaView,
+  ActivityIndicator,
+  Text,
+  TouchableOpacity,
+  PermissionsAndroid,
+  Dimensions,
+  Platform,
 } from 'react-native'
-import { LinearGradient } from 'expo-linear-gradient'
+import MapView, { Marker } from 'react-native-maps'
 import { MMKV } from 'react-native-mmkv'
 import axios from 'axios'
+import GeoLocation from '@react-native-community/geolocation'
 import { API_URL } from '../../.env/config'
 
 const storage = new MMKV()
+const { width, height } = Dimensions.get('screen')
 
 export default function Consultorio() {
+  const [address, setAddress] = useState('')
   const nomeUser = storage.getString('user.nameUser')
-  const [dados, setDados] = useState(null)
+  const [region, setRegion] = useState(null)
+  const [isEditMode, setIsEditMode] = useState(false)
+  const [loading, setLoading] = useState(false)
+
   const [consultorioDetails, setConsultorioDetails] = useState({
     Nome: '',
     Bairro: '',
@@ -31,130 +39,254 @@ export default function Consultorio() {
     Cidade: '',
   })
 
-  useEffect(() => {
-    const fetchDados = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/ExplainConsultorio`, {
-          params: { nomeUser },
-        })
-        const data = response.data
-        setDados(data.data)
-        setConsultorioDetails(data.data.consultorio)
-      } catch (error) {
-        console.error('Erro ao puxar os dados do consultório :', error)
-      }
-    }
+  const handleAddressChange = (text) => {
+    setAddress(text)
+  }
 
-    fetchDados()
-  }, [nomeUser])
+  const handleEditToggle = () => {
+    setIsEditMode(true)
+  }
 
-  const handleInputChange = (field, value) => {
+  const handleDetailChange = (field, value) => {
     setConsultorioDetails({ ...consultorioDetails, [field]: value })
   }
 
-  const handleEdit = async () => {
+  const getCoordinates = async (addressDetails) => {
+    const { Rua, Numero, Cidade, Estado, Cep } = addressDetails
+    const address = `${Rua}, ${Numero}, ${Cidade}, ${Estado}, ${Cep}`
     try {
-      await axios.post(`${API_URL}/EditConsultorio`, {
-        nomeUser,
-        consultorioDetails,
-      })
-      alert('Dados do consultório atualizados com sucesso!')
+      const response = await axios.get(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyBB0NnuLix6tj8RsN_5OPxBcGVEP3UnfMk`,
+      )
+      const result = response.data.results[0].geometry.location
+      return result
     } catch (error) {
-      console.error('Erro ao editar os dados do consultório:', error)
-      alert('Erro ao atualizar os dados do consultório.')
+      console.error('Erro ao buscar coordenadas:', error)
+      return null
     }
+  }
+
+  async function handleSaveConsult() {
+    console.log(consultorioDetails)
+    setLoading(true)
+    const coordinates = await getCoordinates(consultorioDetails)
+    if (!coordinates) {
+      alert('Não foi possível obter as coordenadas para o endereço fornecido.')
+      setLoading(false)
+      return
+    }
+
+    setRegion({
+      latitude: coordinates.lat,
+      longitude: coordinates.lng,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+    })
+
+    const nomeUser = storage.getString('user.nameUser')
+    const dataToSend = {
+      ...consultorioDetails,
+      Latitude: coordinates.lat,
+      Longitude: coordinates.lng,
+    }
+
+    try {
+      const response = await axios.post(API_URL + '/EditConsultorio', {
+        consultorioDetails: dataToSend,
+        nomeUser,
+      })
+      const data = response.data
+      if (data && data.data && data.data.Nome) {
+        setConsultorioDetails(data.data)
+        setIsEditMode(false)
+      } else {
+        setIsEditMode(true)
+      }
+    } catch (error) {
+      console.error('Erro ao salvar os dados', error)
+    } finally {
+      setLoading(false)
+      setIsEditMode(false)
+    }
+  }
+
+  const fetchDados = async () => {
+    try {
+      const response = await axios.post(API_URL + '/ExplainConsultorio', {
+        nomeUser,
+      })
+      const data = response.data
+      if (data && data.data && data.data.Nome) {
+        setConsultorioDetails(data.data)
+        setIsEditMode(false)
+      } else {
+        setIsEditMode(true)
+      }
+    } catch (error) {
+      console.error('Erro ao puxar os dados do consultório:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleSearchLocation = async () => {
+    setLoading(true)
+    try {
+      const response = await axios.get(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyBB0NnuLix6tj8RsN_5OPxBcGVEP3UnfMk`,
+      )
+      const result = response.data.results[0].geometry.location
+      setRegion({
+        latitude: result.lat,
+        longitude: result.lng,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      })
+    } catch (error) {
+      console.error('Erro ao buscar coordenadas:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchDados()
+    if (Platform.OS === 'android') {
+      PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      ).then(getMyLocation)
+    } else {
+      getMyLocation()
+    }
+  }, [nomeUser])
+
+  const getMyLocation = () => {
+    GeoLocation.getCurrentPosition(
+      (info) => {
+        setRegion({
+          latitude: info.coords.latitude,
+          longitude: info.coords.longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        })
+      },
+      (error) => {
+        console.log('Location error:', error)
+      },
+      { enableHighAccuracy: true, timeout: 2000 },
+    )
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
-        <ScrollView contentContainerStyle={styles.scrollView}>
-          <View>
-            <Text style={styles.title}>Meu consultório</Text>
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <>
+          <TextInput
+            style={styles.textInput}
+            placeholder="Digite um endereço..."
+            onChangeText={handleAddressChange}
+            value={address}
+            onSubmitEditing={handleSearchLocation}
+          />
+
+          <MapView
+            style={styles.map}
+            initialRegion={region}
+            onPress={handleSearchLocation}
+            showsUserLocation={true}
+            zoomEnabled={true}
+            loadingEnabled={true}
+          >
+            {region && <Marker coordinate={region} />}
+          </MapView>
+
+          <View style={styles.bottomContainer}>
+            <Text style={styles.sectionTitle}>Meu Consultório</Text>
+            {isEditMode ? (
+              <>
+                <TextInput
+                  style={styles.input}
+                  value={consultorioDetails.Nome}
+                  onChangeText={(text) => handleDetailChange('Nome', text)}
+                  placeholder="Nome do Consultório"
+                />
+                <TextInput
+                  style={styles.input}
+                  value={consultorioDetails.Estado}
+                  onChangeText={(text) => handleDetailChange('Estado', text)}
+                  placeholder="Estado"
+                />
+                <TextInput
+                  style={styles.input}
+                  value={consultorioDetails.Cidade}
+                  onChangeText={(text) => handleDetailChange('Cidade', text)}
+                  placeholder="Cidade"
+                />
+                <TextInput
+                  style={styles.input}
+                  value={consultorioDetails.Bairro}
+                  onChangeText={(text) => handleDetailChange('Bairro', text)}
+                  placeholder="Bairro"
+                />
+                <TextInput
+                  style={styles.input}
+                  value={consultorioDetails.Cep}
+                  onChangeText={(text) => handleDetailChange('Cep', text)}
+                  placeholder="Cep"
+                />
+                <TextInput
+                  style={styles.input}
+                  value={consultorioDetails.Numero}
+                  onChangeText={(text) => handleDetailChange('Numero', text)}
+                  placeholder="Número"
+                />
+                <TextInput
+                  style={styles.input}
+                  value={consultorioDetails.Rua}
+                  onChangeText={(text) => handleDetailChange('Rua', text)}
+                  placeholder="Rua"
+                />
+                <TextInput
+                  style={styles.input}
+                  value={consultorioDetails.Complemento}
+                  onChangeText={(text) =>
+                    handleDetailChange('Complemento', text)
+                  }
+                  placeholder="Complemento"
+                />
+                <Button title="Salvar" onPress={() => handleSaveConsult()} />
+              </>
+            ) : (
+              <>
+                <Text>Nome: {consultorioDetails.Nome || 'Não informado'}</Text>
+                <Text>
+                  Estado: {consultorioDetails.Estado || 'Não informado'}
+                </Text>
+                <Text>
+                  Bairro: {consultorioDetails.Bairro || 'Não informado'}
+                </Text>
+                <Text>
+                  Cidade: {consultorioDetails.Cidade || 'Não informado'}
+                </Text>
+                <Text>Cep: {consultorioDetails.Cep || 'Não informado'}</Text>
+                <Text>
+                  Número: {consultorioDetails.Numero || 'Não informado'}
+                </Text>
+                <Text>Rua: {consultorioDetails.Rua || 'Não informado'}</Text>
+                <Text>
+                  Complemento:{' '}
+                  {consultorioDetails.Complemento || 'Não informado'}
+                </Text>
+                <TouchableOpacity onPress={handleEditToggle}>
+                  <Text style={styles.editButton}>Editar</Text>
+                </TouchableOpacity>
+              </>
+            )}
           </View>
-
-          <View>
-            <Text style={styles.title}>Fotos</Text>
-            <ScrollView horizontal>
-              <Image source={{ uri: 'url_da_foto' }} style={styles.photo} />
-              <Image source={{ uri: 'url_da_foto' }} style={styles.photo} />
-            </ScrollView>
-          </View>
-
-          <View>
-            <Text style={styles.title}>Informações</Text>
-
-            <View style={styles.infoContainer}>
-              <Text style={styles.text}>Nome</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Digite o nome do consultório"
-                placeholderTextColor="#ccc"
-                value={consultorioDetails.Nome}
-                onChangeText={(text) => handleInputChange('Nome', text)}
-              />
-              <Text style={styles.text}>Bairro</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Digite o bairro"
-                placeholderTextColor="#ccc"
-                value={consultorioDetails.Bairro}
-                onChangeText={(text) => handleInputChange('Bairro', text)}
-              />
-              <Text style={styles.text}>Rua</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Digite a rua"
-                placeholderTextColor="#ccc"
-                value={consultorioDetails.Rua}
-                onChangeText={(text) => handleInputChange('Rua', text)}
-              />
-              <Text style={styles.text}>Número</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Digite o número"
-                placeholderTextColor="#ccc"
-                value={consultorioDetails.Numero}
-                onChangeText={(text) => handleInputChange('Numero', text)}
-              />
-              <Text style={styles.text}>Complemento</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Digite o complemento"
-                placeholderTextColor="#ccc"
-                value={consultorioDetails.Complemento}
-                onChangeText={(text) => handleInputChange('Complemento', text)}
-              />
-              <Text style={styles.text}>Cep</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Digite o CEP"
-                placeholderTextColor="#ccc"
-                value={consultorioDetails.Cep}
-                onChangeText={(text) => handleInputChange('Cep', text)}
-              />
-              <Text style={styles.text}>Estado</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Digite o estado"
-                placeholderTextColor="#ccc"
-                value={consultorioDetails.Estado}
-                onChangeText={(text) => handleInputChange('Estado', text)}
-              />
-              <Text style={styles.text}>Cidade</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Digite a cidade"
-                placeholderTextColor="#ccc"
-                value={consultorioDetails.Cidade}
-                onChangeText={(text) => handleInputChange('Cidade', text)}
-              />
-
-              <Button title="Editar dados" onPress={handleEdit} />
-            </View>
-          </View>
-        </ScrollView>
-      </LinearGradient>
+        </>
+      )}
     </SafeAreaView>
   )
 }
@@ -162,50 +294,43 @@ export default function Consultorio() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  background: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  scrollView: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
-    marginVertical: 20,
+  textInput: {
+    position: 'absolute',
+    top: 25,
+    width: '90%',
+    height: 40,
+    borderWidth: 1,
+    paddingRight: 20,
+    zIndex: 1000,
+    alignSelf: 'start',
+    backgroundColor: 'white',
   },
   map: {
     width: '100%',
-    height: 300,
-    marginVertical: 20,
+    height: '100%',
   },
-  photo: {
-    width: 100,
-    height: 100,
-    marginHorizontal: 5,
-    borderRadius: 10,
-  },
-  infoContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+  bottomContainer: {
+    position: 'absolute',
+    bottom: 0,
     width: '100%',
+    padding: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
   },
-  text: {
+  sectionTitle: {
     fontSize: 18,
-    color: 'white',
-    marginVertical: 5,
+    fontWeight: 'bold',
   },
   input: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    fontSize: 16,
-    marginBottom: 10,
-    color: 'white',
-    padding: 5,
+    width: '90%',
+    margin: 10,
+    borderWidth: 1,
+    padding: 8,
+  },
+  editButton: {
+    marginTop: 10,
+    color: 'blue',
   },
 })

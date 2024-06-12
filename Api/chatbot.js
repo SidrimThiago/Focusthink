@@ -21,7 +21,7 @@ export default function Consults() {
   const navigation = useNavigation()
   const UserDetails = storage.getString('user.nameUser')
   const focusbot = 'Focusbot'
-  const apiKey = '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'
+  const apiKey = 'sk-proj-z8i4RZVJosExo5JRpji3T3BlbkFJvRQIuN3sI6C7ooSn7bIV'
   const apiUrl = 'https://api.openai.com/v1/chat/completions'
 
   const [data, setData] = useState([])
