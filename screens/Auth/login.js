@@ -25,7 +25,7 @@ import { GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/go
 
 GoogleSignin.configure({
   scopes: ['email', 'profile'],
-  webClientId: '1046030188594-6tfjdtergfr6tk9l2bvdfb6l2kuvekq2.apps.googleusercontent.com',
+  webClientId: '541274265608-7955nenbgsvdi8o5mb28v9497h2sh4be.apps.googleusercontent.com',
   iosClientId: '1046030188594-ncnuq46els218u5r7f0gnr87hcsl5ua2.apps.googleusercontent.com'
 });
 
@@ -33,10 +33,6 @@ const storage = new MMKV()
 
 export default function Start() {
   const [password, onChangePassword] = useState('')
-  const [loginStatus, setLoginStatus] = useState('')
-  const [errorMessage, setErrorMessage] = useState('')
-  const [sucess, setSucess] = useState('')
-  const [params, setParams] = useState({})
   const [visiblePassword, setVisiblePassword] = useState(true)
   const navigation = useNavigation()
 
@@ -44,14 +40,18 @@ export default function Start() {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   }
 
+
   async function handleGoogleSignIn() {
     try {
       const { idToken } = await GoogleSignin.signIn();
-
-      if(idToken) {
-        const credentials = Realm.Credentials.jwt(idToken);
-
-        await app.logIn(credentials);
+      if (idToken) {
+        const response = await axios.post(API_URL + '/google-auth',  idToken );
+        const result = response.data;
+        if (result.status === 'ok') {
+          console.log(result.message);
+        } else {  
+          console.error(result.error);
+        }
       }
     } catch (error) {
       console.log(error);

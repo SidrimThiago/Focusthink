@@ -1,161 +1,160 @@
-import { React, useState } from 'react'
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   StyleSheet,
   View,
   Text,
-  TextInput,
   SafeAreaView,
-  TouchableOpacity,
-  FlatList,
   Image,
-} from 'react-native'
-import { MMKV } from 'react-native-mmkv'
-import { LinearGradient } from 'expo-linear-gradient'
-import { Ionicons } from '@expo/vector-icons'
-import { useNavigation } from '@react-navigation/native'
-import { StatusBar } from 'expo-status-bar'
+  TouchableOpacity,
+  TextInput,
+} from 'react-native';
+import { MMKV } from 'react-native-mmkv';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import { GiftedChat } from 'react-native-gifted-chat';
+import { useNavigation } from '@react-navigation/native';
 
-const storage = new MMKV()
+const storage = new MMKV();
 
 export default function Consults() {
-  const navigation = useNavigation()
-  const UserDetails = storage.getString('user.nameUser')
-  const focusbot = 'Focusbot'
-  const apiKey = 'sk-proj-z8i4RZVJosExo5JRpji3T3BlbkFJvRQIuN3sI6C7ooSn7bIV'
-  const apiUrl = 'https://api.openai.com/v1/chat/completions'
+  const navigation = useNavigation();
+  const UserDetails = storage.getString('user.nameUser');
+  const focusbot = 'Focusbot';
+  const apiKey = 'sk-proj-z8i4RZVJosExo5JRpji3T3BlbkFJvRQIuN3sI6C7ooSn7bIV';
+  const apiUrl = 'https://api.openai.com/v1/chat/completions';
 
-  const [data, setData] = useState([])
-  const [userInput, setUserInput] = useState('')
+  const [messages, setMessages] = useState([]);
 
-  const HandlerSend = async () => {
-    fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
+  useEffect(() => {
+    setMessages([
+      {
+        _id: 1,
+        text: 'Hello! How can I help you today?',
+        createdAt: new Date(),
+        user: {
+          _id: 2,
+          name: focusbot,
+        },
       },
-      body: JSON.stringify({
-        model: 'gpt-3.5-turbo',
-        messages: [
-          {
-            role: 'user',
-            content: userInput,
-          },
-        ],
-        temperature: 0.3,
-        max_tokens: 500,
-        top_p: 1,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+    ]);
+  }, []);
 
-    const BotRespost = data
-    setData([
-      ...data,
-      { type: `${UserDetails}`, text: userInput },
-      { type: `${focusbot}`, text: BotRespost },
-    ])
-    setUserInput('')
-  }
+  const onSend = useCallback(async (newMessages = []) => {
+    setMessages((previousMessages) => GiftedChat.append(previousMessages, newMessages));
+
+    const userMessage = newMessages[0].text;
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: 'gpt-3.5-turbo',
+          messages: [
+            {
+              role: 'user',
+              content: userMessage,
+            },
+          ],
+          temperature: 0.3,
+          max_tokens: 500,
+          top_p: 1,
+        }),
+      });
+
+      const data = await response.json();
+      const botResponse = data.choices[0].message.content;
+
+      const botMessage = {
+        _id: Math.random().toString(36).substring(7),
+        text: botResponse,
+        createdAt: new Date(),
+        user: {
+          _id: 2,
+          name: focusbot,
+        },
+      };
+
+      setMessages((previousMessages) => GiftedChat.append(previousMessages, botMessage));
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
   return (
-    <SafeAreaView style={styles.container} className="w-full h-screen flex-1">
-      <LinearGradient
-        colors={['#633DE8', '#1C233F']}
-        style={styles.background}
-        className="justify-between flex-1 h-full"
-      >
-        <View className=" justify-start items-center flex-row pt-10">
+    <SafeAreaView style={styles.container}>
+      <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
+        <View style={styles.header}>
           <Image
-            className="rounded-full w-10 h-10 mx-5"
-            alt="image"
+            style={styles.profileImage}
             source={require('../assets/memory/death.png')}
           />
-
-          <Text
-            className=""
-            style={{ fontSize: 16, fontFamily: 'Quicksand-Bold' }}
-          >
-            {UserDetails}
-          </Text>
+          <Text style={styles.userName}>{UserDetails}</Text>
         </View>
-        <FlatList
-          data={data}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <View className="p-10 flex-col">
-              <Text className="font-bold">{item.type}</Text>
-              <Text className="">{item.text}</Text>
-            </View>
+        <GiftedChat
+          messages={messages}
+          onSend={(messages) => onSend(messages)}
+          user={{
+            _id: 1,
+            name: UserDetails,
+          }}
+          placeholder="Type a message..."
+          alwaysShowSend
+          renderSend={(props) => (
+            <Send {...props} />
           )}
         />
-        <View className="flex flex-row bottom-0 pb-2 absolute w-full">
-          <View
-            className="relative justify-center h-14 mb-1 mr-2 ml-2"
-            style={{ width: '81%' }}
-          >
-            <TextInput
-              placeholder="Diga algo"
-              style={{ backgroundColor: 'white' }}
-              className="bg-white w-full h-full rounded-2xl border border-white p-2 text-lg pl-2"
-              onChangeText={(text) => setUserInput(text)}
-              value={userInput}
-            />
-          </View>
-          <View>
-            <TouchableOpacity
-              className="bg-white w-14 h-14 rounded-full items-center justify-center"
-              onPress={HandlerSend}
-            >
-              <Ionicons name="send" size={20} color="#999"></Ionicons>
-            </TouchableOpacity>
-          </View>
-        </View>
       </LinearGradient>
     </SafeAreaView>
-  )
+  );
 }
 
+const Send = (props) => {
+  return (
+    <TouchableOpacity
+      style={styles.sendButton}
+      onPress={() => {
+        if (props.text && props.onSend) {
+          props.onSend({ text: props.text.trim() }, true);
+        }
+      }}
+    >
+      <Ionicons name="send" size={24} color="#633DE8" />
+    </TouchableOpacity>
+  );
+};
+
 const styles = StyleSheet.create({
-  quicksand: {
-    fontFamily: 'Quicksand-Bold',
-    marginBottom: 30,
-  },
-  quicksandRegular: {
-    fontFamily: 'Quicksand-Regular',
-  },
-  quicksandMedium: {
-    fontFamily: 'Quicksand-SemiBold',
-  },
-  tinyLogo: {
-    width: 50,
-    height: 50,
-    padding: 20,
-    position: 'absolute',
-    top: 55,
-    right: 22,
-  },
-  profileImage: {
-    width: 190,
-    height: 190,
-  },
-  textArea: {
-    textAlignVertical: 'top',
-    paddingTop: 15,
-  },
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   background: {
     flex: 1,
-    width: '100%',
-    height: '100%',
+    paddingTop: 10,
   },
-})
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+  },
+  profileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
+  },
+  userName: {
+    fontSize: 16,
+    fontFamily: 'Quicksand-Bold',
+    color: '#fff',
+  },
+  sendButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+    margin: 5,
+  },
+});

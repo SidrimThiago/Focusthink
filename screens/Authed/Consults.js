@@ -1,40 +1,49 @@
-import { React, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
   Text,
-  Image,
-  TextInput,
   SafeAreaView,
   TouchableOpacity,
   Button,
-  FlatList,
-  ScrollView,
   Modal,
-} from 'react-native'
-import { LinearGradient } from 'expo-linear-gradient'
-import {
-  FontAwesome5,
-  MaterialIcons,
-  Entypo,
-  Feather,
-  FontAwesome6,
-} from '@expo/vector-icons'
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import axios from 'axios';
+import MapView, { Marker, Callout } from 'react-native-maps';
+import { API_URL } from '../../.env/config';
 
-import { useNavigation } from '@react-navigation/native'
-import axios from 'axios'
+export default function Consults({ navigation }) {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [consultorios, setConsultorios] = useState([]);
+  const [selectedConsultorio, setSelectedConsultorio] = useState(null);
 
-export default function Consults() {
-  const navigation = useNavigation()
-  const [professionalsData, setProfessionalsData] = useState([])
-  const [modalVisible, setModalVisible] = useState(false)
-  const [selectedProfessional, setSelectedProfessional] = useState(null)
+  useEffect(() => {
+    fetchConsultorios();
+  }, []);
+
+  const fetchConsultorios = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/ExplainConsultorios`);
+      setConsultorios(response.data.data);
+    } catch (error) {
+      console.error('Error fetching consultorios:', error);
+    }
+  };
+
+  const handleMarkerPress = (consultorio) => {
+    setSelectedConsultorio(consultorio);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
         <Button
-          title="chatbot"
+          title="Show Consultories"
+          onPress={() => setModalVisible(true)}
+        />
+        <Button
+          title="Chatbot"
           onPress={() => navigation.navigate('Chatbot')}
         />
         <Button
@@ -42,41 +51,63 @@ export default function Consults() {
           onPress={() => navigation.navigate('Questionary')}
         />
         <Button
-          title="Questionário com Ia"
+          title="Questionário com IA"
           onPress={() => navigation.navigate('IaQuestionary')}
         />
+
+        <Modal
+          visible={modalVisible}
+          animationType="slide"
+          transparent={false}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <MapView style={styles.map}>
+              {consultorios.map((consultorio, index) => (
+                <Marker
+                  key={index}
+                  coordinate={{
+                    latitude: consultorio.Latitude,
+                    longitude: consultorio.Longitude,
+                  }}
+                  onPress={() => handleMarkerPress(consultorio)}
+                >
+                  <Callout>
+                    <View>
+                      <Text>{consultorio.Nome}</Text>
+                    </View>
+                  </Callout>
+                </Marker>
+              ))}
+            </MapView>
+            {selectedConsultorio && (
+              <View style={styles.detailsContainer}>
+                <Text style={styles.sectionTitle}>
+                  Detalhes do Consultório
+                </Text>
+                <Text>Nome: {selectedConsultorio.Nome}</Text>
+                <Text>Estado: {selectedConsultorio.Estado}</Text>
+                <Text>Cidade: {selectedConsultorio.Cidade}</Text>
+                <Text>Bairro: {selectedConsultorio.Bairro}</Text>
+                <Text>Rua: {selectedConsultorio.Rua}</Text>
+                <Text>Número: {selectedConsultorio.Numero}</Text>
+                <Text>Complemento: {selectedConsultorio.Complemento}</Text>
+                <Text>CEP: {selectedConsultorio.Cep}</Text>
+                <Button
+                  title="Fechar"
+                  onPress={() => setSelectedConsultorio(null)}
+                />
+              </View>
+            )}
+            <Button title="Fechar" onPress={() => setModalVisible(false)} />
+          </View>
+        </Modal>
       </LinearGradient>
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
-  quicksand: {
-    fontFamily: 'Quicksand-Bold',
-    marginBottom: 30,
-  },
-  quicksandRegular: {
-    fontFamily: 'Quicksand-Regular',
-  },
-  quicksandMedium: {
-    fontFamily: 'Quicksand-SemiBold',
-  },
-  tinyLogo: {
-    width: 50,
-    height: 50,
-    padding: 20,
-    position: 'absolute',
-    top: 55,
-    right: 22,
-  },
-  profileImage: {
-    width: 190,
-    height: 190,
-  },
-  textArea: {
-    textAlignVertical: 'top',
-    paddingTop: 15,
-  },
   container: {
     flex: 1,
     alignItems: 'center',
@@ -88,31 +119,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  modalContent: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 10,
+  modalContainer: {
+    flex: 1,
   },
-  professionalName: {
+  map: {
+    width: '100%',
+    height: '80%',
+  },
+  detailsContainer: {
+    padding: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+  },
+  sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
   },
-  professionalDetail: {
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    margin: 10,
-    color: '#fff',
-  },
-  modalContainer: {
-    width: '100%',
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-})
+});
