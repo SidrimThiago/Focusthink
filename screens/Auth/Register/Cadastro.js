@@ -1,4 +1,3 @@
-
 import { React, useState } from 'react'
 import {
   StyleSheet,
@@ -177,14 +176,12 @@ export default function Cadastro() {
             </TouchableOpacity>
 
             <TouchableOpacity className="bg-white w-40 h-16 border-4 border-orange-500 rounded-xl mr-3">
-
               <Text
                 className="text-lg shadow-lg self-center mt-3"
                 style={styles.quicksandMedium}
               >
                 Paciente
               </Text>
-
             </TouchableOpacity>
           </View>
 
@@ -277,7 +274,6 @@ export default function Cadastro() {
             Diagnóstico
           </Text>
           <View className="relative justify-center pr-8 pl-8 mb-3 w-full text-gray-500 text-lg">
-
             <SelectList
               setSelected={(value) => setDiag(value)}
               data={data}

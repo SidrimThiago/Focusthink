@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
 import {
   View,
@@ -154,7 +155,13 @@ export default function Consultorio() {
     if (Platform.OS === 'android') {
       PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      ).then(getMyLocation)
+      ).then((granted) => {
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          getMyLocation()
+        } else {
+          console.log('Location permission denied')
+        }
+      })
     } else {
       getMyLocation()
     }
@@ -173,7 +180,7 @@ export default function Consultorio() {
       (error) => {
         console.log('Location error:', error)
       },
-      { enableHighAccuracy: true, timeout: 2000 },
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
     )
   }
 
@@ -193,8 +200,7 @@ export default function Consultorio() {
 
           <MapView
             style={styles.map}
-            initialRegion={region}
-            onPress={handleSearchLocation}
+            region={region}
             showsUserLocation={true}
             zoomEnabled={true}
             loadingEnabled={true}

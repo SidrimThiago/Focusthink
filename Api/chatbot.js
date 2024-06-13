@@ -115,7 +115,7 @@ export default function Chatbot() {
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
-        <View style={styles.header}>
+        <View style={styles.header} className="mt-5">
           <Image
             alt="image"
             style={styles.profileImage}
