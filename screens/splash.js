@@ -24,11 +24,13 @@ export default function Splash() {
 
     const userData = {
       usertoken: storage.getString('user.token'),
-      nomeUser: storage.getString('user.nameUser')
+      nomeUser: storage.getString('user.nameUser'),
+      tipo: storage.getString('user.tipo')
     }
 
     console.log(userData.usertoken)
     console.log(userData.nomeUser)
+    console.log(userData.tipo)
 
     axios
       .post(API_URL + '/ValidateUser', userData)
@@ -37,7 +39,13 @@ export default function Splash() {
         console.log(res.data)
         const { status } = res.data
         if (status === 'verified') {
+
          navigation.navigate('NavBar')
+
+        } else if ( status === 'admin') {
+
+          navigation.navigate('Console')
+          
         } else {
           navigation.dispatch(
             CommonActions.reset({
@@ -45,7 +53,7 @@ export default function Splash() {
               routes: [{ name: 'Start' }],
             }),
           )
-        }
+        } 
       })
   }
 

@@ -30,6 +30,7 @@ import Ranking from '../screens/Authed/Ranking'
 import Consultorio from '../screens/Authed/Consultorio'
 import Questionary from '../screens/Authed/Questionary'
 import IaQuestionary from '../screens/Authed/IaQuestionary'
+import Console from '../screens/Authed/Console'
 
 const Stack = createNativeStackNavigator()
 
@@ -41,6 +42,7 @@ export default function Routes() {
         screenOptions={{ headerShown: false }}
       >
         <Stack.Screen name="Start" component={Start} />
+        <Stack.Screen name="Console" component={Console} />
         <Stack.Screen name="Questionary" component={Questionary} />
         <Stack.Screen name="IaQuestionary" component={IaQuestionary} />
         <Stack.Screen name="CallPage" component={CallPage} />

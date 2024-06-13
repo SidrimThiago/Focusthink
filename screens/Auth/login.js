@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   Keyboard,
   TouchableWithoutFeedback,
+  Modal,
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import React, { useState } from 'react'
@@ -34,12 +35,13 @@ const storage = new MMKV()
 export default function Start() {
   const [password, onChangePassword] = useState('')
   const [visiblePassword, setVisiblePassword] = useState(true)
+  const [modalVisible, setModalVisible] = useState(false)
+  const [userType, setUserType] = useState('')
   const navigation = useNavigation()
 
   const isValidEmail = (email) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   }
-
 
   async function handleGoogleSignIn() {
     try {
@@ -56,6 +58,16 @@ export default function Start() {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  const showAccountTypeModal = () => {
+    setModalVisible(true);
+  }
+
+  const handleAccountTypeSelection = (type) => {
+    setUserType(type);
+    setModalVisible(false);
+    handleGoogleSignIn();
   }
 
   return (
@@ -205,7 +217,7 @@ export default function Start() {
                   className="w-full px-5 pr-8 pl-8"
                   style={{ marginBottom: '10' }}
                 >
-                  <TouchableOpacity onPress={() => handleGoogleSignIn()} className=" border-white w-full border rounded-full flex-row items-center justify-center p-3 mb-3 py-5">
+                  <TouchableOpacity onPress={showAccountTypeModal} className=" border-white w-full border rounded-full flex-row items-center justify-center p-3 mb-3 py-5">
                     <Image
                       alt="image"
                       className="px-1 mr-4 absolute left-5"
@@ -215,7 +227,7 @@ export default function Start() {
                       Continuar com o Google
                     </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity className="border-white border w-full rounded-full items-center justify-center flex-row mb-3 py-5">
+                  <TouchableOpacity onPress={showAccountTypeModal} className="border-white border w-full rounded-full items-center justify-center flex-row mb-3 py-5">
                     <Image
                       alt="image"
                       className="px-1 mr-5 absolute left-5"
@@ -245,15 +257,33 @@ export default function Start() {
                             console.log(res.data)
                             const { status, data } = res.data
                             if (status === 'ok') {
-                              const user = {
-                                userName: data.userName,
-                                token: data.token,
-                              }
-                              console.log(user.userName, user.token)
-                              storage.set('user.nameUser', user.userName)
-                              storage.set('user.token', user.token)
 
-                              navigation.navigate('NavBar')
+                              if(data.tipo === 'Admin' || data.tipo === 'admin'){
+                                console.log("user admin")
+                                const user = {
+                                  userName: data.userName,
+                                  token: data.token,
+                                  tipo: data.tipo
+                                }
+                                storage.set('user.nameUser', user.userName)
+                                storage.set('user.token', user.token)
+                                storage.set('user.tipo', user.tipo)
+                                
+                                navigation.navigate('Console')
+                              } else {
+                                const user = {
+                                  userName: data.userName,
+                                  token: data.token,
+                                  tipo: data.tipo
+                                }
+                                console.log(user.userName, user.token, user.tipo)
+                                storage.set('user.nameUser', user.userName)
+                                storage.set('user.token', user.token)
+                                storage.set('user.tipo', user.tipo)
+  
+                                navigation.navigate('NavBar')
+                              }
+                              
                             }
                           })
                           .catch((error) => {
@@ -274,6 +304,39 @@ export default function Start() {
                   </Text>
                 </View>
               </View>
+
+              {/* Modal for selecting account type */}
+              <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => setModalVisible(false)}
+              >
+                <View style={styles.centeredView}>
+                  <View style={styles.modalView}>
+                    <Text style={styles.modalText} className="font-quick-bold"> 
+                      Antes de fazer Cadastro/Login
+                    </Text>
+                    <Text style={styles.modalText} className="font-quick-medium">
+                      Você deseja entrar com que tipo de usuário?
+                    </Text>
+                    <TouchableOpacity
+                      style={[styles.button, styles.buttonClose]}
+                      className="p-5 w-56"
+                      onPress={() => handleAccountTypeSelection('Especialista')}
+                    >
+                      <Text style={styles.textStyle} className="font-quick-bold">Especialista</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[styles.button, styles.buttonClose]}
+                      className="p-5 w-56"
+                      onPress={() => handleAccountTypeSelection('Paciente')}
+                    >
+                      <Text style={styles.textStyle} className="font-quick-bold">Paciente</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </Modal>
             </LinearGradient>
           </SafeAreaView>
         </TouchableWithoutFeedback>
@@ -305,5 +368,37 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 10,
     paddingTop: 15,
+    marginVertical: 10,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: '#ff7f50',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+    color: '#fff',
+    fontSize: 18,
+  },
+  textStyle: {
+    color: 'black',
+    textAlign: 'center',
   },
 })

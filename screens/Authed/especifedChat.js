@@ -1,65 +1,85 @@
-import { React, useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import {
   StyleSheet,
   View,
   Text,
-  TextInput,
   SafeAreaView,
   TouchableOpacity,
-  FlatList,
+  ActivityIndicator,
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Ionicons, Feather } from '@expo/vector-icons'
 import { useNavigation, useRoute } from '@react-navigation/native'
+import { GiftedChat, Send } from 'react-native-gifted-chat'
 import io from 'socket.io-client'
-import { API_URL } from '../../.env/config'
 import { MMKV } from 'react-native-mmkv'
+import { API_URL } from '../../.env/config'
 
 const storage = new MMKV()
-
 const socket = io(API_URL)
 
 export default function EspecifedChat() {
   const navigation = useNavigation()
   const route = useRoute()
-  const { professional } = route.params
+  const { chatId } = route.params
   const [messages, setMessages] = useState([])
-  const [userInput, setUserInput] = useState('')
-  const flatListRef = useRef()
+  const [loading, setLoading] = useState(false)
   const nomeUser = storage.getString('user.nameUser')
 
   useEffect(() => {
-    socket.emit('findRoom', professional._id)
+    socket.emit('findRoom', chatId)
 
     socket.on('foundRoom', (roomMessages) => {
-      setMessages(roomMessages)
+      const formattedMessages = roomMessages.map((msg) => ({
+        _id: msg.id,
+        text: msg.text,
+        createdAt: new Date(msg.timestamp),
+        user: {
+          _id: msg.user === nomeUser ? 1 : 2,
+          name: msg.user,
+        },
+      }))
+      setMessages(formattedMessages)
     })
 
     socket.on('roomMessage', (newMessage) => {
-      setMessages((prevMessages) => [...prevMessages, newMessage])
+      const formattedMessage = {
+        _id: newMessage.id,
+        text: newMessage.text,
+        createdAt: new Date(newMessage.timestamp),
+        user: {
+          _id: newMessage.user === nomeUser ? 1 : 2,
+          name: newMessage.user,
+        },
+      }
+      setMessages((prevMessages) =>
+        GiftedChat.append(prevMessages, [formattedMessage]),
+      )
     })
 
     return () => {
       socket.off('foundRoom')
       socket.off('roomMessage')
     }
-  }, [professional._id])
+  }, [chatId, nomeUser])
 
-  const handleSend = () => {
-    if (userInput.trim()) {
+  const handleSend = useCallback(
+    (newMessages = []) => {
+      const userMessage = newMessages[0]
       const newMessage = {
-        room_id: professional._id,
-        message: userInput,
+        room_id: chatId,
+        message: userMessage.text,
         user: nomeUser,
-        timestamp: {
-          hour: new Date().getHours(),
-          mins: new Date().getMinutes(),
-        },
+        timestamp: new Date().toISOString(),
       }
+
       socket.emit('newMessage', newMessage)
-      setUserInput('')
-    }
-  }
+      setMessages((previousMessages) =>
+        GiftedChat.append(previousMessages, newMessages),
+      )
+    },
+    [nomeUser, chatId],
+  )
 
   const makeCall = () => {
     const callId = generateRandomId(5)
@@ -84,35 +104,32 @@ export default function EspecifedChat() {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={26} color="white" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>{professional.nome}</Text>
+          <Text style={styles.headerTitle}>Chat</Text>
           <Feather name="video" size={26} color="white" onPress={makeCall} />
         </View>
-        <FlatList
-          ref={flatListRef}
-          data={messages}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View style={styles.messageContainer}>
-              <Text style={styles.messageUser}>{item.user}</Text>
-              <Text style={styles.messageText}>{item.text}</Text>
-              <Text style={styles.messageTime}>{item.time}</Text>
+        <GiftedChat
+          messages={messages}
+          onSend={(messages) => handleSend(messages)}
+          user={{
+            _id: 1,
+            name: nomeUser,
+          }}
+          placeholder="Diga algo..."
+          alwaysShowSend
+          renderSend={(props) => (
+            <Send {...props}>
+              <View style={styles.sendingContainer}>
+                <Ionicons name="send" size={24} color="#633DE8" />
+              </View>
+            </Send>
+          )}
+          renderLoading={() => (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#633DE8" />
             </View>
           )}
-          onContentSizeChange={() =>
-            flatListRef.current.scrollToEnd({ animated: true })
-          }
+          isLoadingEarlier={loading}
         />
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Diga algo"
-            value={userInput}
-            onChangeText={setUserInput}
-          />
-          <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-            <Ionicons name="send" size={20} color="#999" />
-          </TouchableOpacity>
-        </View>
       </LinearGradient>
     </SafeAreaView>
   )
@@ -124,7 +141,7 @@ const styles = StyleSheet.create({
   },
   background: {
     flex: 1,
-    padding: 10,
+    paddingTop: 10,
   },
   header: {
     flexDirection: 'row',
@@ -139,40 +156,14 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 20,
   },
-  messageContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 10,
-    marginVertical: 5,
-  },
-  messageUser: {
-    fontWeight: 'bold',
-  },
-  messageText: {
-    marginVertical: 5,
-  },
-  messageTime: {
-    textAlign: 'right',
-    color: '#999',
-    fontSize: 12,
-  },
-  inputContainer: {
-    flexDirection: 'row',
+  sendingContainer: {
+    justifyContent: 'center',
     alignItems: 'center',
     padding: 10,
-    backgroundColor: '#fff',
-    borderRadius: 10,
   },
-  input: {
+  loadingContainer: {
     flex: 1,
-    padding: 10,
-    backgroundColor: '#eee',
-    borderRadius: 10,
-  },
-  sendButton: {
-    padding: 10,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    marginLeft: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 })

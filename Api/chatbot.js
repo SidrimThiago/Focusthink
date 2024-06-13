@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react'
 import {
   StyleSheet,
   View,
@@ -7,59 +7,59 @@ import {
   SafeAreaView,
   TouchableOpacity,
   ActivityIndicator,
-} from 'react-native';
-import { MMKV } from 'react-native-mmkv';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
-import { GiftedChat, Send } from 'react-native-gifted-chat';
-import { useNavigation } from '@react-navigation/native';
+} from 'react-native'
+import { MMKV } from 'react-native-mmkv'
+import { LinearGradient } from 'expo-linear-gradient'
+import { Ionicons } from '@expo/vector-icons'
+import { GiftedChat, Send } from 'react-native-gifted-chat'
+import { useNavigation } from '@react-navigation/native'
 
-const storage = new MMKV();
+const storage = new MMKV()
 
 export default function Chatbot() {
-  const navigation = useNavigation();
-  const UserDetails = storage.getString('user.nameUser') || 'User';
-  const focusbot = 'Focusbot';
-  const apiKey = 'sk-proj-z8i4RZVJosExo5JRpji3T3BlbkFJvRQIuN3sI6C7ooSn7bIV';
-  const apiUrl = 'https://api.openai.com/v1/chat/completions';
+  const navigation = useNavigation()
+  const UserDetails = storage.getString('user.nameUser') || 'User'
+  const focusbot = 'Focusbot'
+  const apiKey = 'sk-proj-vbx5FzIZwVnO7f7dcxOWT3BlbkFJjl7GIGqYuQ3Jn0VUNWhc'
+  const apiUrl = 'https://api.openai.com/v1/chat/completions'
 
-  const [messages, setMessages] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState([])
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    const storedMessages = storage.getString('chatMessages');
+    const storedMessages = storage.getString('chatMessages')
     if (storedMessages) {
-      setMessages(JSON.parse(storedMessages));
+      setMessages(JSON.parse(storedMessages))
     } else {
       setMessages([
         {
           _id: 1,
-          text: 'Hello! How can I help you today?',
+          text: 'Olá, como posso ajudar você hoje ?',
           createdAt: new Date(),
           user: {
             _id: 2,
             name: focusbot,
           },
         },
-      ]);
+      ])
     }
-  }, []);
+  }, [])
 
   const saveMessages = (messages) => {
-    storage.set('chatMessages', JSON.stringify(messages));
-  };
+    storage.set('chatMessages', JSON.stringify(messages))
+  }
 
   const HandlerSend = useCallback(async (newMessages = []) => {
-    setLoading(true);
+    setLoading(true)
 
     // Add user message to chat
     setMessages((previousMessages) => {
-      const updatedMessages = GiftedChat.append(previousMessages, newMessages);
-      saveMessages(updatedMessages);
-      return updatedMessages;
-    });
+      const updatedMessages = GiftedChat.append(previousMessages, newMessages)
+      saveMessages(updatedMessages)
+      return updatedMessages
+    })
 
-    const userMessage = newMessages[0]?.text || '';
+    const userMessage = newMessages[0]?.text || ''
 
     try {
       const response = await fetch(apiUrl, {
@@ -80,10 +80,12 @@ export default function Chatbot() {
           max_tokens: 500,
           top_p: 1,
         }),
-      });
+      })
 
-      const data = await response.json();
-      const botResponse = data.choices?.[0]?.message?.content || 'Sorry, I did not understand that.';
+      const data = await response.json()
+      const botResponse =
+        data.choices?.[0]?.message?.content ||
+        'Sorry, I did not understand that.'
 
       const botMessage = {
         _id: Math.random().toString(36).substring(7),
@@ -93,26 +95,29 @@ export default function Chatbot() {
           _id: 2,
           name: focusbot,
         },
-      };
+      }
 
       setMessages((previousMessages) => {
-        const updatedMessages = GiftedChat.append(previousMessages, [botMessage]);
-        saveMessages(updatedMessages);
-        return updatedMessages;
-      });
+        const updatedMessages = GiftedChat.append(previousMessages, [
+          botMessage,
+        ])
+        saveMessages(updatedMessages)
+        return updatedMessages
+      })
     } catch (error) {
-      console.log(error);
-      alert('Error fetching the response from the bot. Please try again.');
+      console.log(error)
+      alert('Error fetching the response from the bot. Please try again.')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  }, []);
+  }, [])
 
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
         <View style={styles.header}>
           <Image
+            alt="image"
             style={styles.profileImage}
             source={require('../assets/memory/death.png')}
           />
@@ -143,7 +148,7 @@ export default function Chatbot() {
         />
       </LinearGradient>
     </SafeAreaView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -180,4 +185,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-});
+})

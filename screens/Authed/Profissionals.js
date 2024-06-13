@@ -20,23 +20,21 @@ export default function Profissionals({ navigation }) {
   const [professionalsData, setProfessionalsData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedProfessional, setSelectedProfessional] = useState(null);
-  const [followingStatus, setFollowingStatus] = useState({}); // Estado para armazenar o status de seguimento
+  const [followingStatus, setFollowingStatus] = useState({});
 
   const nomeUser = storage.getString('user.nameUser');
 
   useEffect(() => {
     const fetchProfessionals = async () => {
       try {
-        const response = await axios.get(API_URL + '/ExplainProfissionals');
+        const response = await axios.get(`${API_URL}/ExplainProfissionals`);
         const data = response.data;
 
-        // Atualizar o estado dos profissionais
         setProfessionalsData(data.data);
 
-        // Verificar o estado de seguimento para cada profissional
         const status = {};
         for (const professional of data.data) {
-          const response = await axios.post(API_URL + '/isFollowing', {
+          const response = await axios.post(`${API_URL}/isFollowing`, {
             nome: professional.nome,
             nomeUser,
           });
@@ -61,22 +59,22 @@ export default function Profissionals({ navigation }) {
     setSelectedProfessional(null);
   };
 
-  const sendMessage = async (professional) => {
-    if (!selectedProfessional) return;
-
+  const startChat = async (professional) => {
     try {
-      setModalVisible(false);
-      navigation.navigate('especifedChat', { professional });
+      const response = await axios.post(`${API_URL}/startChat`, {
+        userName: nomeUser,
+        professionalName: professional.nome,
+      });
+      navigation.navigate('EspecifedChat', { chatId: response.data._id });
     } catch (error) {
-      console.error('Erro ao enviar mensagem:', error);
+      console.error('Error starting chat:', error);
     }
   };
 
   const follow = async (professional) => {
     try {
       const nome = professional.nome;
-      const nomeUser = storage.getString('user.nameUser');
-      const response = await axios.post(API_URL + '/FollowProfessional', {
+      const response = await axios.post(`${API_URL}/FollowProfessional`, {
         nome,
         nomeUser,
       });
@@ -163,7 +161,7 @@ export default function Profissionals({ navigation }) {
                   </Text>
                   <Button
                     title="Mensagens"
-                    onPress={() => sendMessage(selectedProfessional)}
+                    onPress={() => startChat(selectedProfessional)}
                   />
                   <Button title="Fechar" onPress={closeModal} />
                 </View>
