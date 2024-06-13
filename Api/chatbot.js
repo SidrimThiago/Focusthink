@@ -27,26 +27,37 @@ export default function Chatbot() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: 'Hello! How can I help you today?',
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: focusbot,
+    const storedMessages = storage.getString('chatMessages');
+    if (storedMessages) {
+      setMessages(JSON.parse(storedMessages));
+    } else {
+      setMessages([
+        {
+          _id: 1,
+          text: 'Hello! How can I help you today?',
+          createdAt: new Date(),
+          user: {
+            _id: 2,
+            name: focusbot,
+          },
         },
-      },
-    ]);
+      ]);
+    }
   }, []);
+
+  const saveMessages = (messages) => {
+    storage.set('chatMessages', JSON.stringify(messages));
+  };
 
   const HandlerSend = useCallback(async (newMessages = []) => {
     setLoading(true);
 
     // Add user message to chat
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, newMessages)
-    );
+    setMessages((previousMessages) => {
+      const updatedMessages = GiftedChat.append(previousMessages, newMessages);
+      saveMessages(updatedMessages);
+      return updatedMessages;
+    });
 
     const userMessage = newMessages[0]?.text || '';
 
@@ -84,9 +95,11 @@ export default function Chatbot() {
         },
       };
 
-      setMessages((previousMessages) =>
-        GiftedChat.append(previousMessages, [botMessage])
-      );
+      setMessages((previousMessages) => {
+        const updatedMessages = GiftedChat.append(previousMessages, [botMessage]);
+        saveMessages(updatedMessages);
+        return updatedMessages;
+      });
     } catch (error) {
       console.log(error);
       alert('Error fetching the response from the bot. Please try again.');
