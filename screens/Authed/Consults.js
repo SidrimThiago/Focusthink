@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'
 import {
   StyleSheet,
   View,
@@ -7,33 +7,72 @@ import {
   TouchableOpacity,
   Button,
   Modal,
-} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import axios from 'axios';
-import MapView, { Marker, Callout } from 'react-native-maps';
-import { API_URL } from '../../.env/config';
+  Platform,
+  PermissionsAndroid,
+} from 'react-native'
+import { LinearGradient } from 'expo-linear-gradient'
+import axios from 'axios'
+import MapView, { Marker, Callout } from 'react-native-maps'
+import { MMKV } from 'react-native-mmkv'
+import { API_URL } from '../../.env/config'
+import { GeoLocation } from '@react-native-community/geolocation'
+
+const storage = new MMKV()
 
 export default function Consults({ navigation }) {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [consultorios, setConsultorios] = useState([]);
-  const [selectedConsultorio, setSelectedConsultorio] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false)
+  const [consultorios, setConsultorios] = useState([])
+  const [region, setRegion] = useState(null)
+  const [selectedConsultorio, setSelectedConsultorio] = useState(null)
+  const nomeUser = storage.getString('user.nameUser')
 
   useEffect(() => {
-    fetchConsultorios();
-  }, []);
+    fetchConsultorios()
+    if (Platform.OS === 'android') {
+      PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      ).then((granted) => {
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          getMyLocation()
+        } else {
+          console.log('Location permission denied')
+        }
+      })
+    } else {
+      getMyLocation()
+    }
+  }, [nomeUser])
+
+  const getMyLocation = () => {
+    GeoLocation.getCurrentPosition(
+      (info) => {
+        setRegion({
+          latitude: info.coords.latitude,
+          longitude: info.coords.longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        })
+      },
+      (error) => {
+        console.log('Location error:', error)
+      },
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+    )
+  }
 
   const fetchConsultorios = async () => {
     try {
-      const response = await axios.get(`${API_URL}/ExplainConsultorios`);
-      setConsultorios(response.data.data);
+      const response = await axios.get(`${API_URL}/ExplainConsultorios`)
+      console.log(response.data.data)
+      setConsultorios(response.data.data)
     } catch (error) {
-      console.error('Error fetching consultorios:', error);
+      console.error('Error fetching consultorios:', error)
     }
-  };
+  }
 
   const handleMarkerPress = (consultorio) => {
-    setSelectedConsultorio(consultorio);
-  };
+    setSelectedConsultorio(consultorio)
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -62,7 +101,11 @@ export default function Consults({ navigation }) {
           onRequestClose={() => setModalVisible(false)}
         >
           <View style={styles.modalContainer}>
-            <MapView style={styles.map}>
+            <MapView
+              style={styles.map}
+              showsUserLocation={true}
+              zoomEnabled={true}
+            >
               {consultorios.map((consultorio, index) => (
                 <Marker
                   key={index}
@@ -82,9 +125,7 @@ export default function Consults({ navigation }) {
             </MapView>
             {selectedConsultorio && (
               <View style={styles.detailsContainer}>
-                <Text style={styles.sectionTitle}>
-                  Detalhes do Consultório
-                </Text>
+                <Text style={styles.sectionTitle}>Detalhes do Consultório</Text>
                 <Text>Nome: {selectedConsultorio.Nome}</Text>
                 <Text>Estado: {selectedConsultorio.Estado}</Text>
                 <Text>Cidade: {selectedConsultorio.Cidade}</Text>
@@ -104,7 +145,7 @@ export default function Consults({ navigation }) {
         </Modal>
       </LinearGradient>
     </SafeAreaView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -124,7 +165,7 @@ const styles = StyleSheet.create({
   },
   map: {
     width: '100%',
-    height: '80%',
+    height: '100%',
   },
   detailsContainer: {
     padding: 20,
@@ -134,4 +175,4 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-});
+})

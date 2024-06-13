@@ -19,12 +19,14 @@ const storage = new MMKV()
 export default function IaQuestionary() {
   const navigation = useNavigation()
   const UserDetails = storage.getString('user.nameUser') || 'User'
-  const focusbot = 'Focusbot'
+  const professionalBot = 'Dr. Psicólogo'
   const apiKey = 'sk-proj-vbx5FzIZwVnO7f7dcxOWT3BlbkFJjl7GIGqYuQ3Jn0VUNWhc'
   const apiUrl = 'https://api.openai.com/v1/chat/completions'
 
   const [messages, setMessages] = useState([])
   const [loading, setLoading] = useState(false)
+
+  const prompt = `Você é um psicólogo especializado em TDAH. Você está realizando o questionário ASRS-18 para ajudar a avaliar sintomas de TDAH em adultos. O questionário consiste em 18 perguntas que você deve fazer ao paciente. Após cada resposta, prossiga com a próxima pergunta do questionário.`
 
   useEffect(() => {
     const storedMessages = storage.getString('chatMessages')
@@ -34,11 +36,11 @@ export default function IaQuestionary() {
       setMessages([
         {
           _id: 1,
-          text: 'Olá, como posso ajudar você hoje ?',
+          text: 'Olá, eu sou Dr. Psicólogo. Vou realizar o questionário ASRS-18 para avaliar sintomas de TDAH. Vamos começar?',
           createdAt: new Date(),
           user: {
             _id: 2,
-            name: focusbot,
+            name: professionalBot,
           },
         },
       ])
@@ -71,10 +73,8 @@ export default function IaQuestionary() {
         body: JSON.stringify({
           model: 'gpt-3.5-turbo',
           messages: [
-            {
-              role: 'user',
-              content: userMessage,
-            },
+            { role: 'system', content: prompt },
+            { role: 'user', content: userMessage },
           ],
           temperature: 0.3,
           max_tokens: 500,
@@ -85,7 +85,7 @@ export default function IaQuestionary() {
       const data = await response.json()
       const botResponse =
         data.choices?.[0]?.message?.content ||
-        'Sorry, I did not understand that.'
+        'Desculpe, não entendi. Poderia repetir?'
 
       const botMessage = {
         _id: Math.random().toString(36).substring(7),
@@ -93,7 +93,7 @@ export default function IaQuestionary() {
         createdAt: new Date(),
         user: {
           _id: 2,
-          name: focusbot,
+          name: professionalBot,
         },
       }
 
@@ -106,7 +106,7 @@ export default function IaQuestionary() {
       })
     } catch (error) {
       console.log(error)
-      alert('Error fetching the response from the bot. Please try again.')
+      alert('Erro ao obter resposta do bot. Por favor, tente novamente.')
     } finally {
       setLoading(false)
     }
@@ -115,7 +115,7 @@ export default function IaQuestionary() {
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
-        <View style={styles.header} className="mt-5 justify-start">
+        <View style={styles.header}>
           <Image
             alt="image"
             style={styles.profileImage}
@@ -130,7 +130,7 @@ export default function IaQuestionary() {
             _id: 1,
             name: UserDetails,
           }}
-          placeholder="Type a message..."
+          placeholder="Digite sua resposta..."
           alwaysShowSend
           renderSend={(props) => (
             <Send {...props}>

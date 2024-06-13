@@ -38,6 +38,8 @@ export default function Consultorio() {
     Cep: '',
     Estado: '',
     Cidade: '',
+    Latitude: null,
+    Longitude: null,
   })
 
   const handleAddressChange = (text) => {
@@ -57,7 +59,7 @@ export default function Consultorio() {
     const address = `${Rua}, ${Numero}, ${Cidade}, ${Estado}, ${Cep}`
     try {
       const response = await axios.get(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyBB0NnuLix6tj8RsN_5OPxBcGVEP3UnfMk`,
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=YOUR_GOOGLE_MAPS_API_KEY`,
       )
       const result = response.data.results[0].geometry.location
       return result
@@ -84,7 +86,6 @@ export default function Consultorio() {
       longitudeDelta: 0.0421,
     })
 
-    const nomeUser = storage.getString('user.nameUser')
     const dataToSend = {
       ...consultorioDetails,
       Latitude: coordinates.lat,
@@ -119,6 +120,12 @@ export default function Consultorio() {
       const data = response.data
       if (data && data.data && data.data.Nome) {
         setConsultorioDetails(data.data)
+        setRegion({
+          latitude: data.data.Latitude,
+          longitude: data.data.Longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        })
         setIsEditMode(false)
       } else {
         setIsEditMode(true)
@@ -159,7 +166,7 @@ export default function Consultorio() {
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           getMyLocation()
         } else {
-          console.log('Location permission denied')
+          console.log('Permissão de localização negada')
         }
       })
     } else {
@@ -178,7 +185,7 @@ export default function Consultorio() {
         })
       },
       (error) => {
-        console.log('Location error:', error)
+        console.log('Erro de localização:', error)
       },
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
     )
