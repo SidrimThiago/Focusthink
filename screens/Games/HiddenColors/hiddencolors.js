@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, View, StatusBar, StyleSheet, Pressable, Alert } from "react-native";
-import { incrementarPontuacao, getPontuacao, resetarPontuacao } from '../../../components/Games/pontuacao.js';
+import { incrementarPontuacao, getPontuacao, resetarPontuacao, incrementarTotal, resetarTotal } from '../../../components/Games/pontuacao.js'
 import TopBarGames from '../../../components/Games/topBarGames.js'
 
 export default function HiddenColors() {
@@ -50,6 +50,7 @@ export default function HiddenColors() {
 
     useEffect(() => {
         resetarPontuacao();
+        resetarTotal();
     }, [])
 
     useEffect(() => {
@@ -170,6 +171,7 @@ export default function HiddenColors() {
             setHiddenColors(generateRandomColors());
         }
 
+        incrementarTotal();
         console.log(`Fase: ${fase}`);
         console.log(`Pontuação: ${getPontuacao()}`);
     };
@@ -262,9 +264,9 @@ export default function HiddenColors() {
         <SafeAreaView style={styles.container}>
 
             <TopBarGames
-                duration={121}
+                duration={60}
                 onTimerFinish={() => setModalVisible(true)}
-                restart="HiddenColors"
+                restart="HiddenColorsInfo"
             />
             <View style={{ marginTop: StatusBar.currentHeight, width: '100%', height: '60%', flexDirection: 'column-reverse' }}>
                 <View style={styles.lines}>

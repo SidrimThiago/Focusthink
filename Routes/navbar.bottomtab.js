@@ -6,7 +6,8 @@ import Calendar from '../screens/Authed/Calendar'
 import HomeRoutes from './home.routes'
 import GamesTopBar from './game.toptab'
 import ConsultsRoutes from './consults.routes'
-import Consultorio from '../screens/Authed/Consults/Consultorio'
+import Maps from '../screens/Authed/Consults/maps'
+import Consults from '../Api/chatbot'
 
 const Tab = createBottomTabNavigator()
 
@@ -75,7 +76,7 @@ export default function NavBar() {
       />
       <Tab.Screen
         name="ConsultsRoutes"
-        component={Consultorio}
+        component={ConsultsRoutes}
         options={{
           title: 'Consultas',
           tabBarIcon: ({ focused }) => (

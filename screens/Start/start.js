@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Image, SafeAreaView, Pressable, TouchableOpacity, Animated } from 'react-native'
+import { StyleSheet, View, Text, Image, SafeAreaView, Pressable, TouchableOpacity,  } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import React, { useEffect, useRef } from 'react'
 import ButtonComponent from '../../components/button'
@@ -8,7 +8,6 @@ import { Formik } from 'formik'
 
 export default function Start() {
     const navigation = useNavigation()
-
 
     return (
         <SafeAreaView style={styles.container} className="w-full h-full flex-1 justify-between" >

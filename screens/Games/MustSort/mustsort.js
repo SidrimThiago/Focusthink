@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { SafeAreaView, View, Dimensions, Pressable, StyleSheet, Text, StatusBar } from 'react-native';
 import Modal from 'react-native-modal'
 import Animated, { useAnimatedStyle, withTiming, Easing, useSharedValue } from 'react-native-reanimated';
-import { incrementarPontuacao, getPontuacao, resetarPontuacao } from '../../../components/Games/pontuacao.js';
+import { incrementarPontuacao, getPontuacao, resetarPontuacao, incrementarTotal, resetarTotal, getTotal } from '../../../components/Games/pontuacao.js'
 import LottieView from 'lottie-react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import TopBarGames from '../../../components/Games/topBarGames.js';
@@ -41,6 +41,7 @@ export default function MustSort() {
         const circleWidth = screenWidth * 0.518;
         setCircleSize(circleWidth);
         resetarPontuacao();
+        resetarTotal();
 
         generateInitialCircleData();
     }, []);
@@ -100,22 +101,24 @@ export default function MustSort() {
 
         duration = 650;
 
+        incrementarTotal();
+
         if (svgType === 'ArrowLeft' && color === '#5C38D3') {
             positionX.value = withTiming(direction * 500, { duration: duration, easing: Easing.linear });
             setCorrectness(true);;
-            incrementScore();
+            incrementarPontuacao();
             handleTopSquarePress()
         } else if (svgType === 'ArrowRight' && color === '#EE5303') {
             positionX.value = withTiming(direction * 500, { duration: duration, easing: Easing.linear });
             setCorrectness(true);;
-            incrementScore();
+            incrementarPontuacao();
             handleBottomSquarePress();
         } else if (svgType === 'Opposite') {
             const oppositeColor = circleColors[1] === '#5C38D3' ? '#EE5303' : '#5C38D3';
             if (color === oppositeColor) {
                 positionX.value = withTiming(direction * 500, { duration: duration, easing: Easing.linear });
                 setCorrectness(true);
-                incrementScore();
+                incrementarPontuacao();
                 if (color === '#5C38D3') {
                     handleTopSquarePress();
                 } else if (color === '#EE5303') {
@@ -128,7 +131,7 @@ export default function MustSort() {
         } else if (svgType === '' && color === circleColors[1]) {
             positionX.value = withTiming(direction * 500, { duration: duration, easing: Easing.linear });
             setCorrectness(true);;
-            incrementScore();
+            incrementarPontuacao();
             if (color === '#5C38D3') {
                 handleTopSquarePress();
             } else if (color === '#EE5303') {
@@ -140,6 +143,7 @@ export default function MustSort() {
         }
 
         console.log(getPontuacao())
+        console.log(getTotal())
         generateRandomColors();
     };
 
@@ -148,7 +152,7 @@ export default function MustSort() {
 
         const svgType = svgTypes[1];
         if (svgType === 'Tap') {
-            incrementScore();
+            incrementarPontuacao();
             setCorrectness(true);
         } else {
             setCorrectness(false);
@@ -182,9 +186,6 @@ export default function MustSort() {
         };
     });
 
-    const incrementScore = () => {
-        incrementarPontuacao();
-    };
 
     const CorrectTap = () => {
         return (
@@ -245,9 +246,9 @@ export default function MustSort() {
     return (
         <SafeAreaView style={styles.container}>
             <TopBarGames
-                duration={500}
+                duration={15}
                 onTimerFinish={() => setModalVisible(true)}
-                restart="Stroop"
+                restart="MustSortInfo"
             />
 
             <Pressable onPress={() => [setModalGuide(true), setCorrectness(null)]} style={{ zIndex: 5, width: 80, height: 80, borderRadius: 100, backgroundColor: 'rgba(255, 255, 255, 0.5)', position: 'absolute', right: 0, marginTop: StatusBar.currentHeight + 80, marginRight: 10, justifyContent: 'flex-start' }}>
@@ -287,6 +288,10 @@ export default function MustSort() {
                     <View style={styles.lines}>
                         <View style={styles.symbols}><ArrowRight width={35} height={50} /></View>
                         <Text style={styles.textGuide}>Toque o lado direito</Text>
+                    </View>
+                    <View style={styles.lines}>
+                        <View style={styles.symbols}><Opposite width={35} height={50} /></View>
+                        <Text style={styles.textGuide}>Toque o lado da cor oposta</Text>
                     </View>
                     <View style={styles.lines}>
                         <View style={styles.symbols}><Tap width={35} height={50} /></View>

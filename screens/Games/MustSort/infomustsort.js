@@ -59,20 +59,7 @@ export default function MustSortInfo() {
                             uma experiência divertida, esse tipo de jogo pode melhorar a capacidade de resposta rápida, a agilidade mental e a concentração dos jogadores.
                         </Text>
 
-                        <View style={{ width: '90%', height: 400, backgroundColor: 'white', marginTop: 40, borderRadius: 20, padding: 15 }}>
-                            <Text style={{ fontSize: 28, fontFamily: 'Quicksand-Bold' }}>
-                                Como Jogar?
-                            </Text>
-                            <Text style={{ fontSize: 17, fontFamily: 'Quicksand-SemiBold', marginTop: 5 }}>
-                                Você deve selecionar a cor em que a palavra está escrita.
-                            </Text>
-                            <LottieView
-                                style={{ flex: 1, maxHeight: 600, }}
-                                source={require('../../../assets/GamesScreen/tutorial.json')}
-                                autoPlay
-                                loop={true}
-                            />
-                        </View>
+                        
 
                     </View>
                 </ScrollView>

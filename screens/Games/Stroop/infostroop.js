@@ -1,14 +1,27 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity, Image, ScrollView, Pressable } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { AntDesign } from '@expo/vector-icons'
 import LottieView from 'lottie-react-native'
+import { MMKV } from 'react-native-mmkv'
 import Icon from '../../../assets/GamesScreen/GamesInfos/StroopInfo.svg'
+
+const storage = new MMKV()
 
 export default function StroopInfo() {
     const navigation = useNavigation();
-    
+    const [ultimasPontuacoes, setUltimasPontuacoes] = useState([])
+    const [melhorPontuacao, setMelhorPontuacao] = useState(0)
+  
+    useEffect(() => {
+      const pontuacoes = JSON.parse(storage.getString('ultimasPontuacoes') || '[0]')
+      setUltimasPontuacoes(pontuacoes)
+      const melhor = storage.getNumber('melhorPontuacao') || 0
+      setMelhorPontuacao(melhor * 5)
+      
+    }, [])
+  
 
     return (
         <SafeAreaView style={styles.container}>
@@ -16,7 +29,7 @@ export default function StroopInfo() {
                 colors={['#633DE8', '#2D3A6A']}
                 style={styles.background}
             >
-                <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+                <ScrollView style={{ flex: 1 }}>
                     <Pressable onPress={() => navigation.navigate('NavBar')}>
                         <AntDesign name="arrowleft" size={38} color="white" style={{ position: 'absolute', top: 55, left: 15 }} />
                     </Pressable>
@@ -26,7 +39,7 @@ export default function StroopInfo() {
                             <Text style={{ fontSize: 36, color: 'white', fontFamily: 'Quicksand-Bold', marginBottom: 5 }}>Palavras {'\n'}de Cores</Text>
                             <Text style={{ fontSize: 18, color: '#E3E3E3', fontFamily: 'Quicksand-Medium', marginBottom: 20 }}>Treino de atenção seletiva de cores</Text>
                             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <TouchableOpacity onPress={() => navigation.navigate('Countdown', { jogo: 'Stroop' })} style={{ height: 45, width: 175, backgroundColor: '#FF6F20', borderRadius: 5, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
+                                <TouchableOpacity onPress={() => navigation.navigate('Countdown', { jogo: 'Stroop'})} style={{ height: 45, width: 175, backgroundColor: '#FF6F20', borderRadius: 5, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
                                     <Text style={{ fontSize: 29, color: 'white', fontFamily: 'Quicksand-Bold', bottom: 4 }}>Jogar</Text>
                                 </TouchableOpacity>
                                 <View style={{ width: 100, height: 32, backgroundColor: '#FF3E3E', alignItems: 'center', justifyContent: 'flex-start', borderRadius: 40 }}>
@@ -35,10 +48,9 @@ export default function StroopInfo() {
                             </View>
                         </View>
 
-
                         <View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 35 }}>
                             <View style={{ width: 150, height: 80, borderWidth: 1.5, borderColor: '#B8B8B8', justifyContent: 'flex-end', alignItems: 'center', borderRadius: 16, marginRight: 10 }}>
-                                <Text style={{ fontSize: 38, color: 'white', fontFamily: 'Quicksand-SemiBold' }}>0</Text>
+                                <Text style={{ fontSize: 38, color: 'white', fontFamily: 'Quicksand-SemiBold' }}>{ultimasPontuacoes[ultimasPontuacoes.length - 1] * 5}</Text>
                                 <Text style={{ fontSize: 14, color: '#D8D8D8', fontFamily: 'Quicksand-Medium', bottom: 5 }}>Ultima pontuação</Text>
                             </View>
                             <View style={{ width: 150, height: 80, borderWidth: 1.5, borderColor: '#B8B8B8', justifyContent: 'flex-end', alignItems: 'center', borderRadius: 16, marginLeft: 10 }}>
@@ -47,7 +59,7 @@ export default function StroopInfo() {
                                         source={require('../../../assets/GamesScreen/trophy.png')}
                                         style={{ width: 28, height: 28, top: 20 }}
                                     />
-                                    <Text style={{ fontSize: 38, color: 'white', fontFamily: 'Quicksand-SemiBold', marginLeft: 5 }}>300</Text>
+                                    <Text style={{ fontSize: 38, color: 'white', fontFamily: 'Quicksand-SemiBold', marginLeft: 5 }}>{melhorPontuacao}</Text>
                                 </View>
                                 <Text style={{ fontSize: 14, color: '#D8D8D8', fontFamily: 'Quicksand-Medium', bottom: 5 }}>Melhor pontuação</Text>
                             </View>
@@ -66,7 +78,7 @@ export default function StroopInfo() {
                                 Você deve selecionar a cor em que a palavra está escrita.
                             </Text>
                             <LottieView
-                                style={{ flex: 1, maxHeight: 600, }}
+                                style={{ flex: 1, maxHeight: 600,}}
                                 source={require('../../../assets/GamesScreen/tutorial.json')}
                                 autoPlay
                                 loop={true}

@@ -2,11 +2,14 @@ import React, { useEffect } from "react";
 import { View } from "react-native";
 import { useNavigation, useRoute, CommonActions } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
+import ReturnFalse from "../../components/returnfalse";
 
 export default function GamesCountdown() {
     const navigation = useNavigation();
     const route = useRoute();
     const { jogo } = route.params; // Access the passed parameter
+
+    ReturnFalse();
 
     useEffect(() => {
         const timer = setTimeout(() => {

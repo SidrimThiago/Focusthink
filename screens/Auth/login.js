@@ -17,20 +17,22 @@ import ButtonComponent from '../../components/button'
 import { useNavigation } from '@react-navigation/native'
 import { MaterialIcons, Entypo } from '@expo/vector-icons'
 import { Formik } from 'formik'
-import auth from '@react-native-firebase/auth'
 import { MMKV } from 'react-native-mmkv'
 import axios from 'axios'
 import { API_URL } from '../../.env/config'
 import * as AuthSession from 'expo-auth-session'
+import { GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
+
+GoogleSignin.configure({
+  scopes: ['email', 'profile'],
+  webClientId: '541274265608-7955nenbgsvdi8o5mb28v9497h2sh4be.apps.googleusercontent.com',
+  iosClientId: '1046030188594-ncnuq46els218u5r7f0gnr87hcsl5ua2.apps.googleusercontent.com'
+});
 
 const storage = new MMKV()
 
 export default function Start() {
   const [password, onChangePassword] = useState('')
-  const [loginStatus, setLoginStatus] = useState('')
-  const [errorMessage, setErrorMessage] = useState('')
-  const [sucess, setSucess] = useState('')
-  const [params, setParams] = useState({})
   const [visiblePassword, setVisiblePassword] = useState(true)
   const navigation = useNavigation()
 
@@ -38,28 +40,21 @@ export default function Start() {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   }
 
+
   async function handleGoogleSignIn() {
     try {
-      const CLIENT_ID = '541274265608-7955nenbgsvdi8o5mb28v9497h2sh4be.apps.googleusercontent.com'
-      const REDIRECT_URI = 'https://auth.expo.io/@sidrim/Focusthink'
-      const SCOPE = encodeURI("profile email")
-      const RESPONSE_TYPE = 'token'
-
-      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPE}&resonse_type=${RESPONSE_TYPE}`
-
-      const result = await AuthSession.loadAsync({ authUrl });
-
-
-
-      if(result.type  === 'success'){
-        const response = await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${params.access_token}`)
-        const user = await response.json()
-        console.log(user)
-
+      const { idToken } = await GoogleSignin.signIn();
+      if (idToken) {
+        const response = await axios.post(API_URL + '/google-auth',  idToken );
+        const result = response.data;
+        if (result.status === 'ok') {
+          console.log(result.message);
+        } else {  
+          console.error(result.error);
+        }
       }
-      
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
@@ -253,10 +248,15 @@ export default function Start() {
                               const user = {
                                 userName: data.userName,
                                 token: data.token,
+                                tipo: data.tipo
                               }
                               console.log(user.userName, user.token)
                               storage.set('user.nameUser', user.userName)
                               storage.set('user.token', user.token)
+
+                              if(user.tipo === 'Admin'){
+                                navigation.navigate('Console')
+                              }
 
                               navigation.navigate('NavBar')
                             }

@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -6,60 +6,75 @@ import {
   SafeAreaView,
   FlatList,
   TouchableOpacity,
-} from 'react-native'
-import { LinearGradient } from 'expo-linear-gradient'
-import axios from 'axios'
-import { useNavigation } from '@react-navigation/native'
-import { MMKV } from 'react-native-mmkv'
-import { API_URL } from '../../.env/config'
+  Button,
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
+import { MMKV } from 'react-native-mmkv';
+import { API_URL } from '../../.env/config';
 
-const storage = new MMKV()
+const storage = new MMKV();
 
 export default function Chats() {
-  const [chats, setChats] = useState([])
-  const navigation = useNavigation()
-  const nomeUser = storage.getString('user.nameUser')
+  const [chats, setChats] = useState([]);
+  const navigation = useNavigation();
+  const nomeUser = storage.getString('user.nameUser');
 
   useEffect(() => {
     const fetchChats = async () => {
       try {
-        const response = await axios.get(API_URL + '/chats', nomeUser)
-        setChats(response.data)
+        console.log(`Fetching chats for user: ${nomeUser}`);
+        const response = await axios.get(API_URL + '/chats', {
+          params: { nomeUser },
+        });
+        console.log('Chats fetched:', response.data);
+        setChats(response.data);
       } catch (error) {
-        console.error('Error fetching chats:', error)
+        console.error('Error fetching chats:', error);
       }
-    }
+    };
 
-    fetchChats()
-  }, [nomeUser])
+    fetchChats();
+  }, [nomeUser]);
 
   const handleChatPress = (chat) => {
-    navigation.navigate('especifedChat', { professional: chat.professional })
-  }
+    navigation.navigate('especifedChat', { chat });
+  };
+
+  const handleStartChatPress = () => {
+    navigation.navigate('Profissionals');
+  };
 
   const renderChatItem = ({ item }) => (
     <TouchableOpacity
       style={styles.chatContainer}
       onPress={() => handleChatPress(item)}
     >
-      <Text style={styles.chatName}>{item.professional.nome}</Text>
+      <Text style={styles.chatName}>{item.roomName}</Text>
       <Text style={styles.chatLastMessage}>{item.lastMessage}</Text>
-      <Text style={styles.chatTime}>{item.time}</Text>
+      <Text style={styles.chatTime}>{item.lastMessageTime}</Text>
     </TouchableOpacity>
-  )
+  );
 
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
         <Text style={styles.title}>Conversas</Text>
-        <FlatList
-          data={chats}
-          renderItem={renderChatItem}
-          keyExtractor={(item) => item._id}
-        />
+        {chats.length === 0 ? (
+          <View style={styles.noChatsContainer}>
+            <Button title="Iniciar Chat" onPress={handleStartChatPress} />
+          </View>
+        ) : (
+          <FlatList
+            data={chats}
+            renderItem={renderChatItem}
+            keyExtractor={(item) => item.id}
+          />
+        )}
       </LinearGradient>
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -96,4 +111,9 @@ const styles = StyleSheet.create({
     color: '#999',
     fontSize: 12,
   },
-})
+  noChatsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

@@ -1,33 +1,110 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import { incrementarPontuacao, getPontuacao, resetarPontuacao } from '../../../components/Games/pontuacao.js'
+import { incrementarPontuacao, getPontuacao, resetarPontuacao, incrementarTotal, resetarTotal } from '../../../components/Games/pontuacao.js'
 import LottieView from 'lottie-react-native'
 import TopBarGames from '../../../components/Games/topBarGames.js'
+import { MMKV } from 'react-native-mmkv'
+import { API_URL } from '../../../.env/config.js'
+import axios from 'axios'
+
+const storage = new MMKV()
 
 export default function Stroop() {
   const navigation = useNavigation()
-  
-  const [modalVisible, setModalVisible] = useState(false)
-  const [isModalOptions, setModalOptions] = useState(false)
 
   const [faseAtual, setFaseAtual] = useState(1) // Controla a fase atual do teste
   const [corReferencial, setCorReferencial] = useState(null) // Cor referencial para a palavra
   const [opcoesCores, setOpcoesCores] = useState([]) // Opções de cores para as alternativas
   const [indiceRespostaCorreta, setIndiceRespostaCorreta] = useState(null) // Índice da alternativa correta
   const [respostaCorreta, setRespostaCorreta] = useState(null)
+  const [pontuacoes, setPontuacoes] = useState([]);
+  const [sequenciaDiaria, setSequenciaDiaria] = useState(0); 
+
+  const [modalVisible, setModalVisible] = useState(false)
+  const [isModalOptions, setModalOptions] = useState(false)
+
+
+  // Função para finalizar o jogo e armazenar pontuações
+  const finalizarJogo = async () => {
+    const pontuacaoAtual = getPontuacao(); // Obtém a pontuação atual
+    const ultimasPontuacoes = JSON.parse(storage.getString('ultimasPontuacoes') || '[]');
+  
+    ultimasPontuacoes.push(pontuacaoAtual); // Adiciona a pontuação atual à array
+  
+    if (ultimasPontuacoes.length > 100) {
+      ultimasPontuacoes.shift(); // Remove a pontuação mais antiga se houver mais de 100
+    }
+  
+    storage.set('ultimasPontuacoes', JSON.stringify(ultimasPontuacoes)); // Armazena a array atualizada
+  
+    const melhorPontuacao = Math.max(...ultimasPontuacoes); // Calcula a melhor pontuação
+    storage.set('melhorPontuacao', melhorPontuacao); // Armazena a melhor pontuação
+  
+    setModalVisible(true);
+
+  }
+
+  const atualizarFocusPoints = async () => {
+    const pont = getPontuacao();
+    const pontuacaoAtual = pont * 5
+    try {
+      const nomeUser = storage.getString('user.nameUser')
+      const response = await axios.post(API_URL + '/updateFocusPoints', {focusPoints: pontuacaoAtual, nomeUser: nomeUser})
+  
+      if (response.status === 200) {
+        console.log('Focus points atualizados com sucesso no backend.');
+        
+      } else {
+        console.error('Erro ao atualizar focus points no backend.');
+      }
+    } catch (error) {
+      console.error('Erro ao enviar solicitação para atualizar focus points:', error);
+    }
+  }
 
 
   useEffect(() => {
-    resetarPontuacao()
+    const ultimasPontuacoes = JSON.parse(storage.getString('ultimasPontuacoes') || '[]');
+    setPontuacoes(ultimasPontuacoes);
+  }, []);
+  
+  const handleTimerFinish = () => {
+    atualizarFocusPoints()
+    finalizarJogo()
+    setModalVisible(true)
+  }
+
+  useEffect(() => {
     gerarFase() // Inicializa a primeira fase
   }, [])
 
   // Arrays com as cores em hexadecimal e seus respectivos nomes
-  const coresHex = [ '#FFFFFF', '#48E55A', '#DE1F1F', '#00D1E6', '#F3DE10', '#FE65F7', '#9D2EEC', '#FF8400', '#ABB4BD', '#2B3344' ]
-  const nomesCores = [ 'BRANCO', 'VERDE', 'VERMELHO', 'AZUL', 'AMARELO', 'ROSA', 'ROXO', 'LARANJA', 'CINZA', 'PRETO' ]
+  const coresHex = [
+    '#FFFFFF',
+    '#48E55A',
+    '#DE1F1F',
+    '#00D1E6',
+    '#F3DE10',
+    '#FE65F7',
+    '#9D2EEC',
+    '#FF8400',
+    '#ABB4BD',
+    '#2B3344',
+  ]
+  const nomesCores = [
+    'BRANCO',
+    'VERDE',
+    'VERMELHO',
+    'AZUL',
+    'AMARELO',
+    'ROSA',
+    'ROXO',
+    'LARANJA',
+    'CINZA',
+    'PRETO',
+  ]
 
-  // Função para gerar uma fase do teste
   const gerarFase = () => {
     // Escolhe aleatoriamente uma cor e sua respectiva palavra
     const indiceAleatorio = Math.floor(Math.random() * coresHex.length)
@@ -105,6 +182,12 @@ export default function Stroop() {
 
   // Função para verificar se a resposta está correta
   const verificarResposta = (indice) => {
+    if (faseAtual === 1) {
+      resetarPontuacao()
+      resetarTotal()
+    }
+
+    incrementarTotal();
 
     if (indice === indiceRespostaCorreta) {
       incrementarPontuacao() // Incrementa a pontuação
@@ -116,8 +199,8 @@ export default function Stroop() {
     }
     setTimeout(() => {
       proximaFase() // Avança para a próxima fase
-    }, 1300)
-  }
+    }, 2100)
+  } 
 
   // Função para ir para a próxima fase
   const proximaFase = () => {
@@ -143,7 +226,7 @@ export default function Stroop() {
       CINZA: 41,
       PRETO: 40,
     }
-    return tamanhoFontePorCor[cor] || 29 // Retorna 29 se o tamanho da fonte não estiver definido para a cor
+    return tamanhoFontePorCor[cor] || 30 // Retorna 30 se o tamanho da fonte não estiver definido para a cor
   }
 
   const obterCorSombra = (corBotao) => {
@@ -162,26 +245,24 @@ export default function Stroop() {
     return corSombraBotao[corBotao]
   }
 
-  const reiniciarJogo = () => {
-    // Redefine o estado para os valores iniciais
-    setFaseAtual(0)
-    setModalVisible(false)
-    resetarPontuacao() // Chama a função para reiniciar a pontuação
-    
-    // Inicializa a primeira fase novamente
-    gerarFase()
-  }
-
 
   return (
     <SafeAreaView style={styles.container}>
       <TopBarGames
-        duration={30}
-        onTimerFinish={() => setModalVisible(true)}
-        restart="Stroop"
+        duration={25}
+        onTimerFinish={handleTimerFinish}
+        restart='StroopInfo'
       />
 
-      <View style={[ styles.referencial, { backgroundColor: corReferencial.cor === '#2B3344' ? '#FFFFFF' : '#2B3344', } ]} >
+      <View
+        style={[
+          styles.referencial,
+          {
+            backgroundColor:
+              corReferencial.cor === '#2B3344' ? '#FFFFFF' : '#2B3344',
+          },
+        ]}
+      >
         <Text style={[styles.texto, { color: corReferencial.cor }]}>
           {corReferencial.nome}
         </Text>
@@ -189,20 +270,25 @@ export default function Stroop() {
 
       {faseAtual <= 2 ? (
         <View style={styles.opcoes}>
-          {opcoesCores.map((cor, indice) => (
-            <TouchableOpacity
-              key={indice}
-              style={styles.botaoSombra}
-              onPress={() => verificarResposta(indice)}
-            >
-              <View style={styles.botao}>
-                <Text style={[ styles.textoBotao, { fontSize: obterTamanhoFonte(cor) } ]} >
-                  {nomeMascarado(cor)}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
+        {opcoesCores.map((cor, indice) => (
+          <TouchableOpacity
+            key={indice}
+            style={styles.botaoSombra}
+            onPress={() => verificarResposta(indice)}
+          >
+            <View style={styles.botao}>
+              <Text
+                style={[
+                  styles.textoBotao,
+                  { fontSize: obterTamanhoFonte(cor) },
+                ]}
+              >
+                {nomeMascarado(cor)}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
       ) : (
         <View style={fase2.opcoes}>
           {opcoesCores.map((cor, indice) => {
@@ -221,7 +307,15 @@ export default function Stroop() {
                 onPress={() => verificarResposta(indice)}
               >
                 <View style={[fase2.botao, { backgroundColor: corBotao }]}>
-                  <Text style={[ fase2.textoBotao, { fontSize: obterTamanhoFonte(nomeMascarado(cor)), color: corTexto } ]} >
+                  <Text
+                    style={[
+                      fase2.textoBotao,
+                      {
+                        fontSize: obterTamanhoFonte(nomeMascarado(cor)),
+                        color: corTexto,
+                      },
+                    ]}
+                  >
                     {nomeMascarado(cor)}
                   </Text>
                 </View>
@@ -235,7 +329,7 @@ export default function Stroop() {
         <View style={styles.lottieContainer}>
           <LottieView
             style={{ flex: 1, maxHeight: 200 }}
-            source={require('../../../assets/GamesScreen/correct.json')}
+            source={require('../../../assets/StroopTest/correct.json')}
             autoPlay
             loop={false}
           />
@@ -247,7 +341,7 @@ export default function Stroop() {
           <View style={styles.lottieContainer}>
             <LottieView
               style={{ flex: 1, maxHeight: 200 }}
-              source={require('../../../assets/GamesScreen/incorrect.json')}
+              source={require('../../../assets/StroopTest/incorrect.json')}
               autoPlay
               loop={false}
             />
@@ -266,7 +360,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#57407C',
   },
   referencial: {
-    width: 380,
+    width: 340,
     height: 90,
     borderRadius: 20,
     backgroundColor: '#2B3344',
@@ -280,13 +374,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   opcoes: {
+    width: 360,
     height: 300,
     flexWrap: 'wrap',
     marginTop: 300,
-    alignItems: 'center'
   },
   botao: {
-    width: 180,
+    width: 160,
     height: 70,
     alignItems: 'center',
     justifyContent: 'center',
@@ -298,13 +392,13 @@ const styles = StyleSheet.create({
     left: -2,
   },
   botaoSombra: {
+    width: 162,
     height: 72,
     backgroundColor: '#8CAECE',
     marginVertical: 10,
     borderRadius: 7,
     marginHorizontal: 10,
     zIndex: 2,
-    paddingRight: 1
   },
   textoBotao: {
     fontWeight: 'bold',
@@ -341,12 +435,13 @@ const fase2 = StyleSheet.create({
     fontWeight: 'bold',
   },
   opcoes: {
-    height: 370,
+    width: 360,
+    height: 450,
     flexWrap: 'wrap',
     marginTop: 300,
   },
   botao: {
-    width: 180,
+    width: 160,
     height: 70,
     alignItems: 'center',
     justifyContent: 'center',
@@ -358,13 +453,12 @@ const fase2 = StyleSheet.create({
     left: -2,
   },
   botaoSombra: {
+    width: 162,
     height: 72,
-    backgroundColor: '#8CAECE',
     marginVertical: 10,
     borderRadius: 7,
     marginHorizontal: 10,
     zIndex: 2,
-    paddingRight: 1
   },
   textoBotao: {
     fontWeight: 'bold',

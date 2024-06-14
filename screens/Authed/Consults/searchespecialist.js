@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import { View, FlatList, Text, TextInput, StyleSheet, Animated, TouchableHighlight, Pressable } from "react-native";
+import { View, FlatList, Text, TextInput, Image, Animated, TouchableHighlight, Pressable } from "react-native";
 import { Octicons, AntDesign } from '@expo/vector-icons';
 
 export default function SearchEspecialist() {
@@ -45,7 +45,7 @@ export default function SearchEspecialist() {
     const Item = React.memo(() => (
         <TouchableHighlight onPress={() => console.log('Apertado')} activeOpacity={0.8} underlayColor='#6148B6'>
             <View style={{ backgroundColor: '#633DE8', alignItems: 'center', flexDirection: 'row', padding: 15, paddingLeft: 15 }}>
-                <View style={{ backgroundColor: 'gray', width: 90, height: 90, borderRadius: 10 }} />
+                <Image source={require('../../../assets/image 102.png')} style={{ width: 90, height: 90, borderRadius: 10 }} />
                 <View style={{ marginLeft: 8, justifyContent: 'space-between' }} >
                     <Text style={{ fontSize: 18, fontFamily: 'Quicksand-Bold', color: 'white' }}>Dr. Adrian Segara</Text>
                     <Text style={{ fontSize: 13, fontFamily: 'Quicksand-SemiBold', color: '#D5D5D5', marginBottom: 5 }}>1.2 km</Text>
@@ -59,11 +59,11 @@ export default function SearchEspecialist() {
     ));
 
     return (
-        <View style={{ borderTopEndRadius: 50, borderTopStartRadius: 50, overflow: 'hidden', height: '90%', alignSelf: 'flex-end', zIndex: 1, }}>
+        <View style={{ borderTopEndRadius: 50, borderTopStartRadius: 50, overflow: 'hidden', height: '30%', alignSelf: 'flex-end', zIndex: 1, }}>
             <FlatList
                 ref={flatListRef} // Referência para o FlatList
 
-                contentContainerStyle={{ paddingTop: '110%' }}
+                contentContainerStyle={{ paddingTop: 0 }}
                 initialNumToRender={10}
                 stickyHeaderIndices={[0]}
                 scrollEventThrottle={16}
@@ -87,6 +87,7 @@ export default function SearchEspecialist() {
                         <View style={{ backgroundColor: '#4A2FA9', flexDirection: 'row', padding: 15, alignItems: 'center', borderRadius: 20 }}>
                             <Octicons name="search" size={30} color="#B6B6B6" />
                             <TextInput
+                                editable={false}
                                 placeholder='Buscar especialista'
                                 placeholderTextColor='#B6B6B6'
                                 style={{ fontSize: 30, fontFamily: 'Quicksand-SemiBold', marginLeft: 10, width: '100%', color: 'white', paddingRight: 28 }}

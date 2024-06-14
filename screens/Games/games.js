@@ -72,8 +72,8 @@ export default function Games() {
               <Pressable style={styles.pressable} onPress={() => navigation.navigate('StroopInfo')}>
                 <Image source={require('../../assets/GamesScreen/GamesIcons/Stroop.png')} style={styles.iconGame} />
                 <Text style={styles.title}>Palavras de Cores</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
+              </Pressable >
+              <Pressable  style={styles.pressable}>
                 <View style={styles.empty} />
                 <Text style={styles.vazio}>Vazio</Text>
               </Pressable>
@@ -102,7 +102,7 @@ export default function Games() {
             <ScrollView style={{ flex: 1 }} horizontal={true} showsHorizontalScrollIndicator={false}>
               <Pressable style={styles.pressable} onPress={() => navigation.navigate('MustSortInfo')}>
                 <Image source={require('../../assets/GamesScreen/GamesIcons/MustSort.png')} style={styles.iconGame} />
-                <Text style={[styles.title, { bottom: 15}]}>Must Sort</Text>
+                <Text style={styles.title}>Jogo de{'\n'}Símbolos</Text>
               </Pressable>
               <Pressable style={styles.pressable}>
                 <View style={styles.empty} />
@@ -131,9 +131,9 @@ export default function Games() {
             <Text style={[styles.categorygame, { color: '#FF00D6' }]}>Raciocínio</Text>
 
             <ScrollView style={{ flex: 1 }} horizontal={true} showsHorizontalScrollIndicator={false}>
-              <Pressable style={styles.pressable} onPress={() => navigation.navigate('HiddenColors')}>
-                <View style={[styles.empty, { backgroundColor: 'pink' }]} />
-                <Text style={[styles.vazio, { width: 100, color: 'black' }]}>Cores Ocultas</Text>
+              <Pressable style={styles.pressable} onPress={() => navigation.navigate('HiddenColorsInfo')}>
+              <Image source={require('../../assets/GamesScreen/GamesIcons/HiddenColors.png')} style={styles.iconGame} />
+              <Text style={styles.title}>Cores Ocultas</Text>
               </Pressable>
               <Pressable style={styles.pressable}>
                 <View style={styles.empty} />

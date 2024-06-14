@@ -9,7 +9,11 @@ export default OnBoardingItem = ({ item }) => {
 
     return (
         <View style={[styles.container, {width}]}>
-            <Image source={item.image} style={[styles.image, { resizeMode: 'contain' }]} />
+            {item.id != 1 ? (
+                <Image source={item.image} style={[styles.image, { resizeMode: 'contain', width: 230, height: 230, marginTop: 30, marginBottom: 25 }]} />
+            ) : (
+                <Image source={item.image} style={[styles.image, { resizeMode: 'contain' }]} />
+            )}
 
             <View style={{ flex: 0.5 }}>
                 <Text style={styles.title}>{item.title}</Text>
@@ -29,20 +33,21 @@ const styles = StyleSheet.create({
         flex: 0.5,
         justifyContent: 'center',
         width: 140,
-        height: 140
+        height: 140,
     },
     title: {
-        fontWeight: '800',
-        fontSize: 28,
+        fontSize: 34,
         marginBottom: 10,
         color: 'white',
-        textAlign: 'center'
+        textAlign: 'center',
+        fontFamily: 'Quicksand-Bold',   
+        paddingHorizontal: 50 
     },
     description: {
-        fontWeight: '300',
-        color: 'white',
+        color: '#CFCFCF',
         textAlign: 'center',
-        paddingHorizontal: 64,
-        fontFamily: 'Quicksand-SemiBold'
+        paddingHorizontal: 30,
+        fontFamily: 'Quicksand-Medium',
+        fontSize: 16
     }
 })

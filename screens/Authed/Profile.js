@@ -1,18 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { LinearGradient } from 'expo-linear-gradient'
 import React, { useEffect, useState } from 'react'
-import {
-  Button,
-  Image,
-  Modal,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native'
+import { Button, Image, Modal, SafeAreaView, StyleSheet, Text, TextInput, View, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import { MMKV } from 'react-native-mmkv'
 import axios from 'axios'
@@ -127,18 +116,30 @@ export default function Profile() {
     if (details) {
       if (userType === 'Paciente') {
         return (
-          <View style={styles.userInfo}>
-            {editingDetails.image || imageUrl ? (
-              <Image
-                alt="image"
-                source={{ uri: imageUrl }}
-                style={styles.profileImage}
-              />
-            ) : (
-              <View style={[styles.profileImage, styles.placeholder]}>
-                <Text>Adicionar Foto</Text>
+          <View style={{ height: '100%', justifyContent: 'space-evenly' }}>
+            <LinearGradient colors={['#8863FF', '#6D53C0']} style={{ flexDirection: 'row', padding: 20, borderRadius: 35 }}> 
+              <View>
+                <Text style={{ fontFamily: 'Quicksand-SemiBold', fontSize: 26, color: 'white'}}>{details.userName}</Text>
+                <Text style={[styles.value, { maxWidth: 240, marginVertical: 15 }]}>{}>{details.biografia}</Text>
+                <Text style={styles.label}>Email: <Text style={styles.value}>{details.email}</Text></Text>
+                <Text style={styles.label}>Telefone: <Text style={styles.value}>{details.telefone}</Text></Text> 
+                <Text style={styles.label}>Diagnóstico: <Text style={styles.value}>{details.diagnostico}</Text></Text>
+                <Text style={styles.value}>{details.focuspoints}</Text>
               </View>
-            )}
+
+              {editingDetails.image || imageUrl ? (
+                <Image
+                  alt="image"
+                  source={{ uri: imageUrl }}
+                  style={styles.profileImage}
+                />
+              ) : (
+                <View style={[styles.profileImage, styles.placeholder]}>
+                  <Text>Adicionar Foto</Text>
+                </View>
+              )}
+            </LinearGradient>
+            
             <View>
               <Button title="Sair da conta" onPress={logout} />
               <Button
@@ -147,23 +148,8 @@ export default function Profile() {
               />
               <Button title="Editar perfil" onPress={EditarPerfil} />
             </View>
-            <Text style={styles.label}>Nome de usuário:</Text>
-            <Text style={styles.value}>{details.userName}</Text>
-            <Text style={styles.label}>Email:</Text>
-            <Text style={styles.value}>{details.email}</Text>
-            <Text style={styles.label}>Telefone:</Text>
-            <Text style={styles.value}>{details.telefone}</Text>
-            <Text style={styles.label}>Biografia:</Text>
-            <Text style={styles.value}>{details.biografia}</Text>
-            <Text style={styles.label}>Diagnóstico:</Text>
-            <Text style={styles.value}>{details.diagnostico}</Text>
-            <Text style={styles.label}>Seguidores:</Text>
-            <Text style={styles.value}>{details.followers}</Text>
-            <Text style={styles.label}>Seguindo:</Text>
-            <Text style={styles.value}>{details.following}</Text>
-            <Text style={styles.label}>Focuspoints:</Text>
-            <Text style={styles.value}>{details.focuspoints}</Text>
           </View>
+
         )
       } else if (userType === 'Profissional') {
         return (
@@ -234,16 +220,7 @@ export default function Profile() {
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
-        <View
-          style={{
-            width: '100%',
-            justifyContent: 'flex-end',
-            alignItems: 'flex-end',
-            padding: 10,
-          }}
-        >
-          <Feather name="settings" size={32} color="white" />
-        </View>
+        
 
         {renderProfileDetails()}
 
@@ -383,12 +360,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   label: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: 'bold',
     marginBottom: 5,
+    color: '#FF8A8A'
   },
   value: {
-    fontSize: 16,
+    fontSize: 14,
+    fontFamily: 'Quicksand-SemiBold',
+    color: '#E0E0E0'
   },
   modalContainer: {
     flex: 1,

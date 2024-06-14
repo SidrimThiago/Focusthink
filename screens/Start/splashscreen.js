@@ -1,16 +1,4 @@
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  TextInput,
-  SafeAreaView,
-  Pressable,
-  TouchableOpacity,
-  Keyboard,
-  TouchableWithoutFeedback,
-  Animated,
-} from 'react-native'
+import { StyleSheet, View, Text, Image, SafeAreaView, Pressable, Animated, } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import React, { useEffect, useRef, useState } from 'react'
 import ButtonComponent from '../../components/button'
@@ -20,6 +8,8 @@ import { Formik } from 'formik'
 
 export default function SplashScreen() {
   const navigation = useNavigation()
+
+
 
   useEffect(() => {
     const handleHardwareBackPress = () => {

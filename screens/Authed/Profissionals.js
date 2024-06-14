@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from 'react'
+import { React, useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -8,75 +8,80 @@ import {
   FlatList,
   Modal,
   Button,
-} from 'react-native'
-import { LinearGradient } from 'expo-linear-gradient'
-import axios from 'axios'
-import { MMKV } from 'react-native-mmkv'
-import { API_URL } from '../../.env/config'
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import axios from 'axios';
+import { MMKV } from 'react-native-mmkv';
+import { API_URL } from '../../.env/config';
 
-const storage = new MMKV()
+const storage = new MMKV();
 
 export default function Profissionals({ navigation }) {
-  const [professionalsData, setProfessionalsData] = useState([])
-  const [modalVisible, setModalVisible] = useState(false)
-  const [selectedProfessional, setSelectedProfessional] = useState(null)
-  const [isFoll, setIsFoll] = useState(false)
+  const [professionalsData, setProfessionalsData] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedProfessional, setSelectedProfessional] = useState(null);
+  const [isFoll, setIsFoll] = useState(false);
 
   useEffect(() => {
     const fetchProfessionals = async () => {
       try {
-        const response = await axios.get(API_URL + '/ExplainProfissionals')
-        const data = response.data
-        setProfessionalsData(data.data)
+        const response = await axios.get(API_URL + '/ExplainProfissionals');
+        const data = response.data;
+        setProfessionalsData(data.data);
       } catch (error) {
-        console.error('Error fetching professionals:', error)
+        console.error('Error fetching professionals:', error);
       }
-    }
+    };
 
-    fetchProfessionals()
-  }, [])
+    fetchProfessionals();
+  }, []);
 
   const handleProfessionalPress = (professional) => {
-    setSelectedProfessional(professional)
-    setModalVisible(true)
-  }
+    setSelectedProfessional(professional);
+    setModalVisible(true);
+  };
 
   const closeModal = () => {
-    setModalVisible(false)
-    setSelectedProfessional(null)
-  }
+    setModalVisible(false);
+    setSelectedProfessional(null);
+  };
 
   const sendMessage = async (professional) => {
-    if (!selectedProfessional) return
+    if (!selectedProfessional) return;
 
     try {
-      setModalVisible(false)
-      navigation.navigate('especifedChat', { professional })
+      const userName = storage.getString('user.nameUser');
+      const response = await axios.post(`${API_URL}/startChat`, {
+        userName,
+        professionalName: professional.nome,
+      });
+      setModalVisible(false);
+      navigation.navigate('especifedChat', { chat: response.data });
     } catch (error) {
-      console.error('Erro ao enviar mensagem:', error)
+      console.error('Erro ao enviar mensagem:', error);
     }
-  }
+  };
 
   const follow = async (professional) => {
     try {
-      const nome = professional.nome
-      const nomeUser = storage.getString('user.nameUser')
+      const nome = professional.nome;
+      const nomeUser = storage.getString('user.nameUser');
       const response = await axios.post(API_URL + '/FollowProfessional', {
         nome,
         nomeUser,
-      })
-      const data = response.data
+      });
+      const data = response.data;
 
       if (response.status === 200 || response.status === 201) {
-        setIsFoll(data.isFollowing)
-        console.log(data.message)
+        setIsFoll(data.isFollowing);
+        console.log(data.message);
       } else {
-        console.log('error')
+        console.log('error');
       }
     } catch (error) {
-      console.error('Error in follow this person because:', error)
+      console.error('Error in follow this person because:', error);
     }
-  }
+  };
 
   const renderProfessionalItem = ({ item }) => (
     <View style={styles.professionalContainer}>
@@ -96,7 +101,8 @@ export default function Profissionals({ navigation }) {
         </Text>
       </TouchableOpacity>
     </View>
-  )
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
@@ -159,7 +165,7 @@ export default function Profissionals({ navigation }) {
         </Modal>
       </LinearGradient>
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -223,4 +229,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginVertical: 20,
   },
-})
+});

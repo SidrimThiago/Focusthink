@@ -19,6 +19,8 @@ import ReturnButtonG from './returnbuttong'
 export default function GameOptions() {
   const navigation = useNavigation()
 
+  
+
   const pushAnimation = useRef(new Animated.Value(0)).current
 
   useEffect(() => {

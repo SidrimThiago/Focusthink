@@ -1,4 +1,4 @@
-import { React, useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react';
 import {
   StyleSheet,
   View,
@@ -7,74 +7,86 @@ import {
   SafeAreaView,
   TouchableOpacity,
   FlatList,
-} from 'react-native'
-import { LinearGradient } from 'expo-linear-gradient'
-import { Ionicons, Feather } from '@expo/vector-icons'
-import { useNavigation, useRoute } from '@react-navigation/native'
-import io from 'socket.io-client'
-import { API_URL } from '../../.env/config'
-import { MMKV } from 'react-native-mmkv'
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons, Feather } from '@expo/vector-icons';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import io from 'socket.io-client';
+import { API_URL } from '../../.env/config';
+import { MMKV } from 'react-native-mmkv';
 
-const storage = new MMKV()
+const storage = new MMKV();
 
-const socket = io(API_URL)
+const socket = io(API_URL);
 
 export default function EspecifedChat() {
-  const navigation = useNavigation()
-  const route = useRoute()
-  const { professional } = route.params
-  const [messages, setMessages] = useState([])
-  const [userInput, setUserInput] = useState('')
-  const flatListRef = useRef()
-  const nomeUser = storage.getString('user.nameUser')
+  const navigation = useNavigation();
+  const route = useRoute();
+  const { chat } = route.params || {};
+  const [messages, setMessages] = useState([]);
+  const [userInput, setUserInput] = useState('');
+  const flatListRef = useRef();
+  const nomeUser = storage.getString('user.nameUser');
 
   useEffect(() => {
-    socket.emit('findRoom', professional._id)
+    if (chat && chat.id) {
+      socket.emit('findRoom', chat.id);
 
-    socket.on('foundRoom', (roomMessages) => {
-      setMessages(roomMessages)
-    })
+      socket.on('foundRoom', (roomMessages) => {
+        setMessages(roomMessages);
+      });
 
-    socket.on('roomMessage', (newMessage) => {
-      setMessages((prevMessages) => [...prevMessages, newMessage])
-    })
+      socket.on('roomMessage', (newMessage) => {
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
+      });
 
-    return () => {
-      socket.off('foundRoom')
-      socket.off('roomMessage')
+      return () => {
+        socket.off('foundRoom');
+        socket.off('roomMessage');
+      };
     }
-  }, [professional._id])
+  }, [chat]);
 
   const handleSend = () => {
     if (userInput.trim()) {
       const newMessage = {
-        room_id: professional._id,
-        message: userInput,
+        room_id: chat.id,
+        text: userInput,
         user: nomeUser,
         timestamp: {
           hour: new Date().getHours(),
           mins: new Date().getMinutes(),
         },
-      }
-      socket.emit('newMessage', newMessage)
-      setUserInput('')
+      };
+      socket.emit('newMessage', newMessage);
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      setUserInput('');
+      flatListRef.current.scrollToEnd({ animated: true });
     }
-  }
+  };
 
   const makeCall = () => {
-    const callId = generateRandomId(5)
-    navigation.navigate('CallPage', { id: callId })
-  }
+    const callId = generateRandomId(5);
+    navigation.navigate('CallPage', { id: callId });
+  };
 
   const generateRandomId = (length) => {
     const characters =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-    let result = ''
-    const charactersLength = characters.length
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    const charactersLength = characters.length;
     for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength))
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
-    return result
+    return result;
+  };
+
+  if (!chat || !chat.id) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.errorText}>Chat não encontrado.</Text>
+      </SafeAreaView>
+    );
   }
 
   return (
@@ -84,7 +96,7 @@ export default function EspecifedChat() {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={26} color="white" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>{professional.nome}</Text>
+          <Text style={styles.headerTitle}>{chat.roomName}</Text>
           <Feather name="video" size={26} color="white" onPress={makeCall} />
         </View>
         <FlatList
@@ -115,7 +127,7 @@ export default function EspecifedChat() {
         </View>
       </LinearGradient>
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -175,4 +187,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginLeft: 10,
   },
-})
+  errorText: {
+    color: 'red',
+    fontSize: 18,
+    textAlign: 'center',
+    marginTop: 20,
+  },
+});

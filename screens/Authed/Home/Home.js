@@ -6,6 +6,10 @@ import { useNavigation } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { MMKV } from 'react-native-mmkv'
+import Icon1 from '../../../assets/Home/jogododia.svg'
+import Icon2 from '../../../assets/Home/controllerjogos.svg'
+import Form from '../../../assets/Home/form.svg'
+import { overlay } from 'react-native-paper'
 
 const storage = new MMKV()
 
@@ -60,7 +64,7 @@ export default function Home(props) {
           contentContainerStyle={{ paddingTop: '45%' }}
           stickyHeaderIndices={[0]}
           overScrollMode='never'
-          showsVerticalScrollIndicator={true}
+          showsVerticalScrollIndicator={false}
         >
 
           <View style={{ borderTopStartRadius: 45, borderTopEndRadius: 45, overflow: 'hidden', zIndex: 1 }}>
@@ -95,6 +99,38 @@ export default function Home(props) {
 
           <LinearGradient colors={['#633DE8', '#283C8C']} style={{ padding: 10 }}>
 
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 5 }}>
+              <View style={styles.box}>
+                <Image source={require('../../../assets/Home/JogoDoDia.png')} resizeMode='cover' style={styles.imageBox} />
+                <View style={{ position: 'absolute', bottom: 0, left: 0 }}>
+                  <Icon1 />
+                </View>
+
+                <Text style={{ fontFamily: 'Quicksand-SemiBold', fontSize: 14, color: 'white', position: 'absolute', textAlign: 'right', left: 10, top: 7 }}>Jogo do dia:</Text>
+
+                <Text style={{ fontFamily: 'Quicksand-Bold', fontSize: 20, color: 'white', position: 'absolute', textAlign: 'right', right: 12, top: 22, }}>Palavras{'\n'}de Cores</Text>
+
+                <Pressable style={{ width: '40%', height: 40, backgroundColor: 'white', borderRadius: 100, justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: 10, right: 15 }}
+                  onPress={() => navigation.navigate('StroopInfo')}>
+                  <Text style={{ fontFamily: 'Quicksand-Bold' }}>Jogar</Text>
+                </Pressable>
+              </View>
+
+              <View style={styles.box}>
+                <Image source={require('../../../assets/Home/TodosOsJogos.png')} resizeMode='cover' style={styles.imageBox} />
+                <View style={{ position: 'absolute', bottom: 0, left: 0, maxWidth: 88.5, overflow: 'hidden' }}>
+                  <Icon2 />
+                </View>
+
+                <Text style={{ fontFamily: 'Quicksand-SemiBold', fontSize: 20, color: 'white', position: 'absolute', textAlign: 'right', right: 8, margin: 10 }}>Todos os{'\n'}jogos</Text>
+
+                <Pressable style={{ width: '35%', height: 40, backgroundColor: 'white', borderRadius: 100, justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: 10, right: 15 }}
+                  onPress={() => navigation.navigate('Jogos')}>
+                  <Text style={{ fontFamily: 'Quicksand-Bold' }}>Ir</Text>
+                </Pressable>
+              </View>
+            </View>
+
             <View style={{ flexDirection: 'row', backgroundColor: '#FF7D34', justifyContent: 'space-evenly', borderRadius: 10, marginVertical: 5 }}>
               <View style={{ justifyContent: 'space-evenly', alignItems: 'center', width: '50%' }}>
                 <Text style={{ fontFamily: 'Quicksand-SemiBold', fontSize: 24, color: 'white' }}> Especialistas {'\n'} disponíveis</Text>
@@ -110,30 +146,21 @@ export default function Home(props) {
               />
             </View>
 
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 5 }}>
-              <View style={{ height: 195, width: '49%', backgroundColor: 'white', borderRadius: 10 }}></View>
-              <View style={{ height: 195, width: '49%', backgroundColor: 'white', borderRadius: 10 }}></View>
+            <View style={{ flexDirection: 'row', backgroundColor: 'white', justifyContent: 'space-evenly', borderRadius: 10, marginVertical: 5, height: 155, overflow: 'hidden', alignItems: 'center' }}>
+              <Image source={require('../../../assets/Home/fundoforms.png')} resizeMode='cover' style={{ height: '100%', width: '100%', position: 'absolute', left: 0 }} />
+              <Form width={'40%'} />
+              <View style={{ width: '60%', alignItems: 'center' }}>
+                <Text style={{ fontFamily: 'Quicksand-Bold  ', fontSize: 20, color: '#272626', textAlign: 'center' }}>Formulário SNAP-IV</Text>
+                <Text style={{ fontFamily: 'Quicksand-SemiBold', fontSize: 12, color: '#3C3C3C', textAlign: 'center', marginVertical: 5 }}>Teste a probabilidade de{'\n'}você ter TDAH.</Text>
+                <Pressable style={{ width: '75%', height: 40, backgroundColor: '#FF7D34', borderRadius: 100, justifyContent: 'center', alignItems: 'center', marginVertical: 5 }}
+                  onPress={() => navigation.navigate('Questionary')}>
+                  <Text style={{ fontFamily: 'Quicksand-Bold', color: 'white' }}>Realizar</Text>
+                </Pressable>
+              </View>
             </View>
 
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 5 }}>
-              <View style={{ height: 195, width: '49%', backgroundColor: 'white', borderRadius: 10 }}></View>
-              <View style={{ height: 195, width: '49%', backgroundColor: 'white', borderRadius: 10 }}></View>
-            </View>
+            <View style={{ height: 100, width: '100%', borderRadius: 10 }} />
 
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 5 }}>
-              <View style={{ height: 195, width: '49%', backgroundColor: 'white', borderRadius: 10 }}></View>
-              <View style={{ height: 195, width: '49%', backgroundColor: 'white', borderRadius: 10 }}></View>
-            </View>
-
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 5 }}>
-              <View style={{ height: 195, width: '49%', backgroundColor: 'white', borderRadius: 10 }}></View>
-              <View style={{ height: 195, width: '49%', backgroundColor: 'white', borderRadius: 10 }}></View>
-            </View>
-
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 5 }}>
-              <View style={{ height: 195, width: '49%', backgroundColor: 'white', borderRadius: 10 }}></View>
-              <View style={{ height: 195, width: '49%', backgroundColor: 'white', borderRadius: 10 }}></View>
-            </View>
           </LinearGradient>
         </Animated.ScrollView>
       </View>
@@ -200,4 +227,16 @@ const styles = {
     color: 'black',
     fontSize: 16
   },
+  box: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    width: '49%',
+    height: 135,
+    borderRadius: 10,
+    overflow: 'hidden'
+  },
+  imageBox: {
+    width: '100%',
+    height: '100%',
+  }
 };

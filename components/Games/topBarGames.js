@@ -60,7 +60,7 @@ const TopBarGames = ({ restart, duration, onTimerFinish }) => {
         >
           <View style={styles.menu}>
             <Pressable
-              onPress={() => navigation.navigate('Countdown', { jogo: restart })}
+              onPress={() => navigation.navigate(restart)}
               style={styles.options}
             >
               <FontAwesome name="undo" size={65} color="black" />
@@ -93,14 +93,9 @@ const TopBarGames = ({ restart, duration, onTimerFinish }) => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalText}>Tempo esgotado!</Text>
-            <Button
-              title="Fechar"
-              onPress={() => {
-                setModalVisible(false)
-                onTimerFinish()
-                navigation.navigate('StroopInfo')
-              }}
-            />
+            <Pressable style={{ backgroundColor: 'white', padding: 10, paddingHorizontal: 15, borderRadius: 15, marginTop: 25} } onPress={() => { setModalVisible(false); onTimerFinish(); navigation.navigate('Results', { reiniciar: restart }) }}>
+              <Text style={{ fontFamily: 'Quicksand-SemiBold', fontSize: 20}}>Ver resultado</Text>
+            </Pressable>
           </View>
         </View>
       </Modal>
@@ -149,14 +144,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: '#FF5C00',
     padding: 20,
     borderRadius: 10,
     alignItems: 'center',
+    borderWidth: 4,
+    borderColor: '#C64E0B'
   },
   modalText: {
-    fontSize: 20,
+    fontSize: 28,
     marginBottom: 20,
+    color: 'white',
+    fontFamily: 'Quicksand-SemiBold',
   },
 })
 

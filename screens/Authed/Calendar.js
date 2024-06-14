@@ -1,16 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import {
-  StyleSheet,
-  View,
-  Text,
-  SafeAreaView,
-  FlatList,
-  ActivityIndicator,
-  TouchableOpacity,
-  Modal,
-  TextInput,
-  Button,
-} from 'react-native'
+import { StyleSheet, View, Text, SafeAreaView, FlatList, ActivityIndicator, TouchableOpacity, Modal, TextInput, Button } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import axios from 'axios'
 import DateTimePicker from '@react-native-community/datetimepicker'
@@ -274,18 +263,18 @@ export default function Calendar() {
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
-      style={styles.taskItem}
+      style={{ padding: 10, marginVertical: 5, marginHorizontal: 10, backgroundColor: '#A995E0', borderRadius: 10 }}
       onPress={() => openModal(item)}
       className="mt-10"
     >
-      <Text style={styles.taskTitle}>{item.nameTask}</Text>
-      <Text style={styles.taskDates}>{`End: ${item.endDate}`}</Text>
-      <View style={styles.taskActions}>
+      <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{item.nameTask}</Text>
+      <Text style={{ fontSize: 14, color: '#333' }}>{`End: ${item.endDate}`}</Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
         <TouchableOpacity onPress={() => openEditModal(item)}>
-          <Text style={styles.editButton}>Edit</Text>
+          <Text style={{ color: 'blue' }}>Edit</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => handleDeleteTask(item.nameTask)}>
-          <Text style={styles.deleteButton}>Delete</Text>
+          <Text style={{ color: 'red' }}>Delete</Text>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -552,32 +541,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   errorText: {
-    color: 'red',
-  },
-  taskItem: {
-    padding: 10,
-    marginVertical: 5,
-    marginHorizontal: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    borderRadius: 10,
-  },
-  taskTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  taskDates: {
-    fontSize: 14,
-    color: '#333',
-  },
-  taskActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
-  editButton: {
-    color: 'blue',
-  },
-  deleteButton: {
     color: 'red',
   },
   addButton: {

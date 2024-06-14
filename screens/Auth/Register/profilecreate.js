@@ -11,8 +11,8 @@ import {
   Modal,
   TouchableOpacity,
   Text,
-  Button,
   Pressable,
+  Button,
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import ButtonComponent from '../../../components/button'
@@ -29,6 +29,7 @@ export default function ProfileCreate({ navigation, route }) {
   const [nomeUser, setNomeUser] = useState('')
   const [biografia, setBiografia] = useState('')
   const [modalVisible, setModalVisible] = useState(false)
+  const [verificationModalVisible, setVerificationModalVisible] = useState(false)
   const [image, setImage] = useState(null)
   const { newUser } = route.params
   const { newProfissional } = route.params
@@ -188,7 +189,7 @@ export default function ProfileCreate({ navigation, route }) {
           console.error('Erro ao fazer requisição:', error)
         })
 
-      navigation.navigate('login')
+      setVerificationModalVisible(true);
     }
   }
 
@@ -292,6 +293,25 @@ export default function ProfileCreate({ navigation, route }) {
         <View className="text-center justify-center items-center w-full px-16 top-14 mt-20">
           <ButtonComponent title="Finalizar" onPress={() => CreateUser()} />
         </View>
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={verificationModalVisible}
+          onRequestClose={() => setVerificationModalVisible(false)}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.verificationModalView}>
+              <Text style={{ color: 'white', textAlign: 'center', marginBottom: 10, fontFamily: 'Quicksand-Bold', fontSize: 20}} >Olá {nomeUser}</Text>
+              <Text style={styles.verificationText} >
+                Para garantir a segurança de nossos usuários, realizamos a verificação manual dos dados dos profissionais. Até validarmos seus dados, você ficará impossibilitado de realizar algumas funções, mas é rapidinho.
+              </Text>
+              <Pressable style={{ padding: 20, backgroundColor: '#633DE8', paddingHorizontal: 50, borderWidth: 1.5, borderColor: 'white', borderRadius: 10, marginTop: 10 }} onPress={() => { setVerificationModalVisible(false); navigation.navigate('login'); }}>
+                <Text style={{ fontFamily: 'Quicksand-SemiBold', color: 'white'}}>Continuar</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
       </LinearGradient>
     </SafeAreaView>
   )
@@ -356,6 +376,23 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+  verificationModalView: {
+    margin: 20,
+    backgroundColor: '#FF5C00',
+    borderRadius: 20,
+    padding: 40,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    borderWidth: 8,
+    borderColor: '#C64E0B'
+  },
   button: {
     borderRadius: 20,
     padding: 10,
@@ -366,5 +403,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  verificationText: {
+    color: 'white',
+    textAlign: 'center',
+    marginBottom: 10,
+    fontFamily: 'Quicksand-SemiBold'
   },
 })

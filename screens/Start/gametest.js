@@ -18,6 +18,7 @@ import OnBoarding from '../../components/Flatlist/onBoarding'
 export default function GamesTest() {
   const navigation = useNavigation()
 
+
   useEffect(() => {
     const handleHardwareBackPress = () => {
       // Impede o usuário de retornar à tela anterior
@@ -57,7 +58,7 @@ export default function GamesTest() {
           Deseja realizar um jogo teste?
         </Text>
         <TouchableOpacity
-          onPress={() => navigation.navigate('GameOptions')}
+          onPress={() => navigation.navigate('TesteCountdown')}
           style={styles.buttonColor}
           className="w-80 h-16 justify-center rounded-3xl my-3"
         >
