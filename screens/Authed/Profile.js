@@ -120,7 +120,7 @@ export default function Profile() {
             <LinearGradient colors={['#8863FF', '#6D53C0']} style={{ flexDirection: 'row', padding: 20, borderRadius: 35 }}> 
               <View>
                 <Text style={{ fontFamily: 'Quicksand-SemiBold', fontSize: 26, color: 'white'}}>{details.userName}</Text>
-                <Text style={[styles.value, { maxWidth: 240, marginVertical: 15 }]}>{}>{details.biografia}</Text>
+                <Text style={[styles.value, { maxWidth: 240, marginVertical: 15 }]}>{details.biografia}</Text>
                 <Text style={styles.label}>Email: <Text style={styles.value}>{details.email}</Text></Text>
                 <Text style={styles.label}>Telefone: <Text style={styles.value}>{details.telefone}</Text></Text> 
                 <Text style={styles.label}>Diagnóstico: <Text style={styles.value}>{details.diagnostico}</Text></Text>

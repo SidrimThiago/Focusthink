@@ -1,24 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  SafeAreaView,
-  TouchableOpacity,
-  StyleSheet,
-  TextInput,
-  Modal,
-  Dimensions,
-  ProgressBarAndroid,
-  Platform,
-  ProgressViewIOS,
-} from 'react-native';
+import { View, Text, SafeAreaView, TouchableOpacity, StyleSheet, TextInput, ProgressBarAndroid, Platform, ProgressViewIOS, StatusBar } from 'react-native';
+import Modal from 'react-native-modal'
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
-
-const { width } = Dimensions.get('screen');
+import { AntDesign } from '@expo/vector-icons'
+import Warning from '../../../assets/Home/warningalert.svg'
 
 export default function Questionary() {
-    const navigation = useNavigation();
+  const navigation = useNavigation();
   const Asks = {
     SetorA: [
       'Com que frequência você deixa um projeto pela metade depois de já ter feito as partes mais difíceis?',
@@ -55,9 +44,15 @@ export default function Questionary() {
   const [relatorio, setRelatorio] = useState({ SetorA: [], SetorB: [], SetorC: [] });
   const [pontuacaoTotal, setPontuacaoTotal] = useState(0);
   const [probabilidadeTDAH, setProbabilidadeTDAH] = useState('');
-  const [showDisclaimerModal, setShowDisclaimerModal] = useState(true);
+  const [showDisclaimerModal, setShowDisclaimerModal] = useState(false);
   const [showResultModal, setShowResultModal] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setShowDisclaimerModal(true);
+    }, 500)
+  }, [])
 
   useEffect(() => {
     const calcularPontuacaoTotal = () => {
@@ -165,9 +160,9 @@ export default function Questionary() {
   };
 
   const renderProgressBar = () => {
-    const progress = (currentQuestionIndex + 1) / Asks[currentSetor].length;
+    const progress = (currentQuestionIndex) / Asks[currentSetor].length;
     return Platform.OS === 'android' ? (
-      <ProgressBarAndroid styleAttr="Horizontal" indeterminate={false} progress={progress} color="#FF6C00" />
+      <ProgressBarAndroid styleAttr="Horizontal" indeterminate={false} progress={progress} color="#FF8F3E" />
     ) : (
       <ProgressViewIOS progress={progress} progressTintColor="#FF6C00" />
     );
@@ -176,84 +171,81 @@ export default function Questionary() {
   const renderCurrentQuestion = () => {
     const question = Asks[currentSetor][currentQuestionIndex];
     return (
-      <SafeAreaView style={styles.container}>
-        <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
-          <View style={styles.questionContainer}>
-            <View style={styles.progressBarContainer}>{renderProgressBar()}</View>
-            <Text style={styles.header}>Formulário SNAP-IV</Text>
-            <Text style={styles.questionNumber}>Pergunta {currentQuestionIndex + 1} de {Asks[currentSetor].length}</Text>
-            <Text style={styles.questionText}>{question}</Text>
-            {currentSetor === 'SetorC' ? (
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.textInput}
-                  multiline
-                  numberOfLines={4}
-                  placeholder="Digite sua resposta aqui..."
-                  value={responses[currentSetor][currentQuestionIndex]}
-                  onChangeText={handleTextInputChange}
-                  onSubmitEditing={() => handleSelectOption(responses[currentSetor][currentQuestionIndex])}
-                />
-                <TouchableOpacity style={styles.submitButton} onPress={() => handleSelectOption(responses[currentSetor][currentQuestionIndex])}>
-                  <Text style={styles.submitButtonText}>Próxima</Text>
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <View style={styles.radioGroup}>
-                {['Nunca', 'Quase Nunca', 'Às vezes', 'Quase Sempre', 'Sempre'].map((option, i) => (
-                  <TouchableOpacity
-                    key={i}
-                    style={[
-                      styles.radioContainer,
-                      responses[currentSetor][currentQuestionIndex] === option ? styles.selectedOption : null,
-                    ]}
-                    onPress={() => handleSelectOption(option)}
-                  >
-                    <Text style={styles.radioText}>{option}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
+      <>
+        <View style={{ top: -4}}>{renderProgressBar()}</View>
+        <Text style={{ color: '#FF8F3E', fontFamily: 'Quicksand-Bold', fontSize: 14, textAlign: 'left', marginBottom: 5, marginTop: 10, marginLeft: 20 }}>Pergunta {currentQuestionIndex + 1} de {Asks[currentSetor].length}</Text>
+        <Text style={{ fontFamily: 'Quicksand-SemiBold', fontSize: 16, color: 'white', marginBottom: 20, textAlign: 'left', marginHorizontal: 20 }}>{question}</Text>
+        {currentSetor === 'SetorC' ? (
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={{ backgroundColor: 'white', borderColor: '#ccc', borderWidth: 1, borderRadius: 4, padding: 10, fontSize: 16, textAlignVertical: 'top', height: 100 }}
+              multiline
+              numberOfLines={4}
+              placeholder="Digite sua resposta aqui..."
+              value={responses[currentSetor][currentQuestionIndex]}
+              onChangeText={handleTextInputChange}
+              onSubmitEditing={() => handleSelectOption(responses[currentSetor][currentQuestionIndex])}
+            />
+            <TouchableOpacity style={{ marginTop: 10, backgroundColor: '#FF6C00', padding: 15, borderRadius: 10, alignItems: 'center' }}
+              onPress={() => handleSelectOption(responses[currentSetor][currentQuestionIndex])}>
+              <Text style={{ color: 'white', fontSize: 16 }}>Próxima</Text>
+            </TouchableOpacity>
           </View>
-        </LinearGradient>
-      </SafeAreaView>
+        ) : (
+          <View style={{ width: '100%', marginTop: 10, paddingHorizontal: 20 }}>
+            {['Nunca', 'Quase Nunca', 'Às vezes', 'Quase Sempre', 'Sempre'].map((option, i) => (
+              <TouchableOpacity
+                key={i}
+                style={[
+                  { padding: 15, borderRadius: 10, marginVertical: 5, borderWidth: 2.5, borderColor: '#2C167A' },
+                  responses[currentSetor][currentQuestionIndex] === option ? { backgroundColor: '#FF9A51' } : null,
+                ]}
+                onPress={() => handleSelectOption(option)}
+              >
+                <Text style={{ color: '#fff', fontSize: 16 }}>{option}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+      </>
     );
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.innerContainer}>
-        <View style={styles.navigationContainer}>
-          <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-            <Text style={styles.backButtonText}>Voltar</Text>
-          </TouchableOpacity>
-        </View>
+    <SafeAreaView style={styles.container}>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <TouchableOpacity style={{ padding: 10, borderRadius: 10 }} onPress={handleGoBack}>
+          <AntDesign name="arrowleft" size={38} color="white" />
+        </TouchableOpacity>
+        <Text style={{ color: 'white', fontFamily: 'Quicksand-Bold', fontSize: 20 }}>Formulário SNAP-IV</Text>
+      </View>
+
+      <View style={{ backgroundColor: '#5C3BCD' }}>
         {renderCurrentQuestion()}
+
         <Modal
-          animationType="slide"
-          transparent={true}
-          visible={showDisclaimerModal}
+          animationIn={'fadeIn'}
+          animationInTiming={700}
+          animationOut={'fadeOut'}
+          isVisible={null}
+          style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', padding: 20 }}
+          backdropOpacity={0.5}
           onRequestClose={() => setShowDisclaimerModal(false)}
         >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>
-                Nenhum teste substitui uma avaliação psiquiátrica.
-                O resultado deste teste não serve como diagnóstico conclusivo nem tem validade jurídica ou como atestado médico, para nenhuma finalidade.
-                Não inicie nenhum tratamento baseado no resultado de qualquer teste da internet, sem uma consulta médica antes.
-              </Text>
-              <TouchableOpacity
-                style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
-                onPress={() => {
-                  setModalVisible(true);
-                  setShowDisclaimerModal(false);
-                }}
-              >
-                <Text style={styles.textStyle}>Continuar</Text>
-              </TouchableOpacity>
-            </View>
+          <View style={{ backgroundColor: '#5C3BCD', borderRadius: 20, alignItems: 'center', padding: 20 }}>
+            <Warning />
+            <Text style={{ fontFamily: 'Quicksand-Medium', fontSize: 17, textAlign: 'justify', marginBottom: 25, color: 'white' }}>
+              Nenhum teste substitui uma avaliação psiquiátrica.
+              O resultado deste teste não serve como diagnóstico conclusivo nem tem validade jurídica ou como atestado médico, para nenhuma finalidade!
+              Não inicie nenhum tratamento baseado no resultado de qualquer teste da internet, sem uma consulta médica antes!
+            </Text>
+            <TouchableOpacity style={{ backgroundColor: '#FF7121', borderRadius: 50, padding: 18, paddingHorizontal: 80, marginVertical: 10 }}
+              onPress={() => { setShowDisclaimerModal(false) }}>
+              <Text style={{ fontFamily: 'Quicksand-SemiBold', fontSize: 20, color: 'white' }}>Continuar</Text>
+            </TouchableOpacity>
           </View>
         </Modal>
+
         <Modal
           animationType="slide"
           transparent={true}
@@ -277,91 +269,21 @@ export default function Questionary() {
           </View>
         </Modal>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '100%'
-  },
-  background: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 40,
-    width: '100%'
+    width: '100%',
+    backgroundColor: '#5A2EF1',
+    paddingTop: StatusBar.currentHeight
   },
   innerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  questionContainer: {
-    marginBottom: 15,
-    width: '100%'
-  },
-  progressBarContainer: {
-    width: '100%',
-    marginVertical: 10,
-  },
-  header: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  questionNumber: {
-    color: '#FFA500',
-    fontSize: 16,
-    textAlign: 'center',
-    marginVertical: 10,
-  },
-  questionText: {
-    fontSize: 16,
-    color: '#fff',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  radioGroup: {
-    width: '100%',
-    marginTop: 10,
-  },
-  radioContainer: {
-    backgroundColor: '#4C4C4C',
-    padding: 15,
-    borderRadius: 10,
-    marginVertical: 5,
-    alignItems: 'center',
-  },
-  selectedOption: {
-    backgroundColor: '#FF6C00',
-  },
-  radioText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  textInput: {
-    backgroundColor: 'white',
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 4,
-    padding: 10,
-    fontSize: 16,
-    textAlignVertical: 'top',
-    height: 100,
-  },
-  submitButton: {
-    marginTop: 10,
-    backgroundColor: '#FF6C00',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  submitButtonText: {
-    color: 'white',
-    fontSize: 16,
   },
   backButton: {
     backgroundColor: '#633DE8',
@@ -369,15 +291,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignSelf: 'flex-start',
     marginBottom: 10,
-  },
-  backButtonText: {
-    color: 'white',
-    fontSize: 16,
-  },
-  navigationContainer: {
-    position: 'absolute',
-    top: 20,
-    left: 20,
   },
   centeredView: {
     flex: 1,
@@ -392,12 +305,6 @@ const styles = StyleSheet.create({
     padding: 35,
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
     elevation: 5,
   },
   modalText: {

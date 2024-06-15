@@ -1,30 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  SafeAreaView,
-  TouchableOpacity,
-  Button,
-  Modal,
-  StatusBar
-} from 'react-native';
+import { StyleSheet, View,SafeAreaView, TouchableOpacity, StatusBar } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import axios from 'axios';
-import MapView, { Marker, Callout } from 'react-native-maps';
-import { API_URL } from '../../../.env/config';
 import SearchEspecialist from './searchespecialist';
 import { Ionicons } from '@expo/vector-icons';
 import Maps from './maps';
-import { color } from '@rneui/base';
 
 export default function Consults({ navigation }) {
+  
+  
+  /*
   const [modalVisible, setModalVisible] = useState(false);
   const [consultorios, setConsultorios] = useState([]);
   const [selectedConsultorio, setSelectedConsultorio] = useState(null);
 
-
-  /*
   <View style={{position: 'absolute', marginTop: StatusBar.currentHeight + 100, zIndex: 2}}>
           <Button
             title="Show Consultories"
@@ -62,7 +50,7 @@ export default function Consults({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        <SearchEspecialist />
+        
 
       </LinearGradient>
     </SafeAreaView>

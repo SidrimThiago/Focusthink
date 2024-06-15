@@ -264,7 +264,7 @@ export default function HiddenColors() {
         <SafeAreaView style={styles.container}>
 
             <TopBarGames
-                duration={60}
+                duration={120}
                 onTimerFinish={() => setModalVisible(true)}
                 restart="HiddenColorsInfo"
             />
