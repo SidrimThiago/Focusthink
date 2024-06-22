@@ -12,7 +12,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient'
 import { Ionicons, Feather, Entypo } from '@expo/vector-icons'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import { GiftedChat, Send } from 'react-native-gifted-chat'
+import { GiftedChat, Send, Bubble } from 'react-native-gifted-chat'
 import { MMKV } from 'react-native-mmkv'
 import { API_URL } from '../../../../.env/config'
 import socket from '../../../../utils/socket'
@@ -119,6 +119,22 @@ export default function EspecifedChat() {
     }).catch((error) => console.error('Error saving messages:', error))
   }
 
+  const renderBubble = (props) => {
+    return (
+      <Bubble
+        {...props}
+        wrapperStyle={{
+          right: {
+            backgroundColor: '#DB6510',
+          },
+          left: {
+            backgroundColor: '#633DE8',
+          },
+        }}
+      />
+    )
+  }
+
   const makeCall = () => {
     const callId = generateRandomId(5)
     navigation.navigate('CallPage', { id: callId })
@@ -171,6 +187,7 @@ export default function EspecifedChat() {
             }}
             placeholder="Diga algo..."
             alwaysShowSend
+            renderBubble={renderBubble}
             renderSend={(props) => (
               <Send {...props}>
                 <View style={styles.sendingContainer}>

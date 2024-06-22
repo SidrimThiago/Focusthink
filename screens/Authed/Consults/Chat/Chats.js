@@ -17,6 +17,7 @@ import { MMKV } from 'react-native-mmkv'
 import { API_URL } from '../../../../.env/config'
 
 const storage = new MMKV()
+
 export default function Chats() {
   const [chats, setChats] = useState([])
   const navigation = useNavigation()

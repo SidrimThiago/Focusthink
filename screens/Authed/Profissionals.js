@@ -109,7 +109,7 @@ export default function Profissionals() {
       const userName = storage.getString('user.nameUser')
       const response = await axios.post(`${API_URL}/startChat`, {
         userName,
-        professionalName: professional.nome,
+        professionalName: professional.nomeUser,
       })
       setModalVisible(false)
       navigation.navigate('especifedChat', { chatId: response.data._id })
