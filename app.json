@@ -1,0 +1,58 @@
+{
+  "expo": {
+    "name": "Focusthink",
+    "slug": "Focusthink",
+    "scheme": "Focusthink",
+    "owner": "sidrinho",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.focusthink"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/VouApagar/adaptative-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.focusthink"
+    },
+    "compilerOptions": {
+      "baseUrl": ".",
+      "paths": {
+        "@/*": [
+          "./*"
+        ]
+      }
+    },
+    "expo": {
+      "plugins": [
+        "expo-font",
+        "@react-native-google-signin/google-signin"
+    ],
+    "android": {
+      "googleServicesFile": "./google-services.json"
+    }
+  },
+    "config": {
+    "googleMaps": {
+      "apiKey": "AIzaSyBB0NnuLix6tj8RsN_5OPxBcGVEP3UnfMk"
+    }
+  },
+    "extra": {
+      "eas": {
+        "projectId": "dab4f2a3-de14-4e4e-8084-7b217d40fe21"
+      }
+    }
+  }
+}
