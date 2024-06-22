@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useCallback } from 'react'
 import {
   StyleSheet,
@@ -17,9 +16,12 @@ import { GiftedChat, Send } from 'react-native-gifted-chat'
 import { MMKV } from 'react-native-mmkv'
 import { API_URL } from '../../../../.env/config'
 import socket from '../../../../utils/socket'
-import { v4 as uuidv4 } from 'uuid'
 
 const storage = new MMKV()
+
+const generateUniqueId = () => {
+  return Math.random().toString(36).substr(2, 9)
+}
 
 export default function EspecifedChat() {
   const navigation = useNavigation()
@@ -91,7 +93,7 @@ export default function EspecifedChat() {
     (newMessages = []) => {
       const userMessage = newMessages[0]
       const newMessage = {
-        _id: uuidv4(),
+        _id: generateUniqueId(),
         room_id: chatId,
         message: userMessage.text,
         user: nomeUser,
