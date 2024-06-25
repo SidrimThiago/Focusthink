@@ -99,18 +99,41 @@ export default function Routes() {
           component={NavBar}
           options={{ gestureEnabled: false }}
         />
-        <Stack.Screen name="especifedChat" component={EspecifedChat} />
+        <Stack.Screen
+          name="especifedChat"
+          component={EspecifedChat}
+          options={{
+            animation: 'slide_from_right',
+            headerShown: true,
+            headerTitle: '',
+            headerStyle: { backgroundColor: '#633DE8' },
+          }}
+        />
         <Stack.Screen name="Chatbot" component={Chatbot} />
         <Stack.Screen
           name="Chats"
           component={Chats}
-          options={{ title: 'Chat', headerShown: false }}
+          options={{
+            animation: 'slide_from_right',
+            headerShown: true,
+            headerTitle: 'Conversas',
+            headerStyle: { backgroundColor: '#633DE8', color: '#fff' },
+          }}
         />
         <Stack.Screen name="IaQuestionary" component={IaQuestionary} />
         <Stack.Screen name="Questionary" component={Questionary} />
         <Stack.Screen name="CallPage" component={CallPage} />
 
-        <Stack.Screen name="Profissionals" component={Profissionals} />
+        <Stack.Screen
+          name="Profissionals"
+          component={Profissionals}
+          options={{
+            animation: 'slide_from_left',
+            headerShown: true,
+            headerTitle: 'Profissionais',
+            headerStyle: { backgroundColor: '#633DE8' },
+          }}
+        />
 
         <Stack.Screen
           name="Countdown"

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useLayoutEffect } from 'react'
 import {
   StyleSheet,
   View,
@@ -12,7 +12,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient'
 import { Ionicons, Feather, Entypo } from '@expo/vector-icons'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import { GiftedChat, Send, Bubble } from 'react-native-gifted-chat'
+import { GiftedChat, Send, Bubble, Avatar } from 'react-native-gifted-chat'
 import { MMKV } from 'react-native-mmkv'
 import { API_URL } from '../../../../.env/config'
 import socket from '../../../../utils/socket'
@@ -31,6 +31,40 @@ export default function EspecifedChat() {
   const [loading, setLoading] = useState(true)
   const nomeUser = storage.getString('user.nameUser')
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: () => (
+        <View style={styles.recipientInfo}>
+          {recipientImage ? (
+            <Image
+              alt="image"
+              source={{ uri: `data:image/jpeg;base64,${recipientImage}` }}
+              style={styles.recipientImage}
+            />
+          ) : (
+            <View style={styles.placeholderImage} />
+          )}
+          <Text style={styles.headerTitle}>{recipientName}</Text>
+          <View style={styles.iconContainer}>
+            <Feather
+              name="video"
+              size={26}
+              color="white"
+              onPress={makeCall}
+              style={styles.icon}
+            />
+            <Entypo
+              name="dots-three-vertical"
+              size={24}
+              color="white"
+              style={styles.icon}
+            />
+          </View>
+        </View>
+      ),
+    })
+  }, [navigation, recipientName, recipientImage])
+
   useEffect(() => {
     const fetchMessages = async () => {
       try {
@@ -43,6 +77,10 @@ export default function EspecifedChat() {
           user: {
             _id: msg.user === nomeUser ? 1 : 2,
             name: msg.user === nomeUser ? '' : msg.user,
+            avatar:
+              msg.user === nomeUser
+                ? ''
+                : `data:image/jpeg;base64,${recipientImage}`,
           },
         }))
         setMessages(formattedMessages)
@@ -63,6 +101,10 @@ export default function EspecifedChat() {
         user: {
           _id: msg.user === nomeUser ? 1 : 2,
           name: msg.user === nomeUser ? '' : msg.user,
+          avatar:
+            msg.user === nomeUser
+              ? ''
+              : `data:image/jpeg;base64,${recipientImage}`,
         },
       }))
       setMessages(formattedMessages)
@@ -76,6 +118,10 @@ export default function EspecifedChat() {
         user: {
           _id: newMessage.user === nomeUser ? 1 : 2,
           name: newMessage.user === nomeUser ? '' : newMessage.user,
+          avatar:
+            newMessage.user === nomeUser
+              ? ''
+              : `data:image/jpeg;base64,${recipientImage}`,
         },
       }
       setMessages((previousMessages) =>
@@ -87,7 +133,7 @@ export default function EspecifedChat() {
       socket.off('foundRoom')
       socket.off('roomMessage')
     }
-  }, [chatId, nomeUser])
+  }, [chatId, nomeUser, recipientImage])
 
   const handleSend = useCallback(
     (newMessages = []) => {
@@ -135,6 +181,18 @@ export default function EspecifedChat() {
     )
   }
 
+  const renderAvatar = (props) => {
+    return (
+      <Avatar
+        {...props}
+        imageStyle={{
+          left: { width: 40, height: 40, borderRadius: 20 },
+          right: { width: 40, height: 40, borderRadius: 20 },
+        }}
+      />
+    )
+  }
+
   const makeCall = () => {
     const callId = generateRandomId(5)
     navigation.navigate('CallPage', { id: callId })
@@ -153,26 +211,7 @@ export default function EspecifedChat() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={26} color="white" />
-          </TouchableOpacity>
-          <View style={styles.recipientInfo}>
-            {recipientImage ? (
-              <Image
-                alt="image"
-                source={{ uri: `data:image/jpeg;base64,${recipientImage}` }}
-                style={styles.recipientImage}
-              />
-            ) : (
-              <View style={styles.placeholderImage} />
-            )}
-            <Text style={styles.headerTitle}>{recipientName}</Text>
-          </View>
-          <Feather name="video" size={26} color="white" onPress={makeCall} />
-          <Entypo name="dots-three-vertical" size={24} color="white" />
-        </View>
+      <LinearGradient colors={['#3E278D', '#1C233F']} style={styles.background}>
         {loading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#633DE8" />
@@ -188,6 +227,7 @@ export default function EspecifedChat() {
             placeholder="Diga algo..."
             alwaysShowSend
             renderBubble={renderBubble}
+            renderAvatar={renderAvatar}
             renderSend={(props) => (
               <Send {...props}>
                 <View style={styles.sendingContainer}>
@@ -210,16 +250,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 10,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 10,
-    backgroundColor: '#000',
-    borderRadius: 10,
-    marginBottom: 10,
-    marginTop: StatusBar.currentHeight - 15,
-  },
   recipientInfo: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -240,6 +270,14 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: 'white',
     fontSize: 20,
+  },
+  iconContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 10,
+  },
+  icon: {
+    marginLeft: 16,
   },
   sendingContainer: {
     justifyContent: 'center',

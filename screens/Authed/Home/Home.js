@@ -45,7 +45,9 @@ export default function Home(props) {
           <Animated.Text style={[styles.title(isTransparent, scrollA), { fontFamily: 'Quicksand-Medium', fontSize: 24 }]}> Seja bem vindo ! </Animated.Text>
           <Animated.Text style={[styles.title(isTransparent, scrollA), { fontFamily: 'Quicksand-Bold', fontSize: 42 }]}> {nameUser}</Animated.Text>
         </View>
-        <Ionicons name="chatbubble-outline" size={32} color="black" onPress={() => navigation.navigate('Chats')}/>
+        <View>
+        <Ionicons name="chatbubble-outline" size={32} color="white" onPress={() => navigation.navigate('Chats')}/>
+        </View>
       </View>
 
       <Animated.Image
@@ -101,7 +103,7 @@ export default function Home(props) {
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 5 }}>
               <View style={styles.box}>
-                <Image source={require('../../../assets/Home/JogoDoDia.png')} resizeMode='cover' style={styles.imageBox} />
+                <Image alt="image" source={require('../../../assets/Home/JogoDoDia.png')} resizeMode='cover' style={styles.imageBox} />
                 <View style={{ position: 'absolute', bottom: 0, left: 0 }}>
                   <Icon1 />
                 </View>
@@ -117,7 +119,7 @@ export default function Home(props) {
               </View>
 
               <View style={styles.box}>
-                <Image source={require('../../../assets/Home/TodosOsJogos.png')} resizeMode='cover' style={styles.imageBox} />
+                <Image alt="image" source={require('../../../assets/Home/TodosOsJogos.png')} resizeMode='cover' style={styles.imageBox} />
                 <View style={{ position: 'absolute', bottom: 0, left: 0, maxWidth: 88.5, overflow: 'hidden' }}>
                   <Icon2 />
                 </View>
@@ -140,6 +142,7 @@ export default function Home(props) {
                 </Pressable>
               </View>
               <Image
+                alt="image"
                 source={require('../../../assets/Home/especialist.png')}
                 resizeMode='contain'
                 style={{ height: 195, width: '50%' }}

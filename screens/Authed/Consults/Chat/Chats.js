@@ -5,12 +5,11 @@ import {
   Text,
   SafeAreaView,
   FlatList,
-  TouchableOpacity,
-  Button,
+  TouchableHighlight,
   Image,
   ActivityIndicator,
+  Button,
 } from 'react-native'
-import { LinearGradient } from 'expo-linear-gradient'
 import axios from 'axios'
 import { useNavigation } from '@react-navigation/native'
 import { MMKV } from 'react-native-mmkv'
@@ -65,57 +64,62 @@ export default function Chats() {
     )
 
     return (
-      <TouchableOpacity
-        style={styles.chatContainer}
+      <TouchableHighlight
         onPress={() => handleChatPress(item)}
+        activeOpacity={0.8}
+        underlayColor="#6148B6"
       >
-        {item.recipientImage ? (
-          <Image
-            alt="image"
-            source={{ uri: `data:image/jpeg;base64,${item.recipientImage}` }}
-            style={styles.chatImage}
-          />
-        ) : (
-          <View style={styles.placeholderImage} />
-        )}
-        <View style={styles.chatTextContainer}>
-          <Text style={styles.chatName}>{recipientName}</Text>
-          <Text style={styles.chatLastMessage}>{item.lastMessage}</Text>
-          <Text style={styles.chatTime}>{item.lastMessageTime}</Text>
+        <View style={styles.chatContainer}>
+          <View style={styles.chatContent}>
+            {item.recipientImage ? (
+              <Image
+                alt="image"
+                source={{
+                  uri: `data:image/jpeg;base64,${item.recipientImage}`,
+                }}
+                style={styles.chatImage}
+              />
+            ) : (
+              <View style={styles.placeholderImage} />
+            )}
+            <View style={styles.chatTextContainer}>
+              <Text style={styles.chatName}>{recipientName}</Text>
+              <Text style={styles.chatLastMessage}>{item.lastMessage}</Text>
+            </View>
+          </View>
+          <View style={styles.chatTimeContainer}>
+            <Text style={styles.chatTime}>{item.lastMessageTime}</Text>
+          </View>
         </View>
-      </TouchableOpacity>
+      </TouchableHighlight>
     )
   }
 
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <LinearGradient
-          colors={['#633DE8', '#1C233F']}
-          style={styles.background}
-        >
-          <ActivityIndicator size="large" color="#fff" />
-        </LinearGradient>
+        <ActivityIndicator size="large" color="#fff" />
       </SafeAreaView>
     )
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
-        <Text style={styles.title}>Conversas</Text>
-        {chats.length === 0 ? (
-          <View style={styles.noChatsContainer}>
-            <Button title="Iniciar Chat" onPress={handleStartChatPress} />
-          </View>
-        ) : (
-          <FlatList
-            data={chats}
-            renderItem={renderChatItem}
-            keyExtractor={(item) => item.id}
-          />
-        )}
-      </LinearGradient>
+      {chats.length === 0 ? (
+        <View style={styles.noChatsContainer}>
+          <Button title="Iniciar Chat" onPress={handleStartChatPress} />
+        </View>
+      ) : (
+        <FlatList
+          initialNumToRender={10}
+          scrollEventThrottle={16}
+          overScrollMode="never"
+          showsVerticalScrollIndicator={false}
+          data={chats}
+          renderItem={renderChatItem}
+          keyExtractor={(item) => item.id}
+        />
+      )}
     </SafeAreaView>
   )
 }
@@ -123,53 +127,55 @@ export default function Chats() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  background: {
-    flex: 1,
-    padding: 10,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 10,
+    backgroundColor: '#3E278D',
   },
   chatContainer: {
+    alignItems: 'center',
+    justifyContent: 'space-between',
     flexDirection: 'row',
-    backgroundColor: '#fff',
-    padding: 10,
-    borderRadius: 10,
-    marginBottom: 10,
+    padding: 15,
+    paddingLeft: 15,
+    borderBottomWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  chatContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   chatImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
+    width: 65,
+    height: 65,
+    borderRadius: 90,
   },
   placeholderImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 65,
+    height: 65,
+    borderRadius: 90,
     backgroundColor: '#ccc',
-    marginRight: 10,
   },
   chatTextContainer: {
-    flex: 1,
+    marginLeft: 8,
+    justifyContent: 'space-between',
   },
   chatName: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 16,
+    fontFamily: 'Quicksand-Bold',
+    color: 'white',
   },
   chatLastMessage: {
-    fontSize: 16,
-    color: '#888',
-    marginVertical: 5,
+    fontSize: 13,
+    fontFamily: 'Quicksand-SemiBold',
+    color: '#D5D5D5',
+    marginBottom: 5,
+  },
+  chatTimeContainer: {
+    justifyContent: 'center',
+    alignItems: 'flex-end',
   },
   chatTime: {
-    textAlign: 'right',
-    color: '#999',
-    fontSize: 12,
+    fontSize: 14,
+    fontFamily: 'Quicksand-Bold',
+    color: '#AFB7E1',
   },
   noChatsContainer: {
     flex: 1,

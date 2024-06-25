@@ -16,16 +16,6 @@ export default function ConsultsRoutes() {
     >
       <Stack.Screen name="Consults" component={Consults} />
       <Stack.Screen name="Details" component={Details} />
-      <Stack.Screen
-        name="Chats"
-        component={ScreenChats}
-        options={{
-          animation: 'slide_from_right',
-          headerShown: true,
-          headerTitle: 'Conversas',
-          headerStyle: { backgroundColor: '#633DE8' },
-        }}
-      />
     </Stack.Navigator>
   )
 }
