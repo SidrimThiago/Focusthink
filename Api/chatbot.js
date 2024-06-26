@@ -92,10 +92,11 @@ export default function Consults() {
       <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
         <View style={styles.header}>
           <Image
+            alt="image"
             style={styles.profileImage}
             source={require('../assets/memory/death.png')}
           />
-          <Text style={styles.userName}>{UserDetails}</Text>
+          <Text style={styles.userName}>Focusbot</Text>
         </View>
         <GiftedChat
           messages={messages}
