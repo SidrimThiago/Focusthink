@@ -36,6 +36,7 @@ import HiddenColors from '../screens/Games/HiddenColors/hiddencolors'
 import HiddenColorsInfo from '../screens/Games/HiddenColors/infohiddencolors'
 
 import Console from '../screens/Authed/Home/console'
+import { Text, Image, View } from 'react-native'
 
 const Stack = createNativeStackNavigator()
 
@@ -109,7 +110,39 @@ export default function Routes() {
             headerStyle: { backgroundColor: '#633DE8' },
           }}
         />
-        <Stack.Screen name="Chatbot" component={Chatbot} />
+        <Stack.Screen
+          name="Chatbot"
+          component={Chatbot}
+          options={{
+            animation: 'slide_from_left',
+            headerShown: true,
+            headerTitle: () => (
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Image
+                  alt="image"
+                  source={require('../assets/memory/death.png')}
+                  style={{
+                    width: 30,
+                    height: 30,
+                    borderRadius: 15,
+                    marginRight: 10,
+                  }}
+                />
+                <Text
+                  style={{
+                    color: '#fff',
+                    fontFamily: 'Quicksand-Bold',
+                    fontSize: 20,
+                  }}
+                >
+                  Focusbot
+                </Text>
+              </View>
+            ),
+            headerStyle: { backgroundColor: '#633DE8' },
+          }}
+        />
+
         <Stack.Screen
           name="Chats"
           component={Chats}

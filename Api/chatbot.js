@@ -6,16 +6,17 @@ import {
   SafeAreaView,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native'
 import { MMKV } from 'react-native-mmkv'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Ionicons } from '@expo/vector-icons'
-import { GiftedChat } from 'react-native-gifted-chat'
+import { GiftedChat, Bubble, Send } from 'react-native-gifted-chat'
 import { useNavigation } from '@react-navigation/native'
 
 const storage = new MMKV()
 
-export default function Consults() {
+export default function Chatbot() {
   const navigation = useNavigation()
   const UserDetails = storage.getString('user.nameUser')
   const focusbot = 'Focusbot'
@@ -23,20 +24,48 @@ export default function Consults() {
   const apiUrl = 'https://api.openai.com/v1/chat/completions'
 
   const [messages, setMessages] = useState([])
+  const [isTyping, setIsTyping] = useState(false)
+
+  const Send = (props) => {
+    return (
+      <TouchableOpacity
+        style={styles.sendButton}
+        onPress={() => {
+          if (props.text && props.onSend) {
+            props.onSend({ text: props.text.trim() }, true)
+          }
+        }}
+      >
+        <Ionicons name="send" size={24} color="#633DE8" />
+      </TouchableOpacity>
+    )
+  }
 
   useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: 'Hello! How can I help you today?',
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: focusbot,
+    const savedMessages = storage.getString('chatMessages')
+    if (savedMessages) {
+      setMessages(JSON.parse(savedMessages))
+    } else {
+      setMessages([
+        {
+          _id: 1,
+          text: `Olá, ${UserDetails}! Gostaria de iniciar uma conversa a respeito do TDAH?`,
+          createdAt: new Date(),
+          user: {
+            _id: 2,
+            name: focusbot,
+          },
         },
-      },
-    ])
+      ])
+    }
   }, [])
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      storage.set('chatMessages', JSON.stringify(messages))
+    })
+    return unsubscribe
+  }, [messages, navigation])
 
   const onSend = useCallback(async (newMessages = []) => {
     setMessages((previousMessages) =>
@@ -46,6 +75,7 @@ export default function Consults() {
     const userMessage = newMessages[0].text
 
     try {
+      setIsTyping(true)
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -67,7 +97,9 @@ export default function Consults() {
       })
 
       const data = await response.json()
-      const botResponse = data.choices[0].message.content
+      const botResponse =
+        data.choices?.[0]?.message?.content ||
+        'Desculpe, não consegui processar a resposta.'
 
       const botMessage = {
         _id: Math.random().toString(36).substring(7),
@@ -84,20 +116,27 @@ export default function Consults() {
       )
     } catch (error) {
       console.log(error)
+      const botMessage = {
+        _id: Math.random().toString(36).substring(7),
+        text: 'Desculpe, houve um erro ao processar sua mensagem.',
+        createdAt: new Date(),
+        user: {
+          _id: 2,
+          name: focusbot,
+        },
+      }
+
+      setMessages((previousMessages) =>
+        GiftedChat.append(previousMessages, botMessage),
+      )
+    } finally {
+      setIsTyping(false)
     }
   }, [])
 
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
-        <View style={styles.header}>
-          <Image
-            alt="image"
-            style={styles.profileImage}
-            source={require('../assets/memory/death.png')}
-          />
-          <Text style={styles.userName}>Focusbot</Text>
-        </View>
+      <LinearGradient colors={['#3E278D', '#1C233F']} style={styles.background}>
         <GiftedChat
           messages={messages}
           onSend={(messages) => onSend(messages)}
@@ -108,24 +147,10 @@ export default function Consults() {
           placeholder="Type a message..."
           alwaysShowSend
           renderSend={(props) => <Send {...props} />}
+          isTyping={isTyping}
         />
       </LinearGradient>
     </SafeAreaView>
-  )
-}
-
-const Send = (props) => {
-  return (
-    <TouchableOpacity
-      style={styles.sendButton}
-      onPress={() => {
-        if (props.text && props.onSend) {
-          props.onSend({ text: props.text.trim() }, true)
-        }
-      }}
-    >
-      <Ionicons name="send" size={24} color="#633DE8" />
-    </TouchableOpacity>
   )
 }
 
@@ -136,22 +161,6 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     paddingTop: 10,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-  },
-  profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
-  },
-  userName: {
-    fontSize: 16,
-    fontFamily: 'Quicksand-Bold',
-    color: '#fff',
   },
   sendButton: {
     justifyContent: 'center',

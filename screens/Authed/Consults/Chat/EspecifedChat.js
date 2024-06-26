@@ -1,21 +1,11 @@
-import React, {
-  useRef,
-  useEffect,
-  useState,
-  useCallback,
-  useLayoutEffect,
-} from 'react'
+import React, { useState, useEffect, useCallback, useLayoutEffect } from 'react'
 import {
   StyleSheet,
   View,
-  Text,
   SafeAreaView,
-  TouchableOpacity,
   ActivityIndicator,
   Image,
-  StatusBar,
-  PermissionsAndroid,
-  Platform,
+  Text,
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Ionicons, Feather, Entypo } from '@expo/vector-icons'
@@ -30,11 +20,9 @@ import {
 import { MMKV } from 'react-native-mmkv'
 import { API_URL } from '../../../../.env/config'
 import socket from '../../../../utils/socket'
-import * as ImagePicker from 'expo-image-picker'
-import AudioRecorderPlayer from 'react-native-audio-recorder-player'
+import * as ImagePicker from 'react-native-image-picker'
 
 const storage = new MMKV()
-const audioRecorderPlayer = new AudioRecorderPlayer()
 
 const generateUniqueId = () => {
   return Math.random().toString(36).substr(2, 9)
@@ -47,7 +35,6 @@ export default function EspecifedChat() {
   const [messages, setMessages] = useState([])
   const [loading, setLoading] = useState(true)
   const nomeUser = storage.getString('user.nameUser')
-  const [recording, setRecording] = useState(false)
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -100,6 +87,7 @@ export default function EspecifedChat() {
                 ? ''
                 : `data:image/jpeg;base64,${recipientImage}`,
           },
+          image: msg.image,
         }))
         setMessages(formattedMessages)
         setLoading(false)
@@ -124,6 +112,7 @@ export default function EspecifedChat() {
               ? ''
               : `data:image/jpeg;base64,${recipientImage}`,
         },
+        image: msg.image,
       }))
       setMessages(formattedMessages)
     })
@@ -141,6 +130,7 @@ export default function EspecifedChat() {
               ? ''
               : `data:image/jpeg;base64,${recipientImage}`,
         },
+        image: newMessage.image,
       }
       setMessages((previousMessages) =>
         GiftedChat.append(previousMessages, [formattedMessage]),
@@ -162,6 +152,7 @@ export default function EspecifedChat() {
         message: userMessage.text,
         user: nomeUser,
         timestamp: new Date().toISOString(),
+        image: userMessage.image,
       }
 
       socket.emit('newMessage', newMessage)
@@ -183,78 +174,6 @@ export default function EspecifedChat() {
     }).catch((error) => console.error('Error saving messages:', error))
   }
 
-  const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    })
-
-    if (!result.canceled) {
-      const newMessage = {
-        _id: generateUniqueId(),
-        room_id: chatId,
-        message: '',
-        user: nomeUser,
-        timestamp: new Date().toISOString(),
-        image: result.uri,
-      }
-
-      socket.emit('newMessage', newMessage)
-      setMessages((previousMessages) =>
-        GiftedChat.append(previousMessages, [newMessage]),
-      )
-      saveMessagesToBackend(newMessage)
-    }
-  }
-
-  const startRecording = async () => {
-    if (Platform.OS === 'android') {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-        {
-          title: 'Permissão para Gravar Áudio',
-          message: 'Este app precisa de acesso ao microfone para gravar áudio.',
-          buttonNeutral: 'Perguntar Depois',
-          buttonNegative: 'Cancelar',
-          buttonPositive: 'Permitir',
-        },
-      )
-      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('Permissão de gravação negada')
-        return
-      }
-    }
-    setRecording(true)
-    const result = await audioRecorderPlayer.startRecorder()
-    audioRecorderPlayer.addRecordBackListener((e) => {
-      console.log('recording', e.current_position)
-    })
-    console.log('result', result)
-  }
-
-  const stopRecording = async () => {
-    setRecording(false)
-    const result = await audioRecorderPlayer.stopRecorder()
-    audioRecorderPlayer.removeRecordBackListener()
-    console.log('result', result)
-    const newMessage = {
-      _id: generateUniqueId(),
-      room_id: chatId,
-      message: '',
-      user: nomeUser,
-      timestamp: new Date().toISOString(),
-      audio: result,
-    }
-
-    socket.emit('newMessage', newMessage)
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, [newMessage]),
-    )
-    saveMessagesToBackend(newMessage)
-  }
-
   const renderBubble = (props) => {
     return (
       <Bubble
@@ -270,9 +189,6 @@ export default function EspecifedChat() {
         renderMessageImage={
           props.currentMessage.image ? renderMessageImage : null
         }
-        renderMessageAudio={
-          props.currentMessage.audio ? renderMessageAudio : null
-        }
       />
     )
   }
@@ -286,20 +202,6 @@ export default function EspecifedChat() {
     )
   }
 
-  const renderMessageAudio = (props) => {
-    return (
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <TouchableOpacity
-          onPress={() =>
-            audioRecorderPlayer.startPlayer(props.currentMessage.audio)
-          }
-        >
-          <Ionicons name="play-circle" size={36} color="#633DE8" />
-        </TouchableOpacity>
-      </View>
-    )
-  }
-
   const renderAvatar = (props) => {
     return (
       <Avatar
@@ -308,6 +210,67 @@ export default function EspecifedChat() {
           left: { width: 40, height: 40, borderRadius: 20 },
           right: { width: 40, height: 40, borderRadius: 20 },
         }}
+      />
+    )
+  }
+
+  const pickImage = () => {
+    const options = {
+      mediaType: 'photo',
+      maxWidth: 300,
+      maxHeight: 300,
+      quality: 1,
+    }
+
+    ImagePicker.launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker')
+      } else if (response.errorMessage) {
+        console.log('ImagePicker Error: ', response.errorMessage)
+      } else if (response.assets) {
+        const source = { uri: response.assets[0].uri }
+        handleSendImage(source.uri)
+      }
+    })
+  }
+
+  const handleSendImage = (imageUri) => {
+    const newMessage = {
+      _id: generateUniqueId(),
+      room_id: chatId,
+      message: '',
+      user: nomeUser,
+      image: imageUri,
+      timestamp: new Date().toISOString(),
+    }
+
+    socket.emit('newMessage', newMessage)
+    setMessages((previousMessages) =>
+      GiftedChat.append(previousMessages, [
+        {
+          _id: newMessage._id,
+          text: '',
+          createdAt: new Date(newMessage.timestamp),
+          user: {
+            _id: 1,
+            name: nomeUser,
+          },
+          image: imageUri,
+        },
+      ]),
+    )
+    saveMessagesToBackend(newMessage)
+  }
+
+  const renderActions = (props) => {
+    return (
+      <Actions
+        {...props}
+        options={{
+          'Enviar Imagem': pickImage,
+        }}
+        icon={() => <Ionicons name="camera" size={24} color="#633DE8" />}
+        onSend={(args) => console.log(args)}
       />
     )
   }
@@ -326,20 +289,6 @@ export default function EspecifedChat() {
       result += characters.charAt(Math.floor(Math.random() * charactersLength))
     }
     return result
-  }
-
-  const renderActions = (props) => {
-    return (
-      <Actions
-        {...props}
-        options={{
-          'Escolher imagem': pickImage,
-          'Gravar áudio': recording ? stopRecording : startRecording,
-        }}
-        icon={() => <Ionicons name="attach" size={24} color="#633DE8" />}
-        onSend={(args) => console.log(args)}
-      />
-    )
   }
 
   return (
@@ -361,7 +310,6 @@ export default function EspecifedChat() {
             alwaysShowSend
             renderBubble={renderBubble}
             renderAvatar={renderAvatar}
-            renderActions={renderActions}
             renderSend={(props) => (
               <Send {...props}>
                 <View style={styles.sendingContainer}>
@@ -369,6 +317,7 @@ export default function EspecifedChat() {
                 </View>
               </Send>
             )}
+            renderActions={renderActions}
           />
         )}
       </LinearGradient>
