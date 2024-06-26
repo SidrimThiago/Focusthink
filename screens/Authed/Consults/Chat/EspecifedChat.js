@@ -8,14 +8,23 @@ import {
   ActivityIndicator,
   Image,
   StatusBar,
+  Alert,
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Ionicons, Feather, Entypo } from '@expo/vector-icons'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import { GiftedChat, Send, Bubble, Avatar } from 'react-native-gifted-chat'
+import {
+  GiftedChat,
+  Send,
+  Bubble,
+  Avatar,
+  InputToolbar,
+  Actions,
+} from 'react-native-gifted-chat'
 import { MMKV } from 'react-native-mmkv'
 import { API_URL } from '../../../../.env/config'
 import socket from '../../../../utils/socket'
+import * as ImagePicker from 'react-native-image-picker'
 
 const storage = new MMKV()
 
@@ -193,6 +202,67 @@ export default function EspecifedChat() {
     )
   }
 
+  const pickImage = () => {
+    const options = {
+      mediaType: 'photo',
+      maxWidth: 300,
+      maxHeight: 300,
+      quality: 1,
+    }
+
+    ImagePicker.launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker')
+      } else if (response.errorMessage) {
+        console.log('ImagePicker Error: ', response.errorMessage)
+      } else if (response.assets) {
+        const source = { uri: response.assets[0].uri }
+        handleSendImage(source.uri)
+      }
+    })
+  }
+
+  const handleSendImage = (imageUri) => {
+    const newMessage = {
+      _id: generateUniqueId(),
+      room_id: chatId,
+      message: '',
+      user: nomeUser,
+      image: imageUri,
+      timestamp: new Date().toISOString(),
+    }
+
+    socket.emit('newMessage', newMessage)
+    setMessages((previousMessages) =>
+      GiftedChat.append(previousMessages, [
+        {
+          _id: newMessage._id,
+          text: '',
+          createdAt: new Date(newMessage.timestamp),
+          user: {
+            _id: 1,
+            name: nomeUser,
+          },
+          image: imageUri,
+        },
+      ]),
+    )
+    saveMessagesToBackend(newMessage)
+  }
+
+  const renderActions = (props) => {
+    return (
+      <Actions
+        {...props}
+        options={{
+          'Enviar Imagem': pickImage,
+        }}
+        icon={() => <Ionicons name="ios-attach" size={24} color="#633DE8" />}
+        onSend={(args) => console.log(args)}
+      />
+    )
+  }
+
   const makeCall = () => {
     const callId = generateRandomId(5)
     navigation.navigate('CallPage', { id: callId })
@@ -235,6 +305,7 @@ export default function EspecifedChat() {
                 </View>
               </Send>
             )}
+            renderActions={renderActions}
           />
         )}
       </LinearGradient>

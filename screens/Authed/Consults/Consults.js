@@ -10,16 +10,39 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { Ionicons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import SearchEspecialist from './searchespecialist'
+import MapView, { Marker } from 'react-native-maps'
 
 export default function Consults() {
   const navigation = useNavigation()
+  const [region, setRegion] = useState(null)
+  const [professionals, setProfessionals] = useState([])
+
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
         <StatusBar barStyle={'dark-content'} />
-        <View
-          style={{ position: 'absolute', width: '100%', height: '100%' }}
-        ></View>
+        <View style={{ position: 'absolute', width: '100%', height: '100%' }}>
+          <MapView
+            style={styles.map}
+            region={region}
+            showsUserLocation={true}
+            showsMyLocationButton={true}
+            onRegionChangeComplete={(region) => setRegion(region)}
+          >
+            {professionals.map((professional, index) => (
+              <Marker
+                key={index}
+                coordinate={{
+                  latitude: professional.consultorio.Latitude,
+                  longitude: professional.consultorio.Longitude,
+                }}
+                title={professional.nome}
+                description={professional.consultorio.Nome}
+                pinColor="#FF7324"
+              />
+            ))}
+          </MapView>
+        </View>
 
         <View />
 
@@ -49,7 +72,7 @@ export default function Consults() {
             <Ionicons name="chatbubble" size={50} color="white" />
           </TouchableOpacity>
         </View>
-        <SearchEspecialist />
+        <SearchEspecialist setProfessionalsData={setProfessionals} />
       </LinearGradient>
     </SafeAreaView>
   )

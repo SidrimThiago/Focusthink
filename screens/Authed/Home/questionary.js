@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
 import { View, Text, SafeAreaView, TouchableOpacity, StyleSheet, TextInput, ProgressBarAndroid, Platform, ProgressViewIOS, StatusBar } from 'react-native';
 import Modal from 'react-native-modal'
@@ -277,7 +278,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
-    backgroundColor: '#5A2EF1',
+    backgroundColor: '#5C3BCD',
     paddingTop: StatusBar.currentHeight
   },
   innerContainer: {
@@ -286,7 +287,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   backButton: {
-    backgroundColor: '#633DE8',
+    backgroundColor: '#5C3BCD',
     padding: 10,
     borderRadius: 10,
     alignSelf: 'flex-start',
