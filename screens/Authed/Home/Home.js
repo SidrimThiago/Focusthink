@@ -1,15 +1,16 @@
 /* eslint-disable prettier/prettier */
-import { React, useState, useRef, useEffect } from 'react'
-import { StyleSheet, StatusBar, View, Text, Image, SafeAreaView, ScrollView, Pressable, Animated, } from 'react-native'
+import React, { useState, useRef, useEffect } from 'react'
+import { StyleSheet, StatusBar, View, Text, Image, SafeAreaView, ScrollView, Pressable, Animated } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useNavigation } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { MMKV } from 'react-native-mmkv'
+import YoutubePlayer from 'react-native-youtube-iframe'
+
 import Icon1 from '../../../assets/Home/jogododia.svg'
 import Icon2 from '../../../assets/Home/controllerjogos.svg'
 import Form from '../../../assets/Home/form.svg'
-import { overlay } from 'react-native-paper'
 
 const storage = new MMKV()
 
@@ -17,90 +18,33 @@ const BANNER_H = 450;
 const TOPNAVI_H = 250;
 
 export default function Home(props) {
-  const navigation = useNavigation();
+  const navigation = useNavigation()
   const nameUser = storage.getString('user.nameUser')
-  const scrollA = useRef(new Animated.Value(0)).current;
-  const safeArea = useSafeAreaInsets();
+  const scrollA = useRef(new Animated.Value(0)).current
+  const safeArea = useSafeAreaInsets()
 
-  const { title, scrollB } = props;
-  const isFloating = scrollB;
-  const [isTransparent, setTransparent] = useState(true);
+  const { title, scrollB } = props
+  const isFloating = scrollB
+  const [isTransparent, setTransparent] = useState(true)
+  const [selectedTopic, setSelectedTopic] = useState('Principal')
 
   useEffect(() => {
     if (!scrollA) {
-      return;
+      return
     }
     const listenerId = scrollA.addListener(a => {
-      const topNaviOffset = BANNER_H - TOPNAVI_H - safeArea.top;
+      const topNaviOffset = BANNER_H - TOPNAVI_H - safeArea.top
       isTransparent !== a.value < topNaviOffset &&
-        setTransparent(!isTransparent);
-    });
-    return () => scrollA.removeListener(listenerId);
-  });
+        setTransparent(!isTransparent)
+    })
+    return () => scrollA.removeListener(listenerId)
+  })
 
-  return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ marginTop: StatusBar.currentHeight, flexDirection: 'row', width: '100%', justifyContent: 'space-between', padding: 10, zIndex: 1 }}>
-        <View style={styles.container(safeArea, isFloating, isTransparent)}>
-          <Animated.Text style={[styles.title(isTransparent, scrollA), { fontFamily: 'Quicksand-Medium', fontSize: 24 }]}> Seja bem vindo ! </Animated.Text>
-          <Animated.Text style={[styles.title(isTransparent, scrollA), { fontFamily: 'Quicksand-Bold', fontSize: 42 }]}> {nameUser}</Animated.Text>
-        </View>
-        <View>
-        <Ionicons name="chatbubble-outline" size={32} color="white" onPress={() => navigation.navigate('Chats')}/>
-        </View>
-      </View>
-
-      <Animated.Image
-        style={[styles.banner(scrollA), { alignSelf: 'center' }]}
-        source={require('../../../assets/Home/homeimage.png')}
-      />
-
-      <View style={{ borderTopRightRadius: 45, borderTopStartRadius: 45, overflow: 'hidden', height: '100%', flex: 2 }}>
-
-        <Animated.ScrollView
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: scrollA } } }],
-            { useNativeDriver: true },
-          )}
-          scrollEventThrottle={16}
-          contentContainerStyle={{ paddingTop: '45%' }}
-          stickyHeaderIndices={[0]}
-          overScrollMode='never'
-          showsVerticalScrollIndicator={false}
-        >
-
-          <View style={{ borderTopStartRadius: 45, borderTopEndRadius: 45, overflow: 'hidden', zIndex: 1 }}>
-            <ScrollView style={{ backgroundColor: '#633DE8', paddingVertical: 10 }} contentContainerStyle={{ flexDirection: 'row' }} horizontal={true} showsHorizontalScrollIndicator={false}>
-              <Pressable
-                onPress={() => console.log('Clicado')}
-                style={[styles.topBar, { backgroundColor: '#FF7425', borderColor: '#B95E2B', marginLeft: 10 }]}
-              >
-                <Text style={[styles.topBarText, { color: 'white' }]}>TDAH</Text>
-              </Pressable>
-              <Pressable
-                onPress={() => console.log('Clicado')}
-                style={styles.topBar}
-              >
-                <Text style={styles.topBarText}>Organização</Text>
-              </Pressable>
-              <Pressable
-                onPress={() => console.log('Clicado')}
-                style={styles.topBar}
-              >
-                <Text style={styles.topBarText}>Estudos </Text>
-              </Pressable>
-              <Pressable
-                onPress={() => console.log('Clicado')}
-                style={[styles.topBar, { marginRight: 10 }]}
-              >
-                <Text style={styles.topBarText}>Ferramentas</Text>
-              </Pressable>
-            </ScrollView>
-          </View>
-
-
-          <LinearGradient colors={['#633DE8', '#283C8C']} style={{ padding: 10 }}>
-
+  const renderContent = () => {
+    switch (selectedTopic) {
+      case 'Principal':
+        return (
+          <View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 5 }}>
               <View style={styles.box}>
                 <Image alt="image" source={require('../../../assets/Home/JogoDoDia.png')} resizeMode='cover' style={styles.imageBox} />
@@ -136,7 +80,7 @@ export default function Home(props) {
             <View style={{ flexDirection: 'row', backgroundColor: '#FF7D34', justifyContent: 'space-evenly', borderRadius: 10, marginVertical: 5 }}>
               <View style={{ justifyContent: 'space-evenly', alignItems: 'center', width: '50%' }}>
                 <Text style={{ fontFamily: 'Quicksand-SemiBold', fontSize: 24, color: 'white' }}> Especialistas {'\n'} disponíveis</Text>
-                <Pressable style={{ width: '75%', height: 40, backgroundColor: 'white', borderRadius: 100, justifyContent: 'center', alignItems: 'center', }}
+                <Pressable style={{ width: '75%', height: 40, backgroundColor: 'white', borderRadius: 100, justifyContent: 'center', alignItems: 'center' }}
                   onPress={() => navigation.navigate('Profissionals')}>
                   <Text style={{ fontFamily: 'Quicksand-Bold' }}>Ver</Text>
                 </Pressable>
@@ -153,7 +97,7 @@ export default function Home(props) {
               <Image alt="image" source={require('../../../assets/Home/fundoforms.png')} resizeMode='cover' style={{ height: '100%', width: '100%', position: 'absolute', left: 0 }} />
               <Form width={'40%'} />
               <View style={{ width: '60%', alignItems: 'center' }}>
-                <Text style={{ fontFamily: 'Quicksand-Bold  ', fontSize: 20, color: '#272626', textAlign: 'center' }}>Formulário SNAP-IV</Text>
+                <Text style={{ fontFamily: 'Quicksand-Bold', fontSize: 20, color: '#272626', textAlign: 'center' }}>Formulário SNAP-IV</Text>
                 <Text style={{ fontFamily: 'Quicksand-SemiBold', fontSize: 12, color: '#3C3C3C', textAlign: 'center', marginVertical: 5 }}>Teste a probabilidade de{'\n'}você ter TDAH.</Text>
                 <Pressable style={{ width: '75%', height: 40, backgroundColor: '#FF7D34', borderRadius: 100, justifyContent: 'center', alignItems: 'center', marginVertical: 5 }}
                   onPress={() => navigation.navigate('Questionary')}>
@@ -166,7 +110,7 @@ export default function Home(props) {
               <Image alt="image" source={require('../../../assets/Home/fundoforms.png')} resizeMode='cover' style={{ height: '100%', width: '100%', position: 'absolute', left: 0 }} />
               <Form width={'40%'} />
               <View style={{ width: '60%', alignItems: 'center' }}>
-                <Text style={{ fontFamily: 'Quicksand-Bold  ', fontSize: 20, color: '#272626', textAlign: 'center' }}>Formulário Com iA</Text>
+                <Text style={{ fontFamily: 'Quicksand-Bold', fontSize: 20, color: '#272626', textAlign: 'center' }}>Formulário Com iA</Text>
                 <Text style={{ fontFamily: 'Quicksand-SemiBold', fontSize: 12, color: '#3C3C3C', textAlign: 'center', marginVertical: 5 }}>Teste a probabilidade de{'\n'}você ter TDAH por meio de inteligência artificial.</Text>
                 <Pressable style={{ width: '75%', height: 40, backgroundColor: '#FF7D34', borderRadius: 100, justifyContent: 'center', alignItems: 'center', marginVertical: 5 }}
                   onPress={() => navigation.navigate('Chatbot')}>
@@ -176,15 +120,181 @@ export default function Home(props) {
             </View>
 
             <View style={{ height: 100, width: '100%', borderRadius: 10 }} />
+          </View>
+        )
+      case 'TDAH':
+        return (
+          <View>
+            <View style={styles.infoBox}>
+              <Text style={styles.infoTitle}>Por que é tão séria essa patologia?</Text>
+              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
+              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
+            </View>
+            <YoutubePlayer height={200} videoId="gqMv8zbnf2k" />
+            <View style={styles.infoBox}>
+              <Text style={styles.infoTitle}>Como aplicativos podem auxiliar seu dia a dia</Text>
+              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
+              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
+            </View>
+            <YoutubePlayer height={200} videoId="gptcc6qWJgc" />
+            <View style={styles.infoBox}>
+              <Text style={styles.infoTitle}>Dicas para lidar com o TDAH</Text>
+              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
+              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
+            </View>
+            <YoutubePlayer height={200} videoId="knu4hQmvqpU" />
+          </View>
+        )
+      case 'Organização':
+        return (
+          <View>
+            <View style={styles.infoBox}>
+              <Text style={styles.infoTitle}>Importância da Organização</Text>
+              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
+              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
+            </View>
+            <YoutubePlayer height={200} videoId="zMWc0De2k-A" />
+            <View style={styles.infoBox}>
+              <Text style={styles.infoTitle}>Ferramentas para ajudar na Organização</Text>
+              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
+              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
+            </View>
+            <YoutubePlayer height={200} videoId="RS5MT7dOUDM" />
+            <View style={styles.infoBox}>
+              <Text style={styles.infoTitle}>Dicas para se manter organizado</Text>
+              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
+              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
+            </View>
+            <YoutubePlayer height={200} videoId="TDnWI7j5bG0" />
+          </View>
+        )
+      case 'Estudos':
+        return (
+          <View>
+            <View style={styles.infoBox}>
+              <Text style={styles.infoTitle}>Técnicas de Estudo Eficazes</Text>
+              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
+              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
+            </View>
+            <YoutubePlayer height={200} videoId="NQqvlM2lGOU" />
+            <View style={styles.infoBox}>
+              <Text style={styles.infoTitle}>Organização dos Estudos</Text>
+              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
+              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
+            </View>
+            <YoutubePlayer height={200} videoId="PvjjCs7fWuA" />
+            <View style={styles.infoBox}>
+              <Text style={styles.infoTitle}>Como manter a motivação</Text>
+              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
+              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
+            </View>
+            <YoutubePlayer height={200} videoId="NetGMY10OIU" />
+          </View>
+        )
+      case 'Ferramentas':
+        return (
+          <View>
+            <View style={styles.infoBox}>
+              <Text style={styles.infoTitle}>Melhores Ferramentas para Produtividade</Text>
+              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
+              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
+            </View>
+            <YoutubePlayer height={200} videoId="M8xWFTNcmoQ" />
+            <View style={styles.infoBox}>
+              <Text style={styles.infoTitle}>Aplicativos Úteis para TDAH</Text>
+              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
+              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
+            </View>
+            <YoutubePlayer height={200} videoId="gHXDnm6dnJc" />
+            <View style={styles.infoBox}>
+              <Text style={styles.infoTitle}>Dicas de Tecnologia para Organização</Text>
+              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
+              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
+            </View>
+            <YoutubePlayer height={200} videoId="icCFIoDxlVM" />
+          </View>
+        )
+      default:
+        return null
+    }
+  }
 
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={{ marginTop: StatusBar.currentHeight, flexDirection: 'row', width: '100%', justifyContent: 'space-between', padding: 10, zIndex: 1 }}>
+        <View style={styles.container(safeArea, isFloating, isTransparent)}>
+          <Animated.Text style={[styles.title(isTransparent, scrollA), { fontFamily: 'Quicksand-Medium', fontSize: 24 }]}> Seja bem vindo ! </Animated.Text>
+          <Animated.Text style={[styles.title(isTransparent, scrollA), { fontFamily: 'Quicksand-Bold', fontSize: 42 }]}> {nameUser}</Animated.Text>
+        </View>
+        <View>
+          <Ionicons name="chatbubble-outline" size={32} color="white" onPress={() => navigation.navigate('Chats')} />
+        </View>
+      </View>
+
+      <Animated.Image
+        style={[styles.banner(scrollA), { alignSelf: 'center' }]}
+        source={require('../../../assets/Home/homeimage.png')}
+      />
+
+      <View style={{ borderTopRightRadius: 45, borderTopStartRadius: 45, overflow: 'hidden', height: '100%', flex: 2 }}>
+
+        <Animated.ScrollView
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollA } } }],
+            { useNativeDriver: true },
+          )}
+          scrollEventThrottle={16}
+          contentContainerStyle={{ paddingTop: '45%' }}
+          stickyHeaderIndices={[0]}
+          overScrollMode='never'
+          showsVerticalScrollIndicator={false}
+        >
+
+          <View style={{ borderTopStartRadius: 45, borderTopEndRadius: 45, overflow: 'hidden', zIndex: 1 }}>
+            <ScrollView style={{ backgroundColor: '#633DE8', paddingVertical: 10 }} contentContainerStyle={{ flexDirection: 'row' }} horizontal={true} showsHorizontalScrollIndicator={false}>
+              <Pressable
+                onPress={() => setSelectedTopic('Principal')}
+                style={[styles.topBar, { backgroundColor: selectedTopic === 'Principal' ? '#FF7425' : 'white', borderColor: '#B95E2B', marginLeft: 10 }]}
+              >
+                <Text style={[styles.topBarText, { color: selectedTopic === 'Principal' ? 'white' : 'black' }]}>Principal</Text>
+              </Pressable>
+              <Pressable
+                onPress={() => setSelectedTopic('TDAH')}
+                style={[styles.topBar, { backgroundColor: selectedTopic === 'TDAH' ? '#FF7425' : 'white', borderColor: '#B95E2B' }]}
+              >
+                <Text style={[styles.topBarText, { color: selectedTopic === 'TDAH' ? 'white' : 'black' }] }>TDAH</Text>
+              </Pressable>
+              <Pressable
+                onPress={() => setSelectedTopic('Organização')}
+                style={[styles.topBar, { backgroundColor: selectedTopic === 'Organização' ? '#FF7425' : 'white', borderColor: '#B95E2B' }]}
+              >
+                <Text style={[styles.topBarText, { color: selectedTopic === 'Organização' ? 'white' : 'black' }]}>Organização</Text>
+              </Pressable>
+              <Pressable
+                onPress={() => setSelectedTopic('Estudos')}
+                style={[styles.topBar, { backgroundColor: selectedTopic === 'Estudos' ? '#FF7425' : 'white', borderColor: '#B95E2B' }]}
+              >
+                <Text style={[styles.topBarText, { color: selectedTopic === 'Estudos' ? 'white' : 'black' }]}>Estudos</Text>
+              </Pressable>
+              <Pressable
+                onPress={() => setSelectedTopic('Ferramentas')}
+                style={[styles.topBar, { backgroundColor: selectedTopic === 'Ferramentas' ? '#FF7425' : 'white', borderColor: '#B95E2B', marginRight: 10 }]}
+              >
+                <Text style={[styles.topBarText, { color: selectedTopic === 'Ferramentas' ? 'white' : 'black' }]}>Ferramentas</Text>
+              </Pressable>
+            </ScrollView>
+          </View>
+
+          <LinearGradient colors={['#633DE8', '#283C8C']} style={{ padding: 10 }}>
+            {renderContent()}
           </LinearGradient>
         </Animated.ScrollView>
       </View>
     </SafeAreaView>
-  );
-};
+  )
+}
 
-const styles = {
+const styles = StyleSheet.create({
   bannerContainer: {
     alignItems: 'center',
     overflow: 'hidden',
@@ -203,10 +313,9 @@ const styles = {
       {
         scale: scrollA.interpolate({
           inputRange: [0, BANNER_H / 2, BANNER_H / 2],
-          outputRange: [1, 0.85, 0.85,],
+          outputRange: [1, 0.85, 0.85],
         }),
       },
-
     ],
   }),
   container: (safeArea, isFloating, isTransparent) => ({
@@ -226,7 +335,6 @@ const styles = {
       outputRange: [1, 0],
       extrapolate: 'clamp',
     }),
-
   }),
   topBar: {
     width: 138,
@@ -236,12 +344,12 @@ const styles = {
     borderWidth: 2,
     borderColor: '#A3A3A3',
     backgroundColor: 'white',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   topBarText: {
     fontFamily: 'Quicksand-Bold',
     color: 'black',
-    fontSize: 16
+    fontSize: 16,
   },
   box: {
     flexDirection: 'row',
@@ -249,10 +357,42 @@ const styles = {
     width: '49%',
     height: 135,
     borderRadius: 10,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   imageBox: {
     width: '100%',
     height: '100%',
-  }
-};
+  },
+  contentText: {
+    color: 'white',
+    fontSize: 18,
+    fontFamily: 'Quicksand-SemiBold',
+    marginBottom: 20,
+  },
+  infoBox: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    padding: 15,
+    borderRadius: 10,
+    marginVertical: 10,
+  },
+  infoTitle: {
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 20,
+    color: 'white',
+    marginBottom: 5,
+  },
+  infoText: {
+    fontFamily: 'Quicksand-Regular',
+    fontSize: 16,
+    color: 'white',
+    marginBottom: 5,
+  },
+  infoQuote: {
+    fontFamily: 'Quicksand-Italic',
+    fontSize: 14,
+    color: 'white',
+    textAlign: 'right',
+  },
+})
+
+

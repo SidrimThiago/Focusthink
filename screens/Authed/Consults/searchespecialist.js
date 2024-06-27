@@ -18,7 +18,7 @@ import { API_URL } from '../../../.env/config'
 import { MMKV } from 'react-native-mmkv'
 import Geolocation from '@react-native-community/geolocation'
 
-const GOOGLE_MAPS_API_KEY = 'YOUR_GOOGLE_MAPS_API_KEY'
+const GOOGLE_MAPS_API_KEY = 'AIzaSyBB0NnuLix6tj8RsN_5OPxBcGVEP3UnfMk'
 
 const storage = new MMKV()
 
