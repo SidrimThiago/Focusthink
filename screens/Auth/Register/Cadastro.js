@@ -32,13 +32,13 @@ export default function Cadastro() {
   const {
     handleChange,
     values: {
+      tipo,
       nome,
       genero,
       endereco,
       email,
       telefone,
       password,
-      tipo,
       dataNascimento,
       focuspoints,
       tokenVerify,
@@ -46,7 +46,7 @@ export default function Cadastro() {
     },
   } = useFormik({
     initialValues: {
-      tipo: '',
+      tipo: 'Paciente',
       nomeCompleto: '',
       genero: '',
       endereco: '',

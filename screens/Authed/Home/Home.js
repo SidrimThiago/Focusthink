@@ -81,7 +81,7 @@ export default function Home(props) {
               <View style={{ justifyContent: 'space-evenly', alignItems: 'center', width: '50%' }}>
                 <Text style={{ fontFamily: 'Quicksand-SemiBold', fontSize: 24, color: 'white' }}> Especialistas {'\n'} disponíveis</Text>
                 <Pressable style={{ width: '75%', height: 40, backgroundColor: 'white', borderRadius: 100, justifyContent: 'center', alignItems: 'center' }}
-                  onPress={() => navigation.navigate('Profissionals')}>
+                  onPress={() => navigation.navigate('ConsultsRoutes')}>
                   <Text style={{ fontFamily: 'Quicksand-Bold' }}>Ver</Text>
                 </Pressable>
               </View>

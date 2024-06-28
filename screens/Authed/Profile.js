@@ -124,7 +124,8 @@ export default function Profile() {
                 <Text style={styles.label}>Email: <Text style={styles.value}>{details.email}</Text></Text>
                 <Text style={styles.label}>Telefone: <Text style={styles.value}>{details.telefone}</Text></Text> 
                 <Text style={styles.label}>Diagnóstico: <Text style={styles.value}>{details.diagnostico}</Text></Text>
-                <Text style={styles.value}>{details.focuspoints}</Text>
+                <Text style={styles.label}>FocusPoins: <Text style={styles.value}>{details.focusPoints}</Text></Text>
+                
               </View>
 
               {editingDetails.image || imageUrl ? (
@@ -147,6 +148,7 @@ export default function Profile() {
                 onPress={() => setExcluirModal(true)}
               />
               <Button title="Editar perfil" onPress={EditarPerfil} />
+              <Button title="Desempenho" onPress={() => navigation.navigate('Desempenho')} />
             </View>
           </View>
 

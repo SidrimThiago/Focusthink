@@ -179,7 +179,6 @@ export default function Profissionals() {
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
         <View style={{ width: '100%' }}>
-          <Text style={styles.title}>Lista de Profissionais</Text>
           <FlatList
             data={professionalsData}
             renderItem={renderProfessionalItem}

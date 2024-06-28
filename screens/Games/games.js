@@ -48,7 +48,7 @@ export default function Games() {
           source={require('../../assets/GamesScreen/backgroundgames.png')}
         />
         
-        <ScrollView showsVerticalScrollIndicator={false} style={{ padding: 10, paddingTop: 0 }} overScrollMode='never'>
+        <ScrollView showsVerticalScrollIndicator={false} style={{ padding: 10, paddingTop: 0, width: '100%' }} overScrollMode='never'>
           <View style={{ width: '100%', height: 70, backgroundColor: 'white', borderRadius: 5, marginVertical: 5, alignItems: 'center', flexDirection: 'row', marginTop: 10 }}>
             <Image
               source={require('../../assets/GamesScreen/FP.png')}
@@ -73,26 +73,7 @@ export default function Games() {
                 <Image source={require('../../assets/GamesScreen/GamesIcons/Stroop.png')} style={styles.iconGame} />
                 <Text style={styles.title}>Palavras de Cores</Text>
               </Pressable >
-              <Pressable  style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
+              
             </ScrollView>
           </View>
 
@@ -104,26 +85,7 @@ export default function Games() {
                 <Image source={require('../../assets/GamesScreen/GamesIcons/MustSort.png')} style={styles.iconGame} />
                 <Text style={styles.title}>Jogo de{'\n'}Símbolos</Text>
               </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
+              
             </ScrollView>
           </View>
 
@@ -135,26 +97,7 @@ export default function Games() {
               <Image source={require('../../assets/GamesScreen/GamesIcons/HiddenColors.png')} style={styles.iconGame} />
               <Text style={styles.title}>Cores Ocultas</Text>
               </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
+              
             </ScrollView>
           </View>
 
@@ -162,30 +105,7 @@ export default function Games() {
             <Text style={[styles.categorygame, { color: '#1CBFE2' }]}>Linguagem</Text>
 
             <ScrollView style={{ flex: 1 }} horizontal={true} showsHorizontalScrollIndicator={false}>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
+              
             </ScrollView>
           </View>
 
@@ -193,30 +113,7 @@ export default function Games() {
             <Text style={[styles.categorygame, { color: '#FFB156' }]}>Memória</Text>
 
             <ScrollView style={{ flex: 1 }} horizontal={true} showsHorizontalScrollIndicator={false}>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
+              
             </ScrollView>
           </View>
         </ScrollView>

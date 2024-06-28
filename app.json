@@ -3,7 +3,7 @@
     "name": "Focusthink",
     "slug": "Focusthink",
     "scheme": "Focusthink",
-    "owner": "sidrinho",
+    "owner": "adryelfr",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,6 +21,7 @@
       "bundleIdentifier": "com.focusthink"
     },
     "android": {
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/VouApagar/adaptative-icon.png",
         "backgroundColor": "#ffffff"

@@ -23,6 +23,7 @@ import EspecifedChat from '../screens/Authed/Consults/Chat/EspecifedChat'
 import CallPage from '../screens/Authed/callPage'
 import IaQuestionary from '../screens/Authed/IaQuestionary'
 import Questionary from '../screens/Authed/Home/questionary'
+import Desempenho from '../screens/Authed/desempenho'
 
 import GamesCountdown from '../screens/Games/countdown'
 import Results from '../screens/Games/results'
@@ -58,14 +59,14 @@ export default function Routes() {
         <Stack.Screen name="NewPass" component={NewPass} />
 
         <Stack.Screen name="NavBar" component={NavBar} options={{ gestureEnabled: false }} />
-        <Stack.Screen name="especifedChat" component={EspecifedChat} options={{ animation: 'slide_from_right', headerShown: true, headerTitle: '', headerStyle: { backgroundColor: '#633DE8' }, }} />
+        <Stack.Screen name="especifedChat" component={EspecifedChat} options={{ animation: 'slide_from_right', headerShown: true, headerTintColor: 'white', headerTitle: '', headerStyle: { backgroundColor: '#633DE8' }, }} />
         <Stack.Screen name="Chatbot" component={Chatbot} />
-        <Stack.Screen name="Chats" component={Chats} options={{ animation: 'slide_from_right', headerShown: true, headerTitle: 'Conversas', headerStyle: { backgroundColor: '#633DE8', color: '#fff' }, }} />
         <Stack.Screen name="IaQuestionary" component={IaQuestionary} />
         <Stack.Screen name="Questionary" component={Questionary} />
         <Stack.Screen name="CallPage" component={CallPage} />
+        <Stack.Screen name="Desempenho" component={Desempenho} options={{ headerShown: true, headerStyle: { backgroundColor: '#633DE8' }, headerTintColor: 'white', headerTitleStyle: { fontFamily: 'Quicksand-Bold'} }} />
 
-        <Stack.Screen name="Profissionals" component={Profissionals} options={{ animation: 'slide_from_left', headerShown: true, headerTitle: 'Profissionais', headerStyle: { backgroundColor: '#633DE8' }, }} />
+        <Stack.Screen name="Profissionals" component={Profissionals} options={{ animation: 'slide_from_left', headerShown: true, headerTitle: 'Profissionais', headerStyle: { backgroundColor: '#633DE8' }, headerTintColor: 'white', title: 'Lista de Profissionais' }} />
 
         <Stack.Screen name="Countdown" component={GamesCountdown} options={{ gestureEnabled: false }} />
         <Stack.Screen name="Results" component={Results} options={{ animation: 'fade_from_bottom' }} />

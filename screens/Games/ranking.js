@@ -53,7 +53,6 @@ export default function Ranking() {
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
         <View style={styles.header}>
-          <Text style={styles.headerText}>Foto</Text>
           <Text style={styles.headerText}>Nome</Text>
           <Text style={styles.headerText}>Pontuação</Text>
         </View>

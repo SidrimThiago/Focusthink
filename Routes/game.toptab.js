@@ -12,7 +12,6 @@ export default function GamesTopBar() {
         tabBarStyle: { backgroundColor: '#633DE8' },
         tabBarLabelStyle: { fontFamily: 'Quicksand-Bold', color: 'white' },
         tabBarIndicatorStyle: { backgroundColor: 'white', height: 3 },
-        swipeEnabled: false,
       }}
     >
       <Tab.Screen name="MINIJOGOS" component={Games} />

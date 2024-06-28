@@ -1,12 +1,14 @@
 import React from 'react'
-import { StyleSheet,
+import {
+  StyleSheet,
   View,
   Text,
   SafeAreaView,
   Image,
   TouchableOpacity,
   ScrollView,
-  StatusBar
+  StatusBar,
+  Pressable
 } from 'react-native'
 import { useRoute, useNavigation } from '@react-navigation/native'
 import MapView, { Marker } from 'react-native-maps'
@@ -30,13 +32,12 @@ export default function Details() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { paddingTop: StatusBar.currentHeight}]}>
-      <ScrollView >
+    <SafeAreaView style={[styles.container, { paddingTop: StatusBar.currentHeight }]}>
+      <ScrollView  style={{ width: '100%'}}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-          <AntDesign name="arrowleft" size={38} color="white" style={{ position: 'absolute', top: 55, left: 15 }} />
-
-          </TouchableOpacity>
+          <Pressable onPress={() => navigation.goBack()} style={{ position: 'absolute', alignSelf: 'flex-start', margin: 15, padding: 5, zIndex: 2 }} >
+            <AntDesign name="arrowleft" size={38} color="white" />
+          </Pressable>
           <Image
             alt="image"
             source={{ uri: professional.image }}
@@ -103,6 +104,7 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     padding: 20,
+    width: '100%'
   },
   backButton: {
     fontSize: 24,

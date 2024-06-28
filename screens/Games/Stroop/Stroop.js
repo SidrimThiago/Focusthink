@@ -247,8 +247,7 @@ export default function Stroop() {
 
 
   return (
-    <SafeAreaView style={styles.container}>
-      <TopBarGames
+    <SafeAreaView style={styles.container}>      <TopBarGames
         duration={25}
         onTimerFinish={handleTimerFinish}
         restart='StroopInfo'

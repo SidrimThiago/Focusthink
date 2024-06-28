@@ -40,6 +40,7 @@ export default function EspecifedChat() {
     navigation.setOptions({
       headerTitle: () => (
         <View style={styles.recipientInfo}>
+          <View style={{ flexDirection: 'row'}}>
           {recipientImage ? (
             <Image
               alt="image"
@@ -50,6 +51,7 @@ export default function EspecifedChat() {
             <View style={styles.placeholderImage} />
           )}
           <Text style={styles.headerTitle}>{recipientName}</Text>
+          </View>
           <View style={styles.iconContainer}>
             <Feather
               name="video"
@@ -336,6 +338,8 @@ const styles = StyleSheet.create({
   recipientInfo: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%'
   },
   recipientImage: {
     width: 40,
@@ -357,7 +361,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: 10,
+    marginRight: '25%'
   },
   icon: {
     marginLeft: 16,
