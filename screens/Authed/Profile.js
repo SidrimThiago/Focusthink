@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
 import { LinearGradient } from 'expo-linear-gradient'
 import React, { useEffect, useState } from 'react'
-import { Button, Image, Modal, SafeAreaView, StyleSheet, Text, TextInput, View, TouchableOpacity, ActivityIndicator } from 'react-native'
-import { Feather } from '@expo/vector-icons'
+import { Button, Image, Modal, SafeAreaView, StyleSheet, Text, TextInput, View, TouchableOpacity, ActivityIndicator, Pressable } from 'react-native'
+import { Feather, Ionicons } from '@expo/vector-icons'
 import { MMKV } from 'react-native-mmkv'
 import axios from 'axios'
 import { useNavigation } from '@react-navigation/native'
@@ -22,6 +22,7 @@ export default function Profile() {
   const [excluirModal, setExcluirModal] = useState(false)
   const navigation = useNavigation()
   const [loading, setLoading] = useState(true);
+  const [settingsModalVisible, setSettingsModalVisible] = useState(false)
 
   const nomeUser = storage.getString('user.nameUser')
 
@@ -117,12 +118,12 @@ export default function Profile() {
       if (userType === 'Paciente') {
         return (
           <View style={{ height: '100%', justifyContent: 'space-evenly' }}>
-            <LinearGradient colors={['#8863FF', '#6D53C0']} style={{ flexDirection: 'row', padding: 20, borderRadius: 35 }}> 
+            <LinearGradient colors={['#8863FF', '#6D53C0']} style={{ flexDirection: 'row', padding: 20, borderRadius: 35 }}>
               <View>
-                <Text style={{ fontFamily: 'Quicksand-SemiBold', fontSize: 26, color: 'white'}}>{details.userName}</Text>
+                <Text style={{ fontFamily: 'Quicksand-SemiBold', fontSize: 26, color: 'white' }}>{details.userName}</Text>
                 <Text style={[styles.value, { maxWidth: 240, marginVertical: 15 }]}>{details.biografia}</Text>
                 <Text style={styles.label}>Email: <Text style={styles.value}>{details.email}</Text></Text>
-                <Text style={styles.label}>Telefone: <Text style={styles.value}>{details.telefone}</Text></Text> 
+                <Text style={styles.label}>Telefone: <Text style={styles.value}>{details.telefone}</Text></Text>
                 <Text style={styles.label}>Diagnóstico: <Text style={styles.value}>{details.diagnostico}</Text></Text>
                 <Text style={styles.value}>{details.focuspoints}</Text>
               </View>
@@ -139,17 +140,22 @@ export default function Profile() {
                 </View>
               )}
             </LinearGradient>
-            
-            <View>
-              <Button title="Sair da conta" onPress={logout} />
-              <Button
-                title="Apagar minha conta"
-                onPress={() => setExcluirModal(true)}
-              />
-              <Button title="Editar perfil" onPress={EditarPerfil} />
+
+            <View style={styles.actionsContainer}>
+              <Pressable style={styles.actionButton} onPress={() => navigation.navigate('Desempenho')}>
+                <Text style={styles.actionText}>Desempenho</Text>
+                <Ionicons name="desktop-outline" size={24} color="black" />
+              </Pressable>
+              <Pressable style={styles.actionButton} onPress={() => setSettingsModalVisible(true)}>
+                <Text style={styles.actionText}>Configurações</Text>
+                <Ionicons name="settings-outline" size={24} color="black" />
+              </Pressable>
+              <Pressable style={styles.actionButton} onPress={EditarPerfil}>
+                <Text style={styles.actionText}>Editar perfil</Text>
+                <Ionicons name="pencil-outline" size={24} color="black" />
+              </Pressable>
             </View>
           </View>
-
         )
       } else if (userType === 'Profissional') {
         return (
@@ -171,15 +177,23 @@ export default function Profile() {
             <Text style={styles.value}>{details.email}</Text>
             <Text style={styles.label}>Telefone:</Text>
             <Text style={styles.value}>{details.telefone}</Text>
-            <View>
-              <Button title="Sair da conta" onPress={logout} />
-              <Button
-                title="Apagar minha conta"
-                onPress={() => setExcluirModal(true)}
-              />
-              <Button title="Editar perfil" onPress={EditarPerfil} />
-
-              <Button title="Consultório" onPress={() => navigation.navigate('Consultorio')} />
+            <View style={styles.actionsContainer}>
+              <Pressable style={styles.actionButton} onPress={() => navigation.navigate('Desempenho')}>
+                <Text style={styles.actionText}>Desempenho</Text>
+                <Ionicons name="desktop-outline" size={24} color="black" />
+              </Pressable>
+              <Pressable style={styles.actionButton} onPress={() => setSettingsModalVisible(true)}>
+                <Text style={styles.actionText}>Configurações</Text>
+                <Ionicons name="settings-outline" size={24} color="black" />
+              </Pressable>
+              <Pressable style={styles.actionButton} onPress={EditarPerfil}>
+                <Text style={styles.actionText}>Editar perfil</Text>
+                <Ionicons name="pencil-outline" size={24} color="black" />
+              </Pressable>
+              <Pressable style={styles.actionButton} onPress={() => navigation.navigate('Consultorio')}>
+                <Text style={styles.actionText}>Consultório</Text>
+                <Ionicons name="briefcase-outline" size={24} color="black" />
+              </Pressable>
             </View>
           </View>
         )
@@ -336,8 +350,52 @@ export default function Profile() {
               <Button title="Confirmar Exclusão" onPress={ExcluirConta} />
               <Button title="Cancelar" onPress={() => setExcluirModal(false)} />
             </View>
+            <View>
+              <Pressable>
+                <Text>Desempenho</Text>
+                <Ionicons name="desktop-outline" width="24" color="black" />
+              </Pressable>
+              <Pressable>
+                <Text>Configurações</Text>
+                <Ionicons name="settings" width="24" color="black" />
+              </Pressable>
+              <Pressable>
+                <Text>Editar perfil</Text>
+                <Ionicons name="airplane" width="24" color="black" />
+              </Pressable>
+            </View>
           </View>
         </Modal>
+        <Modal
+        visible={settingsModalVisible}
+        animationType="slide"
+        transparent={true}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Configurações</Text>
+            <Pressable style={styles.settingsButton} onPress={logout}>
+              <Text style={styles.settingsText}>Logout</Text>
+            </Pressable>
+            <Pressable
+              style={styles.settingsButton}
+              onPress={() => setExcluirModal(true)}
+            >
+              <Text style={styles.settingsText}>Excluir Conta</Text>
+            </Pressable>
+            <Pressable style={styles.settingsButton}>
+              <Text style={styles.settingsText}>Sobre a Equipe</Text>
+            </Pressable>
+            <Pressable style={styles.settingsButton} onPress={EditarPerfil}>
+              <Text style={styles.settingsText}>Editar Perfil</Text>
+            </Pressable>
+            <Button
+              title="Fechar"
+              onPress={() => setSettingsModalVisible(false)}
+            />
+          </View>
+        </View>
+      </Modal>
       </LinearGradient>
     </SafeAreaView>
   )
@@ -363,12 +421,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     marginBottom: 5,
-    color: '#FF8A8A'
+    color: '#FF8A8A',
   },
   value: {
     fontSize: 14,
     fontFamily: 'Quicksand-SemiBold',
-    color: '#E0E0E0'
+    color: '#E0E0E0',
   },
   modalContainer: {
     flex: 1,
@@ -403,5 +461,36 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#e1e1e1',
+  },
+  actionsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    marginTop: 20,
+  },
+  actionButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 10,
+    width: '30%',
+  },
+  actionText: {
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 14,
+    marginBottom: 5,
+  },
+  settingsButton: {
+    backgroundColor: '#FF7D34',
+    padding: 10,
+    marginVertical: 5,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  settingsText: {
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 18,
+    color: 'white',
   },
 })

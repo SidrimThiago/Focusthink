@@ -1,11 +1,11 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
 import { View, Text, SafeAreaView, TouchableOpacity, StyleSheet, TextInput, ProgressBarAndroid, Platform, ProgressViewIOS, StatusBar } from 'react-native';
-import Modal from 'react-native-modal'
+import Modal from 'react-native-modal';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
-import { AntDesign } from '@expo/vector-icons'
-import Warning from '../../../assets/Home/warningalert.svg'
+import { AntDesign } from '@expo/vector-icons';
+import Warning from '../../../assets/Home/warningalert.svg';
 
 export default function Questionary() {
   const navigation = useNavigation();
@@ -52,8 +52,8 @@ export default function Questionary() {
   useEffect(() => {
     setTimeout(() => {
       setShowDisclaimerModal(true);
-    }, 500)
-  }, [])
+    }, 500);
+  }, []);
 
   useEffect(() => {
     const calcularPontuacaoTotal = () => {
@@ -88,11 +88,11 @@ export default function Questionary() {
 
     const determinarProbabilidadeTDAH = (pontuacao) => {
       if (pontuacao >= 0 && pontuacao <= 15) {
-        return 'Baixa probabilidade de TDAH';
+        return 'Baixa probabilidade';
       } else if (pontuacao >= 16 && pontuacao <= 30) {
-        return 'Moderada probabilidade de TDAH';
+        return 'Moderada probabilidade';
       } else {
-        return 'Alta probabilidade de TDAH';
+        return 'Alta probabilidade';
       }
     };
 
@@ -132,7 +132,7 @@ export default function Questionary() {
         setCurrentSetor(setors[currentSetorIndex + 1]);
         setCurrentQuestionIndex(0);
       } else {
-        setShowDisclaimerModal(true);
+        setShowResultModal(true);
         console.log('Questionario completo', relatorio);
       }
     }
@@ -186,147 +186,152 @@ export default function Questionary() {
               value={responses[currentSetor][currentQuestionIndex]}
               onChangeText={handleTextInputChange}
               onSubmitEditing={() => handleSelectOption(responses[currentSetor][currentQuestionIndex])}
-            />
-            <TouchableOpacity style={{ marginTop: 10, backgroundColor: '#FF6C00', padding: 15, borderRadius: 10, alignItems: 'center' }}
-              onPress={() => handleSelectOption(responses[currentSetor][currentQuestionIndex])}>
-              <Text style={{ color: 'white', fontSize: 16 }}>Próxima</Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <View style={{ width: '100%', marginTop: 10, paddingHorizontal: 20 }}>
-            {['Nunca', 'Quase Nunca', 'Às vezes', 'Quase Sempre', 'Sempre'].map((option, i) => (
-              <TouchableOpacity
-                key={i}
-                style={[
-                  { padding: 15, borderRadius: 10, marginVertical: 5, borderWidth: 2.5, borderColor: '#2C167A' },
-                  responses[currentSetor][currentQuestionIndex] === option ? { backgroundColor: '#FF9A51' } : null,
-                ]}
-                onPress={() => handleSelectOption(option)}
+              />
+              <TouchableOpacity 
+                style={{ marginTop: 10, backgroundColor: '#FF6C00', padding: 15, borderRadius: 10, alignItems: 'center' }}
+                onPress={() => handleSelectOption(responses[currentSetor][currentQuestionIndex])}
               >
-                <Text style={{ color: '#fff', fontSize: 16 }}>{option}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        )}
-      </>
-    );
-  };
-
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <TouchableOpacity style={{ padding: 10, borderRadius: 10 }} onPress={handleGoBack}>
-          <AntDesign name="arrowleft" size={38} color="white" />
-        </TouchableOpacity>
-        <Text style={{ color: 'white', fontFamily: 'Quicksand-Bold', fontSize: 20 }}>Formulário SNAP-IV</Text>
-      </View>
-
-      <View style={{ backgroundColor: '#5C3BCD' }}>
-        {renderCurrentQuestion()}
-
-        <Modal
-          animationIn={'fadeIn'}
-          animationInTiming={700}
-          animationOut={'fadeOut'}
-          isVisible={null}
-          style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', padding: 20 }}
-          backdropOpacity={0.5}
-          onRequestClose={() => setShowDisclaimerModal(false)}
-        >
-          <View style={{ backgroundColor: '#5C3BCD', borderRadius: 20, alignItems: 'center', padding: 20 }}>
-            <Warning />
-            <Text style={{ fontFamily: 'Quicksand-Medium', fontSize: 17, textAlign: 'justify', marginBottom: 25, color: 'white' }}>
-              Nenhum teste substitui uma avaliação psiquiátrica.
-              O resultado deste teste não serve como diagnóstico conclusivo nem tem validade jurídica ou como atestado médico, para nenhuma finalidade!
-              Não inicie nenhum tratamento baseado no resultado de qualquer teste da internet, sem uma consulta médica antes!
-            </Text>
-            <TouchableOpacity style={{ backgroundColor: '#FF7121', borderRadius: 50, padding: 18, paddingHorizontal: 80, marginVertical: 10 }}
-              onPress={() => { setShowDisclaimerModal(false) }}>
-              <Text style={{ fontFamily: 'Quicksand-SemiBold', fontSize: 20, color: 'white' }}>Continuar</Text>
-            </TouchableOpacity>
-          </View>
-        </Modal>
-
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(!modalVisible);
-          }}
-        >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>Relatório e Pontuação</Text>
-              <Text style={styles.reportText}>Pontuação Total: {pontuacaoTotal}</Text>
-              <Text style={styles.reportText}>Probabilidade de TDAH: {probabilidadeTDAH}</Text>
-              <TouchableOpacity
-                style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
-                onPress={() => navigation.navigate('Home')}
-              >
-                <Text style={styles.textStyle}>Fechar</Text>
+                <Text style={{ color: 'white', fontSize: 16 }}>Próxima</Text>
               </TouchableOpacity>
             </View>
-          </View>
-        </Modal>
-      </View>
-    </SafeAreaView>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: '100%',
-    backgroundColor: '#5C3BCD',
-    paddingTop: StatusBar.currentHeight
-  },
-  innerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backButton: {
-    backgroundColor: '#5C3BCD',
-    padding: 10,
-    borderRadius: 10,
-    alignSelf: 'flex-start',
-    marginBottom: 10,
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 22,
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
-    elevation: 5,
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'center',
-    fontSize: 16,
-  },
-  openButton: {
-    backgroundColor: '#F194FF',
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  reportText: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginVertical: 5,
-  },
-});
+          ) : (
+            <View style={{ width: '100%', marginTop: 10, paddingHorizontal: 20 }}>
+              {['Nunca', 'Quase Nunca', 'Às vezes', 'Quase Sempre', 'Sempre'].map((option, i) => (
+                <TouchableOpacity
+                  key={i}
+                  style={[
+                    { padding: 15, borderRadius: 10, marginVertical: 5, borderWidth: 2.5, borderColor: '#2C167A' },
+                    responses[currentSetor][currentQuestionIndex] === option ? { backgroundColor: '#FF9A51' } : null,
+                  ]}
+                  onPress={() => handleSelectOption(option)}
+                >
+                  <Text style={{ color: '#fff', fontSize: 16 }}>{option}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+        </>
+      );
+    };
+  
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <TouchableOpacity style={{ padding: 10, borderRadius: 10 }} onPress={handleGoBack}>
+            <AntDesign name="arrowleft" size={38} color="white" />
+          </TouchableOpacity>
+          <Text style={{ color: 'white', fontFamily: 'Quicksand-Bold', fontSize: 20 }}>Formulário SNAP-IV</Text>
+        </View>
+  
+        <View style={{ backgroundColor: '#5C3BCD' }}>
+          {renderCurrentQuestion()}
+  
+          <Modal
+            animationIn={'fadeIn'}
+            animationInTiming={700}
+            animationOut={'fadeOut'}
+            isVisible={showDisclaimerModal}
+            style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', padding: 20 }}
+            backdropOpacity={0.5}
+            onRequestClose={() => setShowDisclaimerModal(false)}
+          >
+            <View style={{ backgroundColor: '#5C3BCD', borderRadius: 20, alignItems: 'center', padding: 20 }}>
+              <Warning />
+              <Text style={{ fontFamily: 'Quicksand-Medium', fontSize: 17, textAlign: 'justify', marginBottom: 25, color: 'white' }}>
+                Nenhum teste substitui uma avaliação psiquiátrica.
+                O resultado deste teste não serve como diagnóstico conclusivo nem tem validade jurídica ou como atestado médico, para nenhuma finalidade!
+                Não inicie nenhum tratamento baseado no resultado de qualquer teste da internet, sem uma consulta médica antes!
+              </Text>
+              <TouchableOpacity 
+                style={{ backgroundColor: '#FF7121', borderRadius: 50, padding: 18, paddingHorizontal: 80, marginVertical: 10 }}
+                onPress={() => setShowDisclaimerModal(false)}
+              >
+                <Text style={{ fontFamily: 'Quicksand-SemiBold', fontSize: 20, color: 'white' }}>Continuar</Text>
+              </TouchableOpacity>
+            </View>
+          </Modal>
+  
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={showResultModal}
+            onRequestClose={() => setShowResultModal(false)}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalText}>Relatório e Pontuação</Text>
+                <Text style={styles.reportText}>Probabilidade de TDAH: {probabilidadeTDAH}</Text>
+                <TouchableOpacity
+                  style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
+                  onPress={() => {
+                    setShowResultModal(false);
+                    navigation.navigate('Home');
+                  }}
+                >
+                  <Text style={styles.textStyle}>Fechar</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+        </View>
+      </SafeAreaView>
+    );
+  };
+  
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      width: '100%',
+      backgroundColor: '#5C3BCD',
+      paddingTop: StatusBar.currentHeight,
+    },
+    innerContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    backButton: {
+      backgroundColor: '#5C3BCD',
+      padding: 10,
+      borderRadius: 10,
+      alignSelf: 'flex-start',
+      marginBottom: 10,
+    },
+    centeredView: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: 22,
+    },
+    modalView: {
+      margin: 20,
+      backgroundColor: 'white',
+      borderRadius: 20,
+      padding: 35,
+      alignItems: 'center',
+      shadowColor: '#000',
+      elevation: 5,
+    },
+    modalText: {
+      marginBottom: 15,
+      textAlign: 'center',
+      fontSize: 16,
+    },
+    openButton: {
+      backgroundColor: '#F194FF',
+      borderRadius: 20,
+      padding: 10,
+      elevation: 2,
+    },
+    textStyle: {
+      color: 'white',
+      fontWeight: 'bold',
+      textAlign: 'center',
+    },
+    reportText: {
+      fontSize: 16,
+      textAlign: 'center',
+      marginVertical: 5,
+    },
+  });
+  

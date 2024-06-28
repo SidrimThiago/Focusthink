@@ -1,10 +1,21 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, Text, Animated, Easing, SafeAreaView, Pressable, Image, ScrollView, Button } from 'react-native'
+import {
+  StyleSheet,
+  View,
+  Text,
+  Animated,
+  Easing,
+  SafeAreaView,
+  Pressable,
+  Image,
+  ScrollView,
+  Button,
+} from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native'
 
 export default function Games() {
-  const navigation = useNavigation();
+  const navigation = useNavigation()
 
   const spinValue = new Animated.Value(0)
 
@@ -33,195 +44,177 @@ export default function Games() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient
-        colors={['#633DE8', '#1C233F']}
-        style={styles.background}
-      >
+      <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
         <Animated.Image
           style={{
             transform: [{ rotate: spin }],
             width: '200%',
             position: 'absolute',
-            bottom: -200
-
+            bottom: -200,
           }}
           source={require('../../assets/GamesScreen/backgroundgames.png')}
         />
-        
-        <ScrollView showsVerticalScrollIndicator={false} style={{ padding: 10, paddingTop: 0 }} overScrollMode='never'>
-          <View style={{ width: '100%', height: 70, backgroundColor: 'white', borderRadius: 5, marginVertical: 5, alignItems: 'center', flexDirection: 'row', marginTop: 10 }}>
+
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={{ padding: 10, paddingTop: 0, width: '100%' }}
+          overScrollMode="never"
+        >
+          <View
+            style={{
+              width: '100%',
+              height: 70,
+              backgroundColor: 'white',
+              borderRadius: 5,
+              marginVertical: 5,
+              alignItems: 'center',
+              flexDirection: 'row',
+              marginTop: 10,
+            }}
+          >
             <Image
               source={require('../../assets/GamesScreen/FP.png')}
               style={{ width: 45, height: 45, marginHorizontal: 10 }}
             />
             <View style={{ marginHorizontal: 5 }}>
               <Text style={styles.missoes}>OBJETIVO DIÁRIO:</Text>
-              <Text style={{ fontSize: 26, fontFamily: 'Quicksand-SemiBold', color: '#FF792F' }}>0<Text style={{ fontSize: 15, fontFamily: 'Quicksand-SemiBold', color: '#FF9459' }}>/1000</Text></Text>
+              <Text
+                style={{
+                  fontSize: 26,
+                  fontFamily: 'Quicksand-SemiBold',
+                  color: '#FF792F',
+                }}
+              >
+                0
+                <Text
+                  style={{
+                    fontSize: 15,
+                    fontFamily: 'Quicksand-SemiBold',
+                    color: '#FF9459',
+                  }}
+                >
+                  /1000
+                </Text>
+              </Text>
             </View>
 
             <View style={{ marginHorizontal: 20 }}>
               <Text style={styles.missoes}>SEQUÊNCIA:</Text>
-              <Text style={{ fontSize: 26, fontFamily: 'Quicksand-SemiBold', color: '#FF792F' }}>0<Text style={{ fontSize: 15, fontFamily: 'Quicksand-SemiBold', color: '#FF9459' }}> DIA</Text></Text>
+              <Text
+                style={{
+                  fontSize: 26,
+                  fontFamily: 'Quicksand-SemiBold',
+                  color: '#FF792F',
+                }}
+              >
+                0
+                <Text
+                  style={{
+                    fontSize: 15,
+                    fontFamily: 'Quicksand-SemiBold',
+                    color: '#FF9459',
+                  }}
+                >
+                  {' '}
+                  DIA
+                </Text>
+              </Text>
             </View>
           </View>
 
           <View style={styles.categorias}>
-            <Text style={[styles.categorygame, { color: '#FF3E3E' }]}>Foco</Text>
+            <Text style={[styles.categorygame, { color: '#FF3E3E' }]}>
+              Foco
+            </Text>
 
-            <ScrollView style={{ flex: 1, height: '85%' }} horizontal={true} showsHorizontalScrollIndicator={false}>
-              <Pressable style={styles.pressable} onPress={() => navigation.navigate('StroopInfo')}>
-                <Image source={require('../../assets/GamesScreen/GamesIcons/Stroop.png')} style={styles.iconGame} />
+            <ScrollView
+              style={{ flex: 1, height: '85%' }}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+            >
+              <Pressable
+                style={styles.pressable}
+                onPress={() => navigation.navigate('StroopInfo')}
+              >
+                <Image
+                  source={require('../../assets/GamesScreen/GamesIcons/Stroop.png')}
+                  style={styles.iconGame}
+                />
                 <Text style={styles.title}>Palavras de Cores</Text>
-              </Pressable >
-              <Pressable  style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
               </Pressable>
             </ScrollView>
           </View>
 
           <View style={styles.categorias}>
-            <Text style={[styles.categorygame, { color: '#9DFF51' }]}>Coordenação</Text>
+            <Text style={[styles.categorygame, { color: '#9DFF51' }]}>
+              Coordenação
+            </Text>
 
-            <ScrollView style={{ flex: 1 }} horizontal={true} showsHorizontalScrollIndicator={false}>
-              <Pressable style={styles.pressable} onPress={() => navigation.navigate('MustSortInfo')}>
-                <Image source={require('../../assets/GamesScreen/GamesIcons/MustSort.png')} style={styles.iconGame} />
+            <ScrollView
+              style={{ flex: 1 }}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+            >
+              <Pressable
+                style={styles.pressable}
+                onPress={() => navigation.navigate('MustSortInfo')}
+              >
+                <Image
+                  source={require('../../assets/GamesScreen/GamesIcons/MustSort.png')}
+                  style={styles.iconGame}
+                />
                 <Text style={styles.title}>Jogo de{'\n'}Símbolos</Text>
               </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
+            </ScrollView>
+          </View>
+
+          <View style={styles.categorias}>
+            <Text style={[styles.categorygame, { color: '#FF00D6' }]}>
+              Raciocínio
+            </Text>
+
+            <ScrollView
+              style={{ flex: 1 }}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+            >
+              <Pressable
+                style={styles.pressable}
+                onPress={() => navigation.navigate('HiddenColorsInfo')}
+              >
+                <Image
+                  source={require('../../assets/GamesScreen/GamesIcons/HiddenColors.png')}
+                  style={styles.iconGame}
+                />
+                <Text style={styles.title}>Cores Ocultas</Text>
               </Pressable>
             </ScrollView>
           </View>
 
           <View style={styles.categorias}>
-            <Text style={[styles.categorygame, { color: '#FF00D6' }]}>Raciocínio</Text>
+            <Text style={[styles.categorygame, { color: '#1CBFE2' }]}>
+              Linguagem
+            </Text>
 
-            <ScrollView style={{ flex: 1 }} horizontal={true} showsHorizontalScrollIndicator={false}>
-              <Pressable style={styles.pressable} onPress={() => navigation.navigate('HiddenColorsInfo')}>
-              <Image source={require('../../assets/GamesScreen/GamesIcons/HiddenColors.png')} style={styles.iconGame} />
-              <Text style={styles.title}>Cores Ocultas</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-            </ScrollView>
+            <ScrollView
+              style={{ flex: 1 }}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+            ></ScrollView>
           </View>
 
           <View style={styles.categorias}>
-            <Text style={[styles.categorygame, { color: '#1CBFE2' }]}>Linguagem</Text>
+            <Text style={[styles.categorygame, { color: '#FFB156' }]}>
+              Memória
+            </Text>
 
-            <ScrollView style={{ flex: 1 }} horizontal={true} showsHorizontalScrollIndicator={false}>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-            </ScrollView>
-          </View>
-
-          <View style={styles.categorias}>
-            <Text style={[styles.categorygame, { color: '#FFB156' }]}>Memória</Text>
-
-            <ScrollView style={{ flex: 1 }} horizontal={true} showsHorizontalScrollIndicator={false}>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-              <Pressable style={styles.pressable}>
-                <View style={styles.empty} />
-                <Text style={styles.vazio}>Vazio</Text>
-              </Pressable>
-            </ScrollView>
+            <ScrollView
+              style={{ flex: 1 }}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+            ></ScrollView>
           </View>
         </ScrollView>
-
-
       </LinearGradient>
     </SafeAreaView>
   )
@@ -258,7 +251,7 @@ const styles = StyleSheet.create({
     width: '50%',
     height: 50,
     borderBottomWidth: 3,
-    borderBottomColor: 'white'
+    borderBottomColor: 'white',
   },
   alternanciasButtons1: {
     justifyContent: 'center',
@@ -272,7 +265,7 @@ const styles = StyleSheet.create({
   },
   missoes: {
     fontFamily: 'Quicksand-SemiBold',
-    color: '#FF9459'
+    color: '#FF9459',
   },
   categorygame: {
     fontFamily: 'Quicksand-Bold',
@@ -280,7 +273,7 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     marginLeft: 14,
     marginTop: 5,
-    height: '18%'
+    height: '18%',
   },
   categorias: {
     width: '100%',
@@ -294,7 +287,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: 14,
     justifyContent: 'flex-start',
-    height: '100%'
+    height: '100%',
   },
   empty: {
     width: 85,
@@ -307,7 +300,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#A3A3A3',
     marginVertical: 5,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   iconGame: {
     width: 105,
@@ -315,11 +308,10 @@ const styles = StyleSheet.create({
     borderRadius: 45,
   },
   title: {
-    textAlign: 'center', 
-    fontSize: 16, 
-    fontFamily: 'Quicksand-Bold', 
-    position: 'absolute', 
-    bottom: 2
-  }
-
+    textAlign: 'center',
+    fontSize: 16,
+    fontFamily: 'Quicksand-Bold',
+    position: 'absolute',
+    bottom: 2,
+  },
 })

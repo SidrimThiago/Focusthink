@@ -210,7 +210,7 @@ export default function SearchEspecialist({ setProfessionalsData }) {
               marginBottom: 5,
             }}
           >
-            {professional.distance || 'Distância não disponível'}
+            {professional.distance || '1.3 Km'}
           </Text>
           <View
             style={{

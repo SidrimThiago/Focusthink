@@ -1,7 +1,19 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity } from 'react-native'
+import {
+  StyleSheet,
+  View,
+  Text,
+  SafeAreaView,
+  TouchableOpacity,
+} from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import { incrementarPontuacao, getPontuacao, resetarPontuacao, incrementarTotal, resetarTotal } from '../../../components/Games/pontuacao.js'
+import {
+  incrementarPontuacao,
+  getPontuacao,
+  resetarPontuacao,
+  incrementarTotal,
+  resetarTotal,
+} from '../../../components/Games/pontuacao.js'
 import LottieView from 'lottie-react-native'
 import TopBarGames from '../../../components/Games/topBarGames.js'
 import { MMKV } from 'react-native-mmkv'
@@ -18,57 +30,63 @@ export default function Stroop() {
   const [opcoesCores, setOpcoesCores] = useState([]) // Opções de cores para as alternativas
   const [indiceRespostaCorreta, setIndiceRespostaCorreta] = useState(null) // Índice da alternativa correta
   const [respostaCorreta, setRespostaCorreta] = useState(null)
-  const [pontuacoes, setPontuacoes] = useState([]);
-  const [sequenciaDiaria, setSequenciaDiaria] = useState(0); 
+  const [pontuacoes, setPontuacoes] = useState([])
+  const [sequenciaDiaria, setSequenciaDiaria] = useState(0)
 
   const [modalVisible, setModalVisible] = useState(false)
   const [isModalOptions, setModalOptions] = useState(false)
 
-
   // Função para finalizar o jogo e armazenar pontuações
   const finalizarJogo = async () => {
-    const pontuacaoAtual = getPontuacao(); // Obtém a pontuação atual
-    const ultimasPontuacoes = JSON.parse(storage.getString('ultimasPontuacoes') || '[]');
-  
-    ultimasPontuacoes.push(pontuacaoAtual); // Adiciona a pontuação atual à array
-  
-    if (ultimasPontuacoes.length > 100) {
-      ultimasPontuacoes.shift(); // Remove a pontuação mais antiga se houver mais de 100
-    }
-  
-    storage.set('ultimasPontuacoes', JSON.stringify(ultimasPontuacoes)); // Armazena a array atualizada
-  
-    const melhorPontuacao = Math.max(...ultimasPontuacoes); // Calcula a melhor pontuação
-    storage.set('melhorPontuacao', melhorPontuacao); // Armazena a melhor pontuação
-  
-    setModalVisible(true);
+    const pontuacaoAtual = getPontuacao() // Obtém a pontuação atual
+    const ultimasPontuacoes = JSON.parse(
+      storage.getString('ultimasPontuacoes') || '[]',
+    )
 
+    ultimasPontuacoes.push(pontuacaoAtual) // Adiciona a pontuação atual à array
+
+    if (ultimasPontuacoes.length > 100) {
+      ultimasPontuacoes.shift() // Remove a pontuação mais antiga se houver mais de 100
+    }
+
+    storage.set('ultimasPontuacoes', JSON.stringify(ultimasPontuacoes)) // Armazena a array atualizada
+
+    const melhorPontuacao = Math.max(...ultimasPontuacoes) // Calcula a melhor pontuação
+    storage.set('melhorPontuacao', melhorPontuacao) // Armazena a melhor pontuação
+
+    setModalVisible(true)
   }
 
   const atualizarFocusPoints = async () => {
-    const pont = getPontuacao();
+    const pont = getPontuacao()
     const pontuacaoAtual = pont * 5
     try {
       const nomeUser = storage.getString('user.nameUser')
-      const response = await axios.post(API_URL + '/updateFocusPoints', {focusPoints: pontuacaoAtual, nomeUser: nomeUser})
-  
+      const response = await axios.post(API_URL + '/updateFocusPoints', {
+        focusPoints: pontuacaoAtual,
+        nomeUser,
+      })
+
       if (response.status === 200) {
-        console.log('Focus points atualizados com sucesso no backend.');
-        
+        console.log('Focus points atualizados com sucesso no backend.')
       } else {
-        console.error('Erro ao atualizar focus points no backend.');
+        console.error('Erro ao atualizar focus points no backend.')
       }
     } catch (error) {
-      console.error('Erro ao enviar solicitação para atualizar focus points:', error);
+      console.error(
+        'Erro ao enviar solicitação para atualizar focus points:',
+        error,
+      )
     }
   }
 
-
   useEffect(() => {
-    const ultimasPontuacoes = JSON.parse(storage.getString('ultimasPontuacoes') || '[]');
-    setPontuacoes(ultimasPontuacoes);
-  }, []);
-  
+    const ultimasPontuacoes = JSON.parse(
+      storage.getString('ultimasPontuacoes') || '[]',
+    )
+    setPontuacoes(ultimasPontuacoes)
+  }, [])
+
   const handleTimerFinish = () => {
     atualizarFocusPoints()
     finalizarJogo()
@@ -187,7 +205,7 @@ export default function Stroop() {
       resetarTotal()
     }
 
-    incrementarTotal();
+    incrementarTotal()
 
     if (indice === indiceRespostaCorreta) {
       incrementarPontuacao() // Incrementa a pontuação
@@ -200,7 +218,7 @@ export default function Stroop() {
     setTimeout(() => {
       proximaFase() // Avança para a próxima fase
     }, 2100)
-  } 
+  }
 
   // Função para ir para a próxima fase
   const proximaFase = () => {
@@ -245,15 +263,14 @@ export default function Stroop() {
     return corSombraBotao[corBotao]
   }
 
-
   return (
     <SafeAreaView style={styles.container}>
+      {' '}
       <TopBarGames
         duration={25}
         onTimerFinish={handleTimerFinish}
-        restart='StroopInfo'
+        restart="StroopInfo"
       />
-
       <View
         style={[
           styles.referencial,
@@ -267,28 +284,27 @@ export default function Stroop() {
           {corReferencial.nome}
         </Text>
       </View>
-
       {faseAtual <= 2 ? (
         <View style={styles.opcoes}>
-        {opcoesCores.map((cor, indice) => (
-          <TouchableOpacity
-            key={indice}
-            style={styles.botaoSombra}
-            onPress={() => verificarResposta(indice)}
-          >
-            <View style={styles.botao}>
-              <Text
-                style={[
-                  styles.textoBotao,
-                  { fontSize: obterTamanhoFonte(cor) },
-                ]}
-              >
-                {nomeMascarado(cor)}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </View>
+          {opcoesCores.map((cor, indice) => (
+            <TouchableOpacity
+              key={indice}
+              style={styles.botaoSombra}
+              onPress={() => verificarResposta(indice)}
+            >
+              <View style={styles.botao}>
+                <Text
+                  style={[
+                    styles.textoBotao,
+                    { fontSize: obterTamanhoFonte(cor) },
+                  ]}
+                >
+                  {nomeMascarado(cor)}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
       ) : (
         <View style={fase2.opcoes}>
           {opcoesCores.map((cor, indice) => {
@@ -324,7 +340,6 @@ export default function Stroop() {
           })}
         </View>
       )}
-
       {respostaCorreta === true && (
         <View style={styles.lottieContainer}>
           <LottieView
@@ -335,7 +350,6 @@ export default function Stroop() {
           />
         </View>
       )}
-
       {respostaCorreta === false && (
         <>
           <View style={styles.lottieContainer}>

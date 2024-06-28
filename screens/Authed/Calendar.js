@@ -1,12 +1,13 @@
+/* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Text, SafeAreaView, FlatList, ActivityIndicator, TouchableOpacity, Modal, TextInput, Button } from 'react-native'
+import { StyleSheet, View, Text, SafeAreaView, FlatList, ActivityIndicator, TouchableOpacity, Modal, TextInput } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import axios from 'axios'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { API_URL } from '../../.env/config'
 import { MMKV } from 'react-native-mmkv'
 import { SelectList } from 'react-native-dropdown-select-list'
-import { MaterialIcons } from '@expo/vector-icons'
+import { MaterialIcons, Ionicons } from '@expo/vector-icons'
 
 const storage = new MMKV()
 
@@ -18,6 +19,7 @@ export default function Calendar() {
   const [selectedTask, setSelectedTask] = useState(null)
   const [createModalVisible, setCreateModalVisible] = useState(false)
   const [editModalVisible, setEditModalVisible] = useState(false)
+  const [menuModalVisible, setMenuModalVisible] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState(null)
 
   // State para criação de nova tarefa
@@ -65,6 +67,47 @@ export default function Calendar() {
 
     fetchTasks()
   }, [])
+
+  const handleTimeChange = (event, selectedTime, type, isEdit = false) => {
+    const currentDate = selectedTime || new Date();
+    if (isEdit) {
+      setEditTask((prevTask) => ({
+        ...prevTask,
+        [type]: currentDate,
+      }));
+    } else {
+      setNewTask((prevTask) => ({
+        ...prevTask,
+        [type]: currentDate,
+      }));
+    }
+    if (type === 'startTime') {
+      setShowStartTimePicker(false);
+    } else if (type === 'endTime') {
+      setShowEndTimePicker(false);
+    }
+  };
+
+  const handleDateChange = (event, selectedDate, type, isEdit = false) => {
+    if (selectedDate) {
+      if (isEdit) {
+        setEditTask((prevTask) => ({
+          ...prevTask,
+          [type]: selectedDate,
+        }))
+      } else {
+        setNewTask((prevTask) => ({
+          ...prevTask,
+          [type]: selectedDate,
+        }))
+      }
+    }
+    if (type === 'startDate') {
+      setShowStartDatePicker(false)
+    } else if (type === 'endDate') {
+      setShowEndDatePicker(false)
+    }
+  }
 
   const openModal = (task) => {
     setSelectedTask(task)
@@ -121,6 +164,16 @@ export default function Calendar() {
     })
   }
 
+  const openMenuModal = (task) => {
+    setSelectedTask(task)
+    setMenuModalVisible(true)
+  }
+
+  const closeMenuModal = () => {
+    setSelectedTask(null)
+    setMenuModalVisible(false)
+  }
+
   const categories = [
     { key: '0', value: 'Sem categoria' },
     { key: '1', value: 'Trabalhos' },
@@ -173,48 +226,6 @@ export default function Calendar() {
     }
   }
 
-  const handleDateChange = (event, selectedDate, type, isEdit = false) => {
-    if (selectedDate) {
-      if (isEdit) {
-        setEditTask((prevTask) => ({
-          ...prevTask,
-          [type]: selectedDate,
-        }))
-      } else {
-        setNewTask((prevTask) => ({
-          ...prevTask,
-          [type]: selectedDate,
-        }))
-      }
-    }
-    if (type === 'startDate') {
-      setShowStartDatePicker(false)
-    } else if (type === 'endDate') {
-      setShowEndDatePicker(false)
-    }
-  }
-
-  const handleTimeChange = (event, selectedTime, type, isEdit = false) => {
-    if (selectedTime) {
-      if (isEdit) {
-        setEditTask((prevTask) => ({
-          ...prevTask,
-          [type]: selectedTime,
-        }))
-      } else {
-        setNewTask((prevTask) => ({
-          ...prevTask,
-          [type]: selectedTime,
-        }))
-      }
-    }
-    if (type === 'startTime') {
-      setShowStartTimePicker(false)
-    } else if (type === 'endTime') {
-      setShowEndTimePicker(false)
-    }
-  }
-
   const handleDeleteTask = async (taskName) => {
     try {
       const nomeUser = storage.getString('user.nameUser')
@@ -226,7 +237,7 @@ export default function Calendar() {
         setTasks((prevTasks) =>
           prevTasks.filter((task) => task.nameTask !== taskName),
         )
-        closeModal()
+        closeMenuModal()
       } else {
         alert('Erro ao deletar tarefa')
       }
@@ -235,49 +246,50 @@ export default function Calendar() {
     }
   }
 
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <LinearGradient
-          colors={['#633DE8', '#1C233F']}
-          style={styles.background}
-        >
-          <ActivityIndicator size="large" color="#fff" />
-        </LinearGradient>
-      </SafeAreaView>
-    )
+  const getColorForTask = (endDate) => {
+    const now = new Date()
+    const end = new Date(endDate)
+    const diffInDays = (end - now) / (1000 * 60 * 60 * 24)
+
+    if (diffInDays <= 7) {
+      return '#FF6347' // Vermelho
+    } else if (diffInDays <= 14) {
+      return '#FFD700' // Amarelo
+    } else if (diffInDays <= 21) {
+      return '#32CD32' // Verde
+    } else {
+      return '#1C233F' // Cor padrão
+    }
   }
 
-  if (error) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <LinearGradient
-          colors={['#633DE8', '#1C233F']}
-          style={styles.background}
-        >
-          <Text style={styles.errorText}>Error: {error}</Text>
-        </LinearGradient>
-      </SafeAreaView>
-    )
+  const formatDate = (dateString) => {
+    const options = { day: '2-digit', month: '2-digit' }
+    return new Date(dateString).toLocaleDateString(undefined, options)
   }
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={{ padding: 10, marginVertical: 5, marginHorizontal: 10, backgroundColor: '#A995E0', borderRadius: 10 }}
-      onPress={() => openModal(item)}
-      className="mt-10"
-    >
-      <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{item.nameTask}</Text>
-      <Text style={{ fontSize: 14, color: '#333' }}>{`End: ${item.endDate}`}</Text>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-        <TouchableOpacity onPress={() => openEditModal(item)}>
-          <Text style={{ color: 'blue' }}>Edit</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleDeleteTask(item.nameTask)}>
-          <Text style={{ color: 'red' }}>Delete</Text>
-        </TouchableOpacity>
+  const formatTime = (timeString) => {
+    const options = { hour: '2-digit', minute: '2-digit' }
+    return new Date(timeString).toLocaleTimeString(undefined, options)
+  }
+
+  const renderItem = ({ item, index }) => (
+    <View style={[styles.itemContainer, index === 0 && styles.firstItem]}>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={[styles.statusIndicator, { backgroundColor: getColorForTask(item.endDate) }]} />
+        <View style={styles.itemContent}>
+          <Text style={styles.itemTitle} className="font-quick-bold">{item.nameTask}</Text>
+          <View style={styles.itemDetails}>
+            <Text style={styles.itemTime} className="font-quick-bold">{`Time: ${formatTime(item.endTime)}`}</Text>
+            <Text style={styles.itemDate} className="font-quick-bold">{`Date: ${formatDate(item.endDate)}`}</Text>
+          </View>
+        </View>
+        <View style={styles.itemActions}>
+          <TouchableOpacity onPress={() => openMenuModal(item)}>
+            <Ionicons name="ellipsis-vertical" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
       </View>
-    </TouchableOpacity>
+    </View>
   )
 
   return (
@@ -308,10 +320,10 @@ export default function Calendar() {
               </Text>
               <Text
                 style={styles.modalDates}
-              >{`Start: ${selectedTask.startDate}`}</Text>
+              >{`Start: ${formatDate(selectedTask.startDate)}`}</Text>
               <Text
                 style={styles.modalDates}
-              >{`End: ${selectedTask.endDate}`}</Text>
+              >{`End: ${formatDate(selectedTask.endDate)}`}</Text>
               <TouchableOpacity onPress={closeModal}>
                 <Text style={styles.closeButton}>Close</Text>
               </TouchableOpacity>
@@ -346,7 +358,7 @@ export default function Calendar() {
             />
             <TouchableOpacity onPress={() => setShowStartDatePicker(true)}>
               <Text style={styles.dateInput}>
-                Start Date: {newTask.startDate.toLocaleDateString()}
+                Start Date: {formatDate(newTask.startDate)}
               </Text>
             </TouchableOpacity>
             {showStartDatePicker && (
@@ -361,7 +373,7 @@ export default function Calendar() {
             )}
             <TouchableOpacity onPress={() => setShowEndDatePicker(true)}>
               <Text style={styles.dateInput}>
-                End Date: {newTask.endDate.toLocaleDateString()}
+                End Date: {formatDate(newTask.endDate)}
               </Text>
             </TouchableOpacity>
             {showEndDatePicker && (
@@ -376,7 +388,7 @@ export default function Calendar() {
             )}
             <TouchableOpacity onPress={() => setShowStartTimePicker(true)}>
               <Text style={styles.dateInput}>
-                Start Time: {newTask.startTime.toLocaleTimeString()}
+                Start Time: {formatTime(newTask.startTime)}
               </Text>
             </TouchableOpacity>
             {showStartTimePicker && (
@@ -391,7 +403,7 @@ export default function Calendar() {
             )}
             <TouchableOpacity onPress={() => setShowEndTimePicker(true)}>
               <Text style={styles.dateInput}>
-                End Time: {newTask.endTime.toLocaleTimeString()}
+                End Time: {formatTime(newTask.endTime)}
               </Text>
             </TouchableOpacity>
             {showEndTimePicker && (
@@ -413,7 +425,9 @@ export default function Calendar() {
               dropdownStyles={styles.dropdown}
               defaultOption={categories[0]}
             />
-            <Button title="Create" onPress={handleCreateTask} />
+            <TouchableOpacity style={styles.createButton} onPress={handleCreateTask}>
+              <Text style={styles.createButtonText}>Create</Text>
+            </TouchableOpacity>
             <TouchableOpacity onPress={closeCreateModal}>
               <Text style={styles.closeButton}>Close</Text>
             </TouchableOpacity>
@@ -449,7 +463,7 @@ export default function Calendar() {
             />
             <TouchableOpacity onPress={() => setShowStartDatePicker(true)}>
               <Text style={styles.dateInput}>
-                Start Date: {editTask.startDate.toLocaleDateString()}
+                Start Date: {formatDate(editTask.startDate)}
               </Text>
             </TouchableOpacity>
             {showStartDatePicker && (
@@ -464,7 +478,7 @@ export default function Calendar() {
             )}
             <TouchableOpacity onPress={() => setShowEndDatePicker(true)}>
               <Text style={styles.dateInput}>
-                End Date: {editTask.endDate.toLocaleDateString()}
+                End Date: {formatDate(editTask.endDate)}
               </Text>
             </TouchableOpacity>
             {showEndDatePicker && (
@@ -479,7 +493,7 @@ export default function Calendar() {
             )}
             <TouchableOpacity onPress={() => setShowStartTimePicker(true)}>
               <Text style={styles.dateInput}>
-                Start Time: {editTask.startTime.toLocaleTimeString()}
+                Start Time: {formatTime(editTask.startTime)}
               </Text>
             </TouchableOpacity>
             {showStartTimePicker && (
@@ -494,7 +508,7 @@ export default function Calendar() {
             )}
             <TouchableOpacity onPress={() => setShowEndTimePicker(true)}>
               <Text style={styles.dateInput}>
-                End Time: {editTask.endTime.toLocaleTimeString()}
+                End Time: {formatTime(editTask.endTime)}
               </Text>
             </TouchableOpacity>
             {showEndTimePicker && (
@@ -520,13 +534,42 @@ export default function Calendar() {
                 (cat) => cat.value === editTask.category,
               )}
             />
-            <Button title="Save" onPress={handleEditTask} />
+            <TouchableOpacity style={styles.saveButton} onPress={handleEditTask}>
+              <Text style={styles.saveButtonText}>Save</Text>
+            </TouchableOpacity>
             <TouchableOpacity onPress={closeEditModal}>
               <Text style={styles.closeButton}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
+
+      {/* Modal de menu para edição e exclusão */}
+      {selectedTask && (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={menuModalVisible}
+          onRequestClose={closeMenuModal}
+        >
+          <View style={styles.menuModalContainer}>
+            <View style={styles.menuModalContent}>
+              <TouchableOpacity onPress={() => { closeMenuModal(); openEditModal(selectedTask); }}>
+                <View style={styles.menuItem}>
+                  <Ionicons name="create-outline" size={24} color                  ="#FF7425" />
+                  <Text style={styles.menuItemText}>Edit</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleDeleteTask(selectedTask.nameTask)}>
+                <View style={styles.menuItem}>
+                  <Ionicons name="trash-outline" size={24} color="#FF7425" />
+                  <Text style={styles.menuItemText}>Delete</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      )}
     </SafeAreaView>
   )
 }
@@ -550,6 +593,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#633DE8',
     borderRadius: 50,
     padding: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modalContainer: {
     flex: 1,
@@ -567,10 +612,13 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: '#1C233F',
+    marginBottom: 15,
   },
   modalDescription: {
     marginTop: 10,
     fontSize: 16,
+    color: '#1C233F',
   },
   modalDates: {
     marginTop: 10,
@@ -579,27 +627,139 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     marginTop: 20,
-    color: 'red',
+    color: '#FF7425',
     fontWeight: 'bold',
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: '#DADADA',
     borderWidth: 1,
     marginBottom: 20,
     paddingHorizontal: 10,
     width: '100%',
+    borderRadius: 10,
+    backgroundColor: '#F8F8F8',
+    color: '#1C233F',
   },
   dateInput: {
     height: 40,
     justifyContent: 'center',
-    borderColor: 'gray',
+    borderColor: '#DADADA',
     borderWidth: 1,
     marginBottom: 20,
     paddingHorizontal: 10,
     width: '100%',
+    borderRadius: 10,
+    backgroundColor: '#F8F8F8',
+    color: '#1C233F',
   },
   dropdown: {
     width: '100%',
   },
-})
+  createButton: {
+    backgroundColor: '#633DE8',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginTop: 10,
+  },
+  createButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  saveButton: {
+    backgroundColor: '#633DE8',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginTop: 10,
+  },
+  saveButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  itemContainer: {
+    width: '80%',
+    padding: 20,
+    marginVertical: 5,
+    marginHorizontal: '10%',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  firstItem: {
+    marginTop: 50,
+  },
+  itemContent: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  itemTitle: {
+    paddingBottom: 5,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  itemDetails: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 5,
+  },
+  itemDate: {
+    paddingTop: 5,
+    paddingLeft: 15,
+    fontSize: 14,
+    color: '#B0B0B0',
+    paddingRight: 50,
+  },
+  itemTime: {
+    fontSize: 14,
+    color: '#B0B0B0',
+  },
+  itemActions: {
+    position: 'absolute',
+    right: 10,
+    top: 10,
+  },
+  statusIndicator: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  menuModalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  menuModalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    width: '100%',
+    alignItems: 'center',
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 15,
+    width: '100%',
+    borderBottomWidth: 1,
+    borderBottomColor: '#DADADA',
+  },
+  menuItemText: {
+    marginLeft: 10,
+    fontSize: 16,
+    color: '#1C233F',
+  },
+});

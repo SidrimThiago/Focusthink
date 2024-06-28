@@ -17,14 +17,13 @@ import ProfissionalCadastro from '../screens/Auth/Register/profissional'
 
 import NavBar from './navbar.bottomtab'
 import Chatbot from '../Api/chatbot'
-import Game2048 from '../screens/Games/2048/2048'
-import Gamebody from '../screens/Games/MemoryGame/gamebody'
 import Profissionals from '../screens/Authed/Profissionals'
 import Chats from '../screens/Authed/Consults/Chat/Chats'
 import EspecifedChat from '../screens/Authed/Consults/Chat/EspecifedChat'
 import CallPage from '../screens/Authed/callPage'
 import IaQuestionary from '../screens/Authed/IaQuestionary'
 import Questionary from '../screens/Authed/Home/questionary'
+import Desempenho from '../screens/Authed/desempenho'
 
 import GamesCountdown from '../screens/Games/countdown'
 import Results from '../screens/Games/results'
@@ -36,7 +35,6 @@ import HiddenColors from '../screens/Games/HiddenColors/hiddencolors'
 import HiddenColorsInfo from '../screens/Games/HiddenColors/infohiddencolors'
 
 import Console from '../screens/Authed/Home/console'
-import { Text, Image, View } from 'react-native'
 
 const Stack = createNativeStackNavigator()
 
@@ -106,56 +104,25 @@ export default function Routes() {
           options={{
             animation: 'slide_from_right',
             headerShown: true,
+            headerTintColor: 'white',
             headerTitle: '',
             headerStyle: { backgroundColor: '#633DE8' },
           }}
         />
-        <Stack.Screen
-          name="Chatbot"
-          component={Chatbot}
-          options={{
-            animation: 'slide_from_left',
-            headerShown: true,
-            headerTitle: () => (
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Image
-                  alt="image"
-                  source={require('../assets/memory/death.png')}
-                  style={{
-                    width: 30,
-                    height: 30,
-                    borderRadius: 15,
-                    marginRight: 10,
-                  }}
-                />
-                <Text
-                  style={{
-                    color: '#fff',
-                    fontFamily: 'Quicksand-Bold',
-                    fontSize: 20,
-                  }}
-                >
-                  Focusbot
-                </Text>
-              </View>
-            ),
-            headerStyle: { backgroundColor: '#633DE8' },
-          }}
-        />
-
-        <Stack.Screen
-          name="Chats"
-          component={Chats}
-          options={{
-            animation: 'slide_from_right',
-            headerShown: true,
-            headerTitle: 'Conversas',
-            headerStyle: { backgroundColor: '#633DE8', color: '#fff' },
-          }}
-        />
+        <Stack.Screen name="Chatbot" component={Chatbot} />
         <Stack.Screen name="IaQuestionary" component={IaQuestionary} />
         <Stack.Screen name="Questionary" component={Questionary} />
         <Stack.Screen name="CallPage" component={CallPage} />
+        <Stack.Screen
+          name="Desempenho"
+          component={Desempenho}
+          options={{
+            headerShown: true,
+            headerStyle: { backgroundColor: '#633DE8' },
+            headerTintColor: 'white',
+            headerTitleStyle: { fontFamily: 'Quicksand-Bold' },
+          }}
+        />
 
         <Stack.Screen
           name="Profissionals"
@@ -165,6 +132,8 @@ export default function Routes() {
             headerShown: true,
             headerTitle: 'Profissionais',
             headerStyle: { backgroundColor: '#633DE8' },
+            headerTintColor: 'white',
+            title: 'Lista de Profissionais',
           }}
         />
 
@@ -178,8 +147,6 @@ export default function Routes() {
           component={Results}
           options={{ animation: 'fade_from_bottom' }}
         />
-        <Stack.Screen name="2048" component={Game2048} />
-        <Stack.Screen name="MemoryGame" component={Gamebody} />
         <Stack.Screen
           name="Stroop"
           component={Stroop}

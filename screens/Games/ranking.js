@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react'
-import { SafeAreaView, StyleSheet, Text, View, StatusBar,FlatList, Image } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, View, StatusBar, FlatList, Image, ActivityIndicator } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import axios from 'axios'
 import { MMKV } from 'react-native-mmkv'
@@ -10,32 +10,52 @@ const storage = new MMKV()
 
 export default function Ranking() {
   const [ranking, setRanking] = useState([])
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchRanking = async () => {
       try {
         const response = await axios.get(API_URL + '/Ranking')
         const data = response.data
-        console.log(data)
 
-        // Convert image URLs to base64
-        const updatedRanking = data.data.pacientesDetails.map((paciente) => {
-          if (paciente.image) {
-            return {
-              ...paciente,
-              image: `data:image/jpeg;base64,${paciente.image}`
+        // Verificar se data.data.pacientesDetails existe e é um array
+        if (data && data.data && Array.isArray(data.data.pacientesDetails)) {
+          // Filtrar pacientes com focusPoints definidos
+          const validPacientes = data.data.pacientesDetails.filter(paciente => typeof paciente.focusPoints !== 'undefined')
+
+          // Convert image URLs to base64
+          const updatedRanking = validPacientes.map((paciente) => {
+            if (paciente.image) {
+              return {
+                ...paciente,
+                image: `data:image/jpeg;base64,${paciente.image}`
+              }
             }
-          }
-          return paciente
-        })
+            return paciente
+          })
 
-        setRanking(updatedRanking)
+          setRanking(updatedRanking)
+        } else {
+          console.error('A estrutura da resposta da API não é a esperada.')
+        }
       } catch (error) {
         console.error('Error in fetching ranking', error)
+      } finally {
+        setLoading(false);
       }
     }
     fetchRanking()
   }, [])
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
+          <ActivityIndicator size="large" color="#fff" />
+        </LinearGradient>
+      </SafeAreaView>
+    );
+  }
 
   const renderItem = ({ item }) => (
     <View style={styles.itemContainer}>
