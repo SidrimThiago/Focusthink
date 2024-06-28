@@ -106,19 +106,6 @@ export default function Home(props) {
               </View>
             </View>
 
-            <View style={{ flexDirection: 'row', backgroundColor: 'white', justifyContent: 'space-evenly', borderRadius: 10, marginVertical: 5, height: 155, overflow: 'hidden', alignItems: 'center' }}>
-              <Image alt="image" source={require('../../../assets/Home/fundoforms.png')} resizeMode='cover' style={{ height: '100%', width: '100%', position: 'absolute', left: 0 }} />
-              <Form width={'40%'} />
-              <View style={{ width: '60%', alignItems: 'center' }}>
-                <Text style={{ fontFamily: 'Quicksand-Bold', fontSize: 20, color: '#272626', textAlign: 'center' }}>Formulário Com iA</Text>
-                <Text style={{ fontFamily: 'Quicksand-SemiBold', fontSize: 12, color: '#3C3C3C', textAlign: 'center', marginVertical: 5 }}>Teste a probabilidade de{'\n'}você ter TDAH por meio de inteligência artificial.</Text>
-                <Pressable style={{ width: '75%', height: 40, backgroundColor: '#FF7D34', borderRadius: 100, justifyContent: 'center', alignItems: 'center', marginVertical: 5 }}
-                  onPress={() => navigation.navigate('Chatbot')}>
-                  <Text style={{ fontFamily: 'Quicksand-Bold', color: 'white' }}>Realizar</Text>
-                </Pressable>
-              </View>
-            </View>
-
             <View style={{ height: 100, width: '100%', borderRadius: 10 }} />
           </View>
         )

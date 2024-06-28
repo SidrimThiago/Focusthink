@@ -435,21 +435,27 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: '#6D53C0', // Updated background color to match the design
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 20,
     width: '90%',
+    alignItems: 'center',
   },
   modalTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: 'white', // Updated text color to white
   },
   input: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    backgroundColor: 'white',
     marginBottom: 10,
     fontSize: 18,
+    padding: 10,
+    borderRadius: 10, // Added border radius
+    width: '100%',
   },
   profileImage: {
     width: 150,
@@ -461,6 +467,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#e1e1e1',
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    marginBottom: 20,
   },
   actionsContainer: {
     flexDirection: 'row',
@@ -493,4 +503,25 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
   },
-})
+  saveButton: {
+    backgroundColor: '#FF7D34', // Updated button color to match the design
+    padding: 10,
+    marginVertical: 5,
+    borderRadius: 10,
+    alignItems: 'center',
+    width: '100%',
+  },
+  cancelButton: {
+    backgroundColor: '#FF7D34', // Updated button color to match the design
+    padding: 10,
+    marginVertical: 5,
+    borderRadius: 10,
+    alignItems: 'center',
+    width: '100%',
+  },
+  buttonText: {
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 18,
+    color: 'white',
+  },
+});

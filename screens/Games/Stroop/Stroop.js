@@ -265,7 +265,6 @@ export default function Stroop() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {' '}
       <TopBarGames
         duration={25}
         onTimerFinish={handleTimerFinish}
@@ -351,16 +350,14 @@ export default function Stroop() {
         </View>
       )}
       {respostaCorreta === false && (
-        <>
-          <View style={styles.lottieContainer}>
-            <LottieView
-              style={{ flex: 1, maxHeight: 200 }}
-              source={require('../../../assets/StroopTest/incorrect.json')}
-              autoPlay
-              loop={false}
-            />
-          </View>
-        </>
+        <View style={styles.lottieContainer}>
+          <LottieView
+            style={{ flex: 1, maxHeight: 200 }}
+            source={require('../../../assets/StroopTest/incorrect.json')}
+            autoPlay
+            loop={false}
+          />
+        </View>
       )}
     </SafeAreaView>
   )

@@ -1,5 +1,14 @@
 import React from 'react'
-import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity, Image, ScrollView, Pressable } from 'react-native'
+import {
+  StyleSheet,
+  View,
+  Text,
+  SafeAreaView,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  Pressable,
+} from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { AntDesign } from '@expo/vector-icons'
@@ -7,85 +16,214 @@ import LottieView from 'lottie-react-native'
 import Icon from '../../../assets/GamesScreen/GamesInfos/MustSortInfo.svg'
 
 export default function MustSortInfo() {
-    const navigation = useNavigation();
-    
+  const navigation = useNavigation()
 
-    return (
-        <SafeAreaView style={styles.container}>
-            <LinearGradient
-                colors={['#633DE8', '#2D3A6A']}
-                style={styles.background}
+  return (
+    <SafeAreaView style={styles.container}>
+      <LinearGradient colors={['#633DE8', '#2D3A6A']} style={styles.background}>
+        <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+          <Pressable onPress={() => navigation.navigate('NavBar')}>
+            <AntDesign
+              name="arrowleft"
+              size={38}
+              color="white"
+              style={{ position: 'absolute', top: 55, left: 15 }}
+            />
+          </Pressable>
+          <Icon style={{ position: 'absolute', alignSelf: 'flex-end' }} />
+          <View style={{ padding: 20, alignItems: 'center' }}>
+            <View style={{ marginTop: 170, alignSelf: 'flex-start' }}>
+              <Text
+                style={{
+                  fontSize: 36,
+                  color: 'white',
+                  fontFamily: 'Quicksand-Bold',
+                  marginBottom: 5,
+                }}
+              >
+                Jogo de{'\n'}Símbolos
+              </Text>
+              <Text
+                style={{
+                  fontSize: 18,
+                  color: '#E3E3E3',
+                  fontFamily: 'Quicksand-Medium',
+                  marginBottom: 20,
+                }}
+              >
+                Distinção de cores e símbolos
+              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate('Countdown', { jogo: 'MustSort' })
+                  }
+                  style={{
+                    height: 45,
+                    width: 175,
+                    backgroundColor: '#FF6F20',
+                    borderRadius: 5,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: 12,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 29,
+                      color: 'white',
+                      fontFamily: 'Quicksand-Bold',
+                      bottom: 4,
+                    }}
+                  >
+                    Jogar
+                  </Text>
+                </TouchableOpacity>
+                <View
+                  style={{
+                    width: 125,
+                    height: 32,
+                    backgroundColor: '#53E76D',
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+                    borderRadius: 40,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      color: 'white',
+                      fontFamily: 'Quicksand-Medium',
+                      marginTop: 3,
+                    }}
+                  >
+                    Coordenação
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                alignSelf: 'center',
+                marginTop: 35,
+              }}
             >
-                <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-                    <Pressable onPress={() => navigation.navigate('NavBar')}>
-                        <AntDesign name="arrowleft" size={38} color="white" style={{ position: 'absolute', top: 55, left: 15 }} />
-                    </Pressable>
-                    <Icon style={{ position: 'absolute', alignSelf: 'flex-end'}} />
-                    <View style={{ padding: 20, alignItems: 'center' }}>
-                        <View style={{ marginTop: 170, alignSelf: 'flex-start' }}>
-                            <Text style={{ fontSize: 36, color: 'white', fontFamily: 'Quicksand-Bold', marginBottom: 5 }}>Jogo de{'\n'}Símbolos</Text>
-                            <Text style={{ fontSize: 18, color: '#E3E3E3', fontFamily: 'Quicksand-Medium', marginBottom: 20 }}>Distinção de cores e símbolos</Text>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <TouchableOpacity onPress={() => navigation.navigate('Countdown', { jogo: 'MustSort' })} style={{ height: 45, width: 175, backgroundColor: '#FF6F20', borderRadius: 5, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
-                                    <Text style={{ fontSize: 29, color: 'white', fontFamily: 'Quicksand-Bold', bottom: 4 }}>Jogar</Text>
-                                </TouchableOpacity>
-                                <View style={{ width: 125, height: 32, backgroundColor: '#53E76D', alignItems: 'center', justifyContent: 'flex-start', borderRadius: 40 }}>
-                                    <Text style={{ fontSize: 15, color: 'white', fontFamily: 'Quicksand-Medium', marginTop: 3 }}>Coordenação</Text>
-                                </View>
-                            </View>
-                        </View>
+              <View
+                style={{
+                  width: 150,
+                  height: 80,
+                  borderWidth: 1.5,
+                  borderColor: '#B8B8B8',
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
+                  borderRadius: 16,
+                  marginRight: 10,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 38,
+                    color: 'white',
+                    fontFamily: 'Quicksand-SemiBold',
+                  }}
+                >
+                  0
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    color: '#D8D8D8',
+                    fontFamily: 'Quicksand-Medium',
+                    bottom: 5,
+                  }}
+                >
+                  Ultima pontuação
+                </Text>
+              </View>
+              <View
+                style={{
+                  width: 150,
+                  height: 80,
+                  borderWidth: 1.5,
+                  borderColor: '#B8B8B8',
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
+                  borderRadius: 16,
+                  marginLeft: 10,
+                }}
+              >
+                <View style={{ flexDirection: 'row' }}>
+                  <Image
+                    source={require('../../../assets/GamesScreen/trophy.png')}
+                    style={{ width: 28, height: 28, top: 20 }}
+                  />
+                  <Text
+                    style={{
+                      fontSize: 38,
+                      color: 'white',
+                      fontFamily: 'Quicksand-SemiBold',
+                      marginLeft: 5,
+                    }}
+                  >
+                    300
+                  </Text>
+                </View>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    color: '#D8D8D8',
+                    fontFamily: 'Quicksand-Medium',
+                    bottom: 5,
+                  }}
+                >
+                  Melhor pontuação
+                </Text>
+              </View>
+            </View>
 
-
-                        <View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 35 }}>
-                            <View style={{ width: 150, height: 80, borderWidth: 1.5, borderColor: '#B8B8B8', justifyContent: 'flex-end', alignItems: 'center', borderRadius: 16, marginRight: 10 }}>
-                                <Text style={{ fontSize: 38, color: 'white', fontFamily: 'Quicksand-SemiBold' }}>0</Text>
-                                <Text style={{ fontSize: 14, color: '#D8D8D8', fontFamily: 'Quicksand-Medium', bottom: 5 }}>Ultima pontuação</Text>
-                            </View>
-                            <View style={{ width: 150, height: 80, borderWidth: 1.5, borderColor: '#B8B8B8', justifyContent: 'flex-end', alignItems: 'center', borderRadius: 16, marginLeft: 10 }}>
-                                <View style={{ flexDirection: 'row' }}>
-                                    <Image
-                                        source={require('../../../assets/GamesScreen/trophy.png')}
-                                        style={{ width: 28, height: 28, top: 20 }}
-                                    />
-                                    <Text style={{ fontSize: 38, color: 'white', fontFamily: 'Quicksand-SemiBold', marginLeft: 5 }}>300</Text>
-                                </View>
-                                <Text style={{ fontSize: 14, color: '#D8D8D8', fontFamily: 'Quicksand-Medium', bottom: 5 }}>Melhor pontuação</Text>
-                            </View>
-                        </View>
-
-                        <Text style={{ fontSize: 17, color: 'white', fontFamily: 'Quicksand-Regular', marginTop: 25 }}>Este jogo desafia os jogadores a reagir 
-                            rapidamente aos estímulos visuais apresentados na forma de cores e símbolos em um círculo central. Cada vez que um símbolo e uma cor 
-                            aparecem, os jogadores devem tocar no lado correspondente do dispositivo (ou da tela) antes que o tempo se esgote. Além de oferecer 
-                            uma experiência divertida, esse tipo de jogo pode melhorar a capacidade de resposta rápida, a agilidade mental e a concentração dos jogadores.
-                        </Text>
-
-                        
-
-                    </View>
-                </ScrollView>
-
-            </LinearGradient>
-        </SafeAreaView>
-    )
+            <Text
+              style={{
+                fontSize: 17,
+                color: 'white',
+                fontFamily: 'Quicksand-Regular',
+                marginTop: 25,
+              }}
+            >
+              Este jogo desafia os jogadores a reagir rapidamente aos estímulos
+              visuais apresentados na forma de cores e símbolos em um círculo
+              central. Cada vez que um símbolo e uma cor aparecem, os jogadores
+              devem tocar no lado correspondente do dispositivo (ou da tela)
+              antes que o tempo se esgote. Além de oferecer uma experiência
+              divertida, esse tipo de jogo pode melhorar a capacidade de
+              resposta rápida, a agilidade mental e a concentração dos
+              jogadores.
+            </Text>
+          </View>
+        </ScrollView>
+      </LinearGradient>
+    </SafeAreaView>
+  )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    background: {
-        flex: 1,
-    },
-    quicksandBold: {
-        fontFamily: 'Quicksand-Bold',
-    },
-    quicksandRegular: {
-        fontFamily: 'Quicksand-Regular',
-    },
-    quicksandSemiBold: {
-        fontFamily: 'Quicksand-SemiBold',
-    },
-    quicksandMedium: {
-        fontFamily: 'Quicksand-Medium'
-    }
+  container: {
+    flex: 1,
+  },
+  background: {
+    flex: 1,
+  },
+  quicksandBold: {
+    fontFamily: 'Quicksand-Bold',
+  },
+  quicksandRegular: {
+    fontFamily: 'Quicksand-Regular',
+  },
+  quicksandSemiBold: {
+    fontFamily: 'Quicksand-SemiBold',
+  },
+  quicksandMedium: {
+    fontFamily: 'Quicksand-Medium',
+  },
 })

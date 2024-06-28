@@ -31,6 +31,7 @@ export default function GamesCountdown() {
         height: '100%',
         width: '100%',
         justifyContent: 'center',
+        right: 35,
       }}
     >
       <LottieView
