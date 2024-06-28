@@ -51,32 +51,32 @@ export default function Home(props) {
                 <View style={{ position: 'absolute', bottom: 0, left: 0 }}>
                   <Icon1 />
                 </View>
-
+  
                 <Text style={{ fontFamily: 'Quicksand-SemiBold', fontSize: 14, color: 'white', position: 'absolute', textAlign: 'right', left: 10, top: 7 }}>Jogo do dia:</Text>
-
+  
                 <Text style={{ fontFamily: 'Quicksand-Bold', fontSize: 20, color: 'white', position: 'absolute', textAlign: 'right', right: 12, top: 22, }}>Palavras{'\n'}de Cores</Text>
-
+  
                 <Pressable style={{ width: '40%', height: 40, backgroundColor: 'white', borderRadius: 100, justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: 10, right: 15 }}
                   onPress={() => navigation.navigate('StroopInfo')}>
                   <Text style={{ fontFamily: 'Quicksand-Bold' }}>Jogar</Text>
                 </Pressable>
               </View>
-
+  
               <View style={styles.box}>
                 <Image alt="image" source={require('../../../assets/Home/TodosOsJogos.png')} resizeMode='cover' style={styles.imageBox} />
                 <View style={{ position: 'absolute', bottom: 0, left: 0, maxWidth: 88.5, overflow: 'hidden' }}>
                   <Icon2 />
                 </View>
-
+  
                 <Text style={{ fontFamily: 'Quicksand-SemiBold', fontSize: 20, color: 'white', position: 'absolute', textAlign: 'right', right: 8, margin: 10 }}>Todos os{'\n'}jogos</Text>
-
+  
                 <Pressable style={{ width: '35%', height: 40, backgroundColor: 'white', borderRadius: 100, justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: 10, right: 15 }}
                   onPress={() => navigation.navigate('Jogos')}>
                   <Text style={{ fontFamily: 'Quicksand-Bold' }}>Ir</Text>
                 </Pressable>
               </View>
             </View>
-
+  
             <View style={{ flexDirection: 'row', backgroundColor: '#FF7D34', justifyContent: 'space-evenly', borderRadius: 10, marginVertical: 5 }}>
               <View style={{ justifyContent: 'space-evenly', alignItems: 'center', width: '50%' }}>
                 <Text style={{ fontFamily: 'Quicksand-SemiBold', fontSize: 24, color: 'white' }}> Especialistas {'\n'} disponíveis</Text>
@@ -92,7 +92,7 @@ export default function Home(props) {
                 style={{ height: 195, width: '50%' }}
               />
             </View>
-
+  
             <View style={{ flexDirection: 'row', backgroundColor: 'white', justifyContent: 'space-evenly', borderRadius: 10, marginVertical: 5, height: 155, overflow: 'hidden', alignItems: 'center' }}>
               <Image alt="image" source={require('../../../assets/Home/fundoforms.png')} resizeMode='cover' style={{ height: '100%', width: '100%', position: 'absolute', left: 0 }} />
               <Form width={'40%'} />
@@ -105,7 +105,7 @@ export default function Home(props) {
                 </Pressable>
               </View>
             </View>
-
+  
             <View style={{ height: 100, width: '100%', borderRadius: 10 }} />
           </View>
         )
@@ -114,20 +114,20 @@ export default function Home(props) {
           <View>
             <View style={styles.infoBox}>
               <Text style={styles.infoTitle}>Por que é tão séria essa patologia?</Text>
-              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
-              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
+              <Text style={styles.infoText}>O TDAH (Transtorno de Déficit de Atenção e Hiperatividade) é uma condição séria que pode afetar todas as áreas da vida de uma pessoa. Pode interferir na capacidade de aprender, trabalhar e manter relacionamentos saudáveis. É essencial entender a gravidade do TDAH para que possa ser tratado de maneira adequada e eficaz.</Text>
+              <Text style={styles.infoQuote}>- Dr. José Almeida, 2004</Text>
             </View>
             <YoutubePlayer height={200} videoId="gqMv8zbnf2k" />
             <View style={styles.infoBox}>
               <Text style={styles.infoTitle}>Como aplicativos podem auxiliar seu dia a dia</Text>
-              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
-              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
+              <Text style={styles.infoText}>Aplicativos de gerenciamento de tarefas, lembretes e cronômetros podem ser ferramentas valiosas para ajudar indivíduos com TDAH a se manterem organizados e focados. Esses aplicativos oferecem estrutura e apoio, facilitando a gestão do tempo e das responsabilidades diárias.</Text>
+              <Text style={styles.infoQuote}>- Dr. Ana Silva, 2010</Text>
             </View>
             <YoutubePlayer height={200} videoId="gptcc6qWJgc" />
             <View style={styles.infoBox}>
               <Text style={styles.infoTitle}>Dicas para lidar com o TDAH</Text>
-              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
-              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
+              <Text style={styles.infoText}>Lidar com o TDAH pode ser desafiador, mas existem várias estratégias que podem ajudar. Estabelecer rotinas diárias, usar listas de verificação e dividir tarefas grandes em pequenas etapas são algumas das maneiras de melhorar a gestão dos sintomas.</Text>
+              <Text style={styles.infoQuote}>- Dr. Ricardo Mendes, 2015</Text>
             </View>
             <YoutubePlayer height={200} videoId="knu4hQmvqpU" />
           </View>
@@ -137,74 +137,76 @@ export default function Home(props) {
           <View>
             <View style={styles.infoBox}>
               <Text style={styles.infoTitle}>Importância da Organização</Text>
-              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
-              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
+              <Text style={styles.infoText}>A organização é fundamental para aumentar a produtividade e reduzir o estresse. Manter um ambiente de trabalho organizado pode ajudar a melhorar a concentração e a eficiência, permitindo que as tarefas sejam concluídas de maneira mais rápida e com menos esforço.</Text>
+              <Text style={styles.infoQuote}>- Dr. Laura Costa, 2007</Text>
             </View>
             <YoutubePlayer height={200} videoId="zMWc0De2k-A" />
             <View style={styles.infoBox}>
               <Text style={styles.infoTitle}>Ferramentas para ajudar na Organização</Text>
-              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
-              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
+              <Text style={styles.infoText}>Existem várias ferramentas disponíveis que podem ajudar na organização, desde aplicativos de gerenciamento de tarefas até planners e bullet journals. Escolher a ferramenta certa pode fazer uma grande diferença na capacidade de se manter organizado.</Text>
+              <Text style={styles.infoQuote}>- Dr. Marcelo Pinto, 2011</Text>
             </View>
             <YoutubePlayer height={200} videoId="RS5MT7dOUDM" />
             <View style={styles.infoBox}>
               <Text style={styles.infoTitle}>Dicas para se manter organizado</Text>
-              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
-              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
+              <Text style={styles.infoText}>Para se manter organizado, é importante criar uma rotina e segui-la. Use listas de tarefas, defina prioridades e reserve um tempo para organizar seu espaço de trabalho regularmente. Essas práticas podem ajudar a manter a ordem e melhorar a eficiência.</Text>
+              <Text style={styles.infoQuote}>- Dr. Fernanda Santos, 2013</Text>
             </View>
             <YoutubePlayer height={200} videoId="TDnWI7j5bG0" />
+        </View>
+      )
+    case 'Estudos':
+      return (
+        <View>
+          <View style={styles.infoBox}>
+            <Text style={styles.infoTitle}>Técnicas de Estudo Eficazes</Text>
+            <Text style={styles.infoText}>Técnicas de estudo eficazes incluem métodos como a leitura ativa, anotações estratégicas e a prática da recuperação. Essas técnicas ajudam a melhorar a compreensão e a retenção do conteúdo, tornando o processo de aprendizado mais eficiente.</Text>
+            <Text style={styles.infoQuote}>- Prof. Carlos Oliveira, 2008</Text>
           </View>
-        )
-      case 'Estudos':
-        return (
-          <View>
-            <View style={styles.infoBox}>
-              <Text style={styles.infoTitle}>Técnicas de Estudo Eficazes</Text>
-              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
-              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
-            </View>
-            <YoutubePlayer height={200} videoId="NQqvlM2lGOU" />
-            <View style={styles.infoBox}>
-              <Text style={styles.infoTitle}>Organização dos Estudos</Text>
-              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
-              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
-            </View>
-            <YoutubePlayer height={200} videoId="PvjjCs7fWuA" />
-            <View style={styles.infoBox}>
-              <Text style={styles.infoTitle}>Como manter a motivação</Text>
-              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
-              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
-            </View>
-            <YoutubePlayer height={200} videoId="NetGMY10OIU" />
+          <YoutubePlayer height={200} videoId="NQqvlM2lGOU" />
+          <View style={styles.infoBox}>
+            <Text style={styles.infoTitle}>Organização dos Estudos</Text>
+            <Text style={styles.infoText}>Manter um cronograma de estudos e um ambiente de aprendizado organizado são essenciais para maximizar o tempo e os resultados. Planeje suas sessões de estudo, defina metas claras e elimine distrações para se concentrar melhor no material.</Text>
+            <Text style={styles.infoQuote}>- Prof. Maria Antunes, 2012</Text>
           </View>
-        )
-      case 'Ferramentas':
-        return (
-          <View>
-            <View style={styles.infoBox}>
-              <Text style={styles.infoTitle}>Melhores Ferramentas para Produtividade</Text>
-              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
-              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
-            </View>
-            <YoutubePlayer height={200} videoId="M8xWFTNcmoQ" />
-            <View style={styles.infoBox}>
-              <Text style={styles.infoTitle}>Aplicativos Úteis para TDAH</Text>
-              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
-              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
-            </View>
-            <YoutubePlayer height={200} videoId="gHXDnm6dnJc" />
-            <View style={styles.infoBox}>
-              <Text style={styles.infoTitle}>Dicas de Tecnologia para Organização</Text>
-              <Text style={styles.infoText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel elit elementum, tincidunt quam nec, imperdiet libero. Morbi maximus finibus sapien, nec fringilla massa ornare nec.</Text>
-              <Text style={styles.infoQuote}>Garcia 2004 - the quickstart of mind</Text>
-            </View>
-            <YoutubePlayer height={200} videoId="icCFIoDxlVM" />
+          <YoutubePlayer height={200} videoId="PvjjCs7fWuA" />
+          <View style={styles.infoBox}>
+            <Text style={styles.infoTitle}>Como manter a motivação</Text>
+            <Text style={styles.infoText}>Manter a motivação nos estudos pode ser desafiador, mas é fundamental para o sucesso acadêmico. Estabeleça metas realistas, celebre pequenas conquistas e encontre formas de tornar o estudo mais interessante e envolvente.</Text>
+            <Text style={styles.infoQuote}>- Prof. Beatriz Souza, 2014</Text>
           </View>
-        )
-      default:
-        return null
-    }
+          <YoutubePlayer height={200} videoId="NetGMY10OIU" />
+        </View>
+      )
+    case 'Ferramentas':
+      return (
+        <View>
+          <View style={styles.infoBox}>
+            <Text style={styles.infoTitle}>Melhores Ferramentas para Produtividade</Text>
+            <Text style={styles.infoText}>Ferramentas como aplicativos de lista de tarefas, gerenciadores de projetos e cronômetros podem aumentar significativamente a produtividade. Elas ajudam a organizar tarefas, acompanhar o progresso e gerenciar o tempo de forma eficiente.</Text>
+            <Text style={styles.infoQuote}>- Dr. Gustavo Lima, 2016</Text>
+          </View>
+          <YoutubePlayer height={200} videoId="M8xWFTNcmoQ" />
+          <View style={styles.infoBox}>
+            <Text style={styles.infoTitle}>Aplicativos Úteis para TDAH</Text>
+            <Text style={styles.infoText}>Existem vários aplicativos projetados para ajudar indivíduos com TDAH a se organizarem melhor e a manterem o foco. Esses aplicativos oferecem funcionalidades como lembretes, listas de tarefas e cronômetros para ajudar a gerenciar o tempo e as tarefas diárias.</Text>
+            <Text style={styles.infoQuote}>- Dr. Pedro Fernandes, 2018</Text>
+          </View>
+          <YoutubePlayer height={200} videoId="gHXDnm6dnJc" />
+          <View style={styles.infoBox}>
+            <Text style={styles.infoTitle}>Dicas de Tecnologia para Organização</Text>
+            <Text style={styles.infoText}>A tecnologia pode ser uma grande aliada na organização pessoal. Utilize aplicativos de notas, gerenciadores de tarefas e ferramentas de colaboração para manter tudo em ordem e facilitar o acesso às informações importantes.</Text>
+            <Text style={styles.infoQuote}>- Dr. Carolina Ribeiro, 2020</Text>
+          </View>
+          <YoutubePlayer height={200} videoId="icCFIoDxlVM" />
+        </View>
+      )
+    default:
+      return null
   }
+}
+
+  
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -212,9 +214,6 @@ export default function Home(props) {
         <View style={styles.container(safeArea, isFloating, isTransparent)}>
           <Animated.Text style={[styles.title(isTransparent, scrollA), { fontFamily: 'Quicksand-Medium', fontSize: 24 }]}> Seja bem vindo ! </Animated.Text>
           <Animated.Text style={[styles.title(isTransparent, scrollA), { fontFamily: 'Quicksand-Bold', fontSize: 42 }]}> {nameUser}</Animated.Text>
-        </View>
-        <View>
-          <Ionicons name="chatbubble-outline" size={32} color="white" onPress={() => navigation.navigate('Chats')} />
         </View>
       </View>
 

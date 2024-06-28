@@ -234,7 +234,7 @@ export default function Profile() {
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
-        
+
 
         {renderProfileDetails()}
 
@@ -326,8 +326,8 @@ export default function Profile() {
                   />
                 </>
               )}
-              <Button title="Salvar" onPress={saveEdits} />
-              <Button title="Cancelar" onPress={() => setModalVisible(false)} />
+              <TouchableOpacity style={{ backgroundColor: '#FF7121', borderRadius: 50, padding: 18, paddingHorizontal: 80, marginVertical: 10 }} onPress={saveEdits}><Text className="font-quick-bold text-white">Salvar</Text></TouchableOpacity>
+              <TouchableOpacity style={{ backgroundColor: '#FF7121', borderRadius: 50, padding: 18, paddingHorizontal: 80, marginVertical: 10 }} title="Cancelar" onPress={() => setModalVisible(false)}><Text className="font-quick-bold text-white">Cancelar</Text></TouchableOpacity>
             </View>
           </View>
         </Modal>
@@ -340,15 +340,15 @@ export default function Profile() {
                 Para confirmar a exclusão da conta, escreva seu nome de usuário
                 abaixo:
               </Text>
-              <Text style={styles.label}>{nomeUser}</Text>
+              <Text className="font-quick-bold text-lg" style={styles.label}>{nomeUser}</Text>
               <TextInput
                 placeholder={`Digite "${nomeUser}" para confirmar`}
                 value={excloseAccount}
                 onChangeText={setExcloseAccount}
                 style={styles.input}
               />
-              <Button title="Confirmar Exclusão" onPress={ExcluirConta} />
-              <Button title="Cancelar" onPress={() => setExcluirModal(false)} />
+              <TouchableOpacity style={{ backgroundColor: '#FF7121', borderRadius: 50, padding: 18, paddingHorizontal: 80, marginVertical: 10 }} onPress={ExcluirConta}><Text className="font-quick-bold text-white">Excluir</Text></TouchableOpacity>
+              <TouchableOpacity style={{ backgroundColor: '#FF7121', borderRadius: 50, padding: 18, paddingHorizontal: 80, marginVertical: 10 }} onPress={() => setExcluirModal(false)}><Text className="font-quick-bold text-white">Cancelar</Text></TouchableOpacity>
             </View>
             <View>
               <Pressable>
@@ -367,35 +367,32 @@ export default function Profile() {
           </View>
         </Modal>
         <Modal
-        visible={settingsModalVisible}
-        animationType="slide"
-        transparent={true}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Configurações</Text>
-            <Pressable style={styles.settingsButton} onPress={logout}>
-              <Text style={styles.settingsText}>Logout</Text>
-            </Pressable>
-            <Pressable
-              style={styles.settingsButton}
-              onPress={() => setExcluirModal(true)}
-            >
-              <Text style={styles.settingsText}>Excluir Conta</Text>
-            </Pressable>
-            <Pressable style={styles.settingsButton}>
-              <Text style={styles.settingsText}>Sobre a Equipe</Text>
-            </Pressable>
-            <Pressable style={styles.settingsButton} onPress={EditarPerfil}>
-              <Text style={styles.settingsText}>Editar Perfil</Text>
-            </Pressable>
-            <Button
-              title="Fechar"
-              onPress={() => setSettingsModalVisible(false)}
-            />
+          visible={settingsModalVisible}
+          animationType="slide"
+          transparent={true}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Configurações</Text>
+              <Pressable style={styles.settingsButton} onPress={logout}>
+                <Text style={styles.settingsText}>Logout</Text>
+              </Pressable>
+              <Pressable
+                style={styles.settingsButton}
+                onPress={() => setExcluirModal(true)}
+              >
+                <Text style={styles.settingsText}>Excluir Conta</Text>
+              </Pressable>
+
+              <Pressable style={styles.settingsButton} onPress={EditarPerfil}>
+                <Text style={styles.settingsText}>Editar Perfil</Text>
+              </Pressable>
+              <TouchableOpacity
+                onPress={() => setSettingsModalVisible(false)}
+              ><Text style={styles.settingsText}>Cancelar</Text></TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
       </LinearGradient>
     </SafeAreaView>
   )

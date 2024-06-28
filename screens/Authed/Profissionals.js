@@ -179,7 +179,6 @@ export default function Profissionals() {
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#633DE8', '#1C233F']} style={styles.background}>
         <View style={{ width: '100%' }}>
-          <Text style={styles.title}>Lista de Profissionais</Text>
           <FlatList
             data={professionalsData}
             renderItem={renderProfessionalItem}
@@ -225,11 +224,34 @@ export default function Profissionals() {
                   <Text style={styles.professionalDetail}>
                     Biografia: {selectedProfessional.biografia}
                   </Text>
-                  <Button
-                    title="Mensagens"
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: '#FF7121',
+                      borderRadius: 50,
+                      padding: 18,
+                      paddingHorizontal: 80,
+                      marginVertical: 10,
+                    }}
                     onPress={() => sendMessage(selectedProfessional)}
-                  />
-                  <Button title="Fechar" onPress={closeModal} />
+                  >
+                    <Text className="font-quick-bold text-white text-center">
+                      Mensagens
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: '#FF7121',
+                      borderRadius: 50,
+                      padding: 18,
+                      paddingHorizontal: 80,
+                      marginVertical: 10,
+                    }}
+                    onPress={closeModal}
+                  >
+                    <Text className="font-quick-bold text-white text-center">
+                      Fechar
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               )}
             </View>
@@ -248,7 +270,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
   title: {
     fontSize: 24,

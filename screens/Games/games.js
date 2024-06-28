@@ -85,7 +85,7 @@ export default function Games() {
                   color: '#FF792F',
                 }}
               >
-                0
+                150
                 <Text
                   style={{
                     fontSize: 15,
@@ -107,7 +107,7 @@ export default function Games() {
                   color: '#FF792F',
                 }}
               >
-                0
+                3
                 <Text
                   style={{
                     fontSize: 15,
@@ -116,7 +116,7 @@ export default function Games() {
                   }}
                 >
                   {' '}
-                  DIA
+                  DIAS
                 </Text>
               </Text>
             </View>
